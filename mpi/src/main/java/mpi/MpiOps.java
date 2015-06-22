@@ -36,6 +36,14 @@ public class MpiOps {
         this(MPI.COMM_WORLD);
     }
 
+    public int getSize() {
+        return size;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
     /* AllReduce */
     public int allReduce(int value, Op reduceOp) throws MPIException {
         return allReduce(value, reduceOp, comm);
