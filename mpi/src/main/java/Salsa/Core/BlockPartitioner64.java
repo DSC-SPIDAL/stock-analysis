@@ -11,11 +11,11 @@ public final class BlockPartitioner64
 	{
 		Range64[] rowRanges = RangePartitioner64.Partition(rowStartIndex, rowCount, numRowBlocks);
 		Range64[] colRanges = RangePartitioner64.Partition(columnStartIndex, columnCount, numColumnBlocks);
-		Block64[][] result = new Block64[numRowBlocks][];
+		Block64[][] result = new Block64[(int) numRowBlocks][];
 
 		for (int i = 0; i < rowRanges.length; i++)
 		{
-			result[i] = new Block64[numColumnBlocks];
+			result[i] = new Block64[(int) numColumnBlocks];
 
 			for (int j = 0; j < colRanges.length; j++)
 			{

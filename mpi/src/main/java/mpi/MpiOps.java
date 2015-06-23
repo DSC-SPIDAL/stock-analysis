@@ -44,6 +44,10 @@ public class MpiOps {
         return rank;
     }
 
+    public Intracomm getComm() {
+        return comm;
+    }
+
     /* AllReduce */
     public int allReduce(int value, Op reduceOp) throws MPIException {
         return allReduce(value, reduceOp, comm);

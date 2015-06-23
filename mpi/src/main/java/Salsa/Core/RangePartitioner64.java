@@ -16,12 +16,12 @@ public final class RangePartitioner64
 	{
 		if (numPartitions < 1)
 		{
-			throw new IllegalArgumentException("count", "Partitioning requires numPartitions to be greater than zero.");
+			throw new IllegalArgumentException("count Partitioning requires numPartitions to be greater than zero.");
 		}
 
 		if (length < 1)
 		{
-			throw new IllegalArgumentException("length", "Partitioning requires length to be greater than zero.");
+			throw new IllegalArgumentException("length Partitioning requires length to be greater than zero.");
 		}
 
 		if (length < numPartitions)
@@ -29,7 +29,7 @@ public final class RangePartitioner64
 			throw new UnsupportedOperationException("Partitioning cannot be performed when length is less than numPartitions requested.");
 		}
 
-		Range64[] ranges = new Range64[numPartitions];
+		Range64[] ranges = new Range64[(int) numPartitions];
 		long chunksize = length / numPartitions;
 		long remainder = length % numPartitions;
 
@@ -65,15 +65,15 @@ public final class RangePartitioner64
 	{
 		if (maxPartitionLength < 1)
 		{
-			throw new IllegalArgumentException("maxPartitionLength", "Partitioning requires the maxPartitionLength to be greater than zero.");
+			throw new IllegalArgumentException("maxPartitionLength Partitioning requires the maxPartitionLength to be greater than zero.");
 		}
 		if (length < 1)
 		{
-			throw new IllegalArgumentException("length", "Partitioning requires the length to be greater than zero.");
+			throw new IllegalArgumentException("length Partitioning requires the length to be greater than zero.");
 		}
 		if (length < maxPartitionLength)
 		{
-			throw new IllegalArgumentException("length", "Partitioning requires the length to be greater than maxPartitionLength.");
+			throw new IllegalArgumentException("length Partitioning requires the length to be greater than maxPartitionLength.");
 		}
 
 		long rangeCount = length / maxPartitionLength;
@@ -88,9 +88,9 @@ public final class RangePartitioner64
 			lastRangeLength = maxPartitionLength;
 		}
 
-		Range64[] ranges = new Range64[rangeCount];
+		Range64[] ranges = new Range64[(int) rangeCount];
 
-		for (long i = 0; i < rangeCount; i++)
+		for (int i = 0; i < rangeCount; i++)
 		{
 			long start = i * maxPartitionLength;
 			long end = (i == rangeCount - 1 ? start + lastRangeLength - 1 : start + maxPartitionLength - 1);

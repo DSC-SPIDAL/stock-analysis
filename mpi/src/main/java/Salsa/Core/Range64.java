@@ -1,6 +1,8 @@
 package Salsa.Core;
 
-/** 
+import java.io.Serializable;
+
+/**
  Represents a range within an 1D array.
 */
 public final class Range64 implements Serializable
@@ -39,7 +41,11 @@ public final class Range64 implements Serializable
 		Length = end - start + 1L;
 	}
 
-	public boolean Contains(long index)
+    public long getLength() {
+        return Length;
+    }
+
+    public boolean Contains(long index)
 	{
 		return (index >= StartIndex && index <= EndIndex);
 	}

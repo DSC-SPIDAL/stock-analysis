@@ -39,6 +39,10 @@ public final class Range implements Serializable {
         Length = end - start + 1;
     }
 
+    public int getLength() {
+        return Length;
+    }
+
     private String privateStartSeqName;
 
     public String getStartSeqName() {

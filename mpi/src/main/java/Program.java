@@ -1,10 +1,13 @@
-﻿package VectorPairwise;
-
-import mpi.MPI;
+﻿import mpi.MPI;
 import mpi.MPIException;
 import mpi.MpiOps;
 import Salsa.Core.*;
 import Salsa.Core.Blas.*;
+import org.apache.commons.cli.*;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Program {
 
@@ -15,23 +18,15 @@ public class Program {
 	private static int _size;
 	private static double _dmax = -Double.MAX_VALUE;
 	private static double _dmin = Double.MAX_VALUE;
+    private static int vectorLength = 30;
+
     private static MpiOps mpiOps;
 
 	static void main(String[] args) {
-		// Load the command line args into our helper class which allows us to name arguments
-		Arguments tempVar = new Arguments(args);
-		tempVar.Usage = "Usage: VectorPairwise.exe /config=<string>";
-		Arguments pargs = tempVar;
-
-        if (pargs.CheckRequired(new String[]{"config"}) == false) {
-            System.out.println(pargs.Usage);
-            return;
-        }
-
+        ReadConfiguration(args);
         try {
             MPI.Init(args);
-            ReadConfiguration(pargs);
-            java.util.List<VectorPoint> vecs = ReadVectors();
+            List<VectorPoint> vecs = ReadVectors();
             _size = vecs.size();
 
             int rank = mpiOps.getRank();
@@ -41,7 +36,6 @@ public class Program {
             Block[] myColumnBlocks = processToCloumnBlocks[rank];
 
             PartialMatrix<Double> myRowStrip = new PartialMatrix<Double>(myColumnBlocks[0].RowRange, new Range(0, _size - 1));
-
 
             ComputeDistanceBlocks(myRowStrip, myColumnBlocks, vecs);
             _dmin = mpiOps.allReduce(_dmin, MPI.MIN);
@@ -69,9 +63,6 @@ public class Program {
 
 	private static void WriteFullMatrixOnRank0(String fileName, int size, int rank, PartialMatrix<Double> partialMatrix,
                                                Range myRowRange, Range rootRowRange, boolean normalize, double dmax) {
-        FileStream fileStream = null;
-        BinaryWriter writer = null;
-
         int a = size / mpiOps.getSize();
         int b = size % mpiOps.getSize();
 
@@ -90,15 +81,24 @@ public class Program {
 
         Range nextRowRange = null;
 
+        DataOutputStream writer = null;
         if (rank == 0) {
-            fileStream = File.Create(fileName, 4194304);
-            writer = new BinaryWriter(fileStream);
+
+            try {
+                writer = new DataOutputStream(new FileOutputStream(fileName));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Cannot find filename: " + fileName);
+            }
 
             // I am rank0 and I am the one who will fill the fullMatrix. So let's fill what I have already.
-            for (int i = partialMatrix.GlobalRowStartIndex; i <= partialMatrix.GlobalRowEndIndex; i++) {
-                double[] values = partialMatrix.GetRowValues(i);
+            for (int i = partialMatrix.getGlobalRowStartIndex(); i <= partialMatrix.getGlobalRowEndIndex(); i++) {
+                Double[] values = partialMatrix.GetRowValues(i);
                 for (double value : values) {
-                    writer.Write((short) ((normalize ? value / dmax : value) * Short.MAX_VALUE));
+                    try {
+                        writer.writeShort((int) ((normalize ? value / dmax : value) * Short.MAX_VALUE));
+                    } catch (IOException e) {
+                        throw new RuntimeException("Cannot write to file: " + fileName);
+                    }
                 }
             }
         }
@@ -114,7 +114,7 @@ public class Program {
             }
 
             // Announce everyone about the next row ranges that rank0 has declared.
-            tangible.RefObject<T> tempRef_nextRowRange = new tangible.RefObject<T>(nextRowRange);
+            tangible.RefObject<Range> tempRef_nextRowRange = new tangible.RefObject<Range>(nextRowRange);
             mpiOps.broadcast(tempRef_nextRowRange, 0);
             nextRowRange = tempRef_nextRowRange.argValue;
 
@@ -124,17 +124,25 @@ public class Program {
                 // A variable to hold the rank of the process, which has the row that I am (rank0) going to receive
                 int processRank;
 
-                double[] values;
+                double[] values = new double[];
                 for (int j = nextRowRange.StartIndex; j <= nextRowRange.EndIndex; j++) {
                     // Let's find the process that has the row j.
                     processRank = j < (b * (a + 1)) ? j / (a + 1) : b + ((j - (b * (a + 1))) / a);
 
                     // For each row that I (rank0) require I will receive from the process, which has that row.
-                    values = mpiOps.receive(processRank, 100);
+                    try {
+                        mpiOps.getComm().recv(values, 0, MPI.DOUBLE, processRank, 100);
+                    } catch (MPIException e) {
+                        e.printStackTrace();
+                    }
 
                     // Set the received values in the fullMatrix
                     for (double value : values) {
-                        writer.Write((short) ((normalize ? value / dmax : value) * Short.MAX_VALUE));
+                        try {
+                            writer.writeShort((int) ((normalize ? value / dmax : value) * Short.MAX_VALUE));
+                        } catch (IOException e) {
+                            throw new RuntimeException("Cannot write to file: " + fileName);
+                        }
                     }
                 }
             } else {
@@ -144,7 +152,11 @@ public class Program {
                 if (myRowRange.IntersectsWith(nextRowRange)) {
                     Range intersection = myRowRange.GetIntersectionWith(nextRowRange);
                     for (int k = intersection.StartIndex; k <= intersection.EndIndex; k++) {
-                        mpiOps.send(partialMatrix.GetRowValues(k), 0, 100);
+                        try {
+                            mpiOps.getComm().send(partialMatrix.GetRowValues(k), 0, MPI.DOUBLE, 0, 100);
+                        } catch (MPIException e) {
+                            throw new RuntimeException("Failed to send the data", e);
+                        }
                     }
                 }
             }
@@ -154,11 +166,13 @@ public class Program {
 
         // I am rank0 and I came here means that I wrote full matrix to disk. So I will clear the writer and stream.
         if (rank == 0) {
-            writer.flush();
-            fileStream.close();
-            writer.close();
+            try {
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
 	}
 
     private static void ComputeDistanceBlocks(PartialMatrix<Double> myRowStrip, Block[] myColumnBlocks, java.util.List<VectorPoint> vecs) {
@@ -167,7 +181,7 @@ public class Program {
                 VectorPoint vr = vecs.get(r);
                 for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c) {
                     VectorPoint vc = vecs.get(c);
-                    double dist = vr.EuclidenDistanceTo(vc);
+                    double dist = vr.correlation(vc);
                     myRowStrip[r][c] = dist;
                     if (dist > _dmax) {
                         _dmax = dist;
@@ -181,47 +195,47 @@ public class Program {
         }
     }
 
-	private static java.util.List<VectorPoint> ReadVectors() {
-		java.util.List<VectorPoint> vecs = new java.util.ArrayList<VectorPoint>();
-		VectorPointsReader reader = new VectorPointsReader(_vectorFile);
-		try {
-			while (!reader.getEndOfStream()) {
-				vecs.add(reader.ReadVectorPoint());
-			}
-		} finally {
-			reader.dispose();
-		}
+	private static List<VectorPoint> ReadVectors() {
+		List<VectorPoint> vecs = new ArrayList<VectorPoint>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(_vectorFile));
+            String line;
+            while ((line = br.readLine()) != null) {
+                // process the line.
+                String parts[] = line.split(" ");
+                String key = parts[0];
+                double []numbers = new double[vectorLength];
+
+                if (vectorLength != parts.length - 1) {
+                    throw new RuntimeException("The number of points in file " + (parts.length - 1) +
+                            " is not equal to the expected value: " + vectorLength);
+                }
+
+                for (int i = 1; i < parts.length; i++) {
+                    numbers[i] = Double.parseDouble(parts[i]);
+                }
+                VectorPoint p = new VectorPoint(key, numbers);
+                vecs.add(p);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 		return vecs;
 	}
 
-    private static void ReadConfiguration(Arguments pargs) {
-        String config = pargs.<String>GetValue("config");
-        StreamReader reader = new StreamReader(config);
+    private static void ReadConfiguration(String []args) {
+        Options options = new Options();
+        options.addOption("v", true, "Vector file");
+        options.addOption("d", true, "Distance file");
+        options.addOption("n", false, "normalize");
+        CommandLineParser commandLineParser = new BasicParser();
         try {
-            char[] sep = new char[]{' ', '\t'};
-            while (!reader.EndOfStream) {
-                String line = reader.ReadLine();
-                if (!tangible.DotNetToJavaStringHelper.isNullOrEmpty(line) && !line.startsWith("#")) {
-                    String[] splits = line.trim().split(java.util.regex.Pattern.quote(sep.toString()), -1);
-                    if (splits.length >= 2) {
-                        String value = splits[1];
-                        String tempVar = splits[0];
-                        if (tempVar.equals("VectorFile")) {
-                            _vectorFile = value;
-                        } else if (tempVar.equals("DistFile")) {
-                            _distFile = value;
-                        } else if (tempVar.equals("Normalize")) {
-                            _normalize = Boolean.parseBoolean(value);
-                        } else {
-                            throw new RuntimeException("Invalid line in configuration file: " + line);
-                        }
-                    } else {
-                        throw new RuntimeException("Invalid line in configuration file: " + line);
-                    }
-                }
-            }
-        } finally {
-            reader.dispose();
+            CommandLine cmd = commandLineParser.parse(options, args);
+            _vectorFile = cmd.getOptionValue("v");
+            _distFile = cmd.getOptionValue("d");
+            _normalize = cmd.hasOption("n");
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 }

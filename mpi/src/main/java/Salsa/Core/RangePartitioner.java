@@ -16,7 +16,7 @@ public final class RangePartitioner
 	{
 		if (numPartitions < 1)
 		{
-			throw new IllegalArgumentException("count", "Partitioning requires numPartitions to be greater than zero.");
+			throw new IllegalArgumentException("count Partitioning requires numPartitions to be greater than zero.");
 		}
 
 		if (length < 1)
@@ -65,15 +65,15 @@ public final class RangePartitioner
 	{
 		if (maxPartitionLength < 1)
 		{
-			throw new IllegalArgumentException("maxPartitionLength", "Partitioning requires the maxPartitionLength to be greater than zero.");
+			throw new IllegalArgumentException("maxPartitionLength Partitioning requires the maxPartitionLength to be greater than zero.");
 		}
 		if (length < 1)
 		{
-			throw new IllegalArgumentException("length", "Partitioning requires the length to be greater than zero.");
+			throw new IllegalArgumentException("length Partitioning requires the length to be greater than zero.");
 		}
 		if (length < maxPartitionLength)
 		{
-			throw new IllegalArgumentException("length", "Partitioning requires the length to be greater than maxPartitionLength.");
+			throw new IllegalArgumentException("length Partitioning requires the length to be greater than maxPartitionLength.");
 		}
 
 		int rangeCount = length / maxPartitionLength;
