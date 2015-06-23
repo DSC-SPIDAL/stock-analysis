@@ -1,4 +1,4 @@
-﻿import mpi.MPI;
+import mpi.MPI;
 import mpi.MPIException;
 import mpi.MpiOps;
 import Salsa.Core.*;
@@ -10,17 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Program {
-	private static String _vectorFile;
-	private static String _distFile;
-	private static boolean _normalize;
+    private static String _vectorFile;
+    private static String _distFile;
+    private static boolean _normalize;
 
     private static double _dmax = -Double.MAX_VALUE;
-	private static double _dmin = Double.MAX_VALUE;
+    private static double _dmin = Double.MAX_VALUE;
     private static int vectorLength = 30;
 
     private static MpiOps mpiOps;
 
-	static void main(String[] args) {
+    static void main(String[] args) {
         ReadConfiguration(args);
         try {
             mpiOps = new MpiOps();
@@ -63,7 +63,7 @@ public class Program {
         }
     }
 
-	private static void WriteFullMatrixOnRank0(String fileName, int size, int rank, PartialMatrix partialMatrix,
+    private static void WriteFullMatrixOnRank0(String fileName, int size, int rank, PartialMatrix partialMatrix,
                                                Range myRowRange, Range rootRowRange, boolean normalize, double dmax) {
         int a = size / mpiOps.getSize();
         int b = size % mpiOps.getSize();
@@ -125,7 +125,7 @@ public class Program {
             nextRowRange = new Range(rowRange[0], rowRange[1]);
 
             if (rank == 0) {
-				/* I am rank0 and now let's try to receive the declared next row range from others */
+                /* I am rank0 and now let's try to receive the declared next row range from others */
 
                 // A variable to hold the rank of the process, which has the row that I am (rank0) going to receive
                 int processRank;
@@ -179,7 +179,7 @@ public class Program {
                 e.printStackTrace();
             }
         }
-	}
+    }
 
     private static void ComputeDistanceBlocks(PartialMatrix myRowStrip, Block[] myColumnBlocks, java.util.List<VectorPoint> vecs) {
         for (Block block : myColumnBlocks) {
@@ -201,8 +201,8 @@ public class Program {
         }
     }
 
-	private static List<VectorPoint> ReadVectors() {
-		List<VectorPoint> vecs = new ArrayList<VectorPoint>();
+    private static List<VectorPoint> ReadVectors() {
+        List<VectorPoint> vecs = new ArrayList<VectorPoint>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(_vectorFile));
             String line;
@@ -210,7 +210,7 @@ public class Program {
                 // process the line.
                 String parts[] = line.split(" ");
                 String key = parts[0];
-                double []numbers = new double[vectorLength];
+                double[] numbers = new double[vectorLength];
                 if (vectorLength != parts.length - 1) {
                     throw new RuntimeException("The number of points in file " + (parts.length - 1) +
                             " is not equal to the expected value: " + vectorLength);
@@ -225,10 +225,10 @@ public class Program {
         } catch (IOException e) {
             e.printStackTrace();
         }
-		return vecs;
-	}
+        return vecs;
+    }
 
-    private static void ReadConfiguration(String []args) {
+    private static void ReadConfiguration(String[] args) {
         Options options = new Options();
         options.addOption("v", true, "Vector file");
         options.addOption("d", true, "Distance file");

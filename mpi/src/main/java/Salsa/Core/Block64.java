@@ -1,4 +1,4 @@
-﻿package Salsa.Core;
+package Salsa.Core;
 
 import java.io.Serializable;
 
