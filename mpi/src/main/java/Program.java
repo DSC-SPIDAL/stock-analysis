@@ -16,16 +16,16 @@ public class Program {
 
     private static double _dmax = -Double.MAX_VALUE;
     private static double _dmin = Double.MAX_VALUE;
-    private static int vectorLength = 30;
+    private static int vectorLength = 10;
 
     private static MpiOps mpiOps;
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         ReadConfiguration(args);
         try {
+            MPI.Init(args);
             mpiOps = new MpiOps();
 
-            MPI.Init(args);
             List<VectorPoint> vecs = ReadVectors();
             int _size = vecs.size();
 
@@ -217,7 +217,7 @@ public class Program {
                 }
 
                 for (int i = 1; i < parts.length; i++) {
-                    numbers[i] = Double.parseDouble(parts[i]);
+                    numbers[i - 1] = Double.parseDouble(parts[i]);
                 }
                 VectorPoint p = new VectorPoint(key, numbers);
                 vecs.add(p);
