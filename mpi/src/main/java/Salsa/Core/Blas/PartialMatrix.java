@@ -142,9 +142,9 @@ public class PartialMatrix implements Serializable {
         return elements;
     }
 
-    public void GetRowColumnCount(double[][] data, tangible.RefObject<Integer> rows, tangible.RefObject<Integer> columns) {
-        rows.argValue = data.length;
-        columns.argValue = (rows.argValue == 0) ? 0 : data[0].length;
+    public void GetRowColumnCount(double[][] data, int rows, int columns) {
+        rows = data.length;
+        columns = (rows == 0) ? 0 : data[0].length;
     }
 
 //C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
@@ -179,12 +179,6 @@ public class PartialMatrix implements Serializable {
 			_elements[i][globalColumnIndex] = values[i];
 		}
 	}
-
-//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
-		///#endregion
-
-//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
-		///#region Block Operations
 
 	public final double[][] GetBlockValues(Block globalBlock) {
 		return GetBlockValues(globalBlock.RowRange, globalBlock.ColumnRange);

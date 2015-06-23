@@ -9,6 +9,6 @@ public class VectorPoint {
     }
 
     public double correlation(VectorPoint vc) {
-        return 0;
+        return .5;
     }
 }

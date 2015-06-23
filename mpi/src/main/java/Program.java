@@ -14,8 +14,7 @@ public class Program {
 	private static String _distFile;
 	private static boolean _normalize;
 
-	private static int _size;
-	private static double _dmax = -Double.MAX_VALUE;
+    private static double _dmax = -Double.MAX_VALUE;
 	private static double _dmin = Double.MAX_VALUE;
     private static int vectorLength = 30;
 
@@ -24,9 +23,11 @@ public class Program {
 	static void main(String[] args) {
         ReadConfiguration(args);
         try {
+            mpiOps = new MpiOps();
+
             MPI.Init(args);
             List<VectorPoint> vecs = ReadVectors();
-            _size = vecs.size();
+            int _size = vecs.size();
 
             int rank = mpiOps.getRank();
             int worldSize = mpiOps.getSize();
@@ -55,6 +56,8 @@ public class Program {
             if (rank == 0) {
                 System.out.println("Done.");
             }
+
+            MPI.Finalize();
         } catch (MPIException e) {
             throw new RuntimeException("MPI Error: ", e);
         }
@@ -75,8 +78,6 @@ public class Program {
 		 * in the second set of processes. Thus, the rank of the process handling
 		 * this row is equal to the integer calculation of b + [(j - (b * (a + 1)) / a]
 		 */
-
-        int numOfRowsPerReceive = a;
 
         Range nextRowRange = null;
 
@@ -105,17 +106,23 @@ public class Program {
 
         // For all the remaining rows that rank0 does not have receive in blocks of rows
         for (int i = rootRowRange.EndIndex + 1; i < size; ) {
+            int rowRange[] = new int[2];
             if (rank == 0) {
                 // I am rank0 and let's declare the next row range that I want to receive.
-                int end = i + numOfRowsPerReceive - 1;
+                int end = i + a - 1;
                 end = end >= size ? size - 1 : end;
                 nextRowRange = new Range(i, end);
+                rowRange[0] = nextRowRange.StartIndex;
+                rowRange[1] = nextRowRange.EndIndex;
             }
-
             // Announce everyone about the next row ranges that rank0 has declared.
-            tangible.RefObject<Range> tempRef_nextRowRange = new tangible.RefObject<Range>(nextRowRange);
-            mpiOps.getComm().bcast(tempRef_nextRowRange, 0);
-            nextRowRange = tempRef_nextRowRange.argValue;
+            try {
+                mpiOps.getComm().bcast(rowRange, 0, MPI.INT, 100);
+            } catch (MPIException e) {
+                throw new RuntimeException("Failed to do broadcast", e);
+
+            }
+            nextRowRange = new Range(rowRange[0], rowRange[1]);
 
             if (rank == 0) {
 				/* I am rank0 and now let's try to receive the declared next row range from others */
@@ -160,7 +167,7 @@ public class Program {
                 }
             }
 
-            i += numOfRowsPerReceive;
+            i += a;
         }
 
         // I am rank0 and I came here means that I wrote full matrix to disk. So I will clear the writer and stream.
