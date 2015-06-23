@@ -34,7 +34,7 @@ public class Program {
             Block[][] processToCloumnBlocks = BlockPartitioner.Partition(_size, _size, worldSize, worldSize);
             Block[] myColumnBlocks = processToCloumnBlocks[rank];
 
-            PartialMatrix<Double> myRowStrip = new PartialMatrix<Double>(myColumnBlocks[0].RowRange, new Range(0, _size - 1));
+            PartialMatrix myRowStrip = new PartialMatrix(myColumnBlocks[0].RowRange, new Range(0, _size - 1));
 
             ComputeDistanceBlocks(myRowStrip, myColumnBlocks, vecs);
             _dmin = mpiOps.allReduce(_dmin, MPI.MIN);
@@ -60,7 +60,7 @@ public class Program {
         }
     }
 
-	private static void WriteFullMatrixOnRank0(String fileName, int size, int rank, PartialMatrix<Double> partialMatrix,
+	private static void WriteFullMatrixOnRank0(String fileName, int size, int rank, PartialMatrix partialMatrix,
                                                Range myRowRange, Range rootRowRange, boolean normalize, double dmax) {
         int a = size / mpiOps.getSize();
         int b = size % mpiOps.getSize();
@@ -91,7 +91,7 @@ public class Program {
 
             // I am rank0 and I am the one who will fill the fullMatrix. So let's fill what I have already.
             for (int i = partialMatrix.getGlobalRowStartIndex(); i <= partialMatrix.getGlobalRowEndIndex(); i++) {
-                Double[] values = partialMatrix.GetRowValues(i);
+                double[] values = partialMatrix.GetRowValues(i);
                 for (double value : values) {
                     try {
                         writer.writeShort((int) ((normalize ? value / dmax : value) * Short.MAX_VALUE));
@@ -114,7 +114,7 @@ public class Program {
 
             // Announce everyone about the next row ranges that rank0 has declared.
             tangible.RefObject<Range> tempRef_nextRowRange = new tangible.RefObject<Range>(nextRowRange);
-            mpiOps.broadcast(tempRef_nextRowRange, 0);
+            mpiOps.getComm().bcast(tempRef_nextRowRange, 0);
             nextRowRange = tempRef_nextRowRange.argValue;
 
             if (rank == 0) {
@@ -123,7 +123,7 @@ public class Program {
                 // A variable to hold the rank of the process, which has the row that I am (rank0) going to receive
                 int processRank;
 
-                double[] values = new double[];
+                double[] values = new double[vectorLength];
                 for (int j = nextRowRange.StartIndex; j <= nextRowRange.EndIndex; j++) {
                     // Let's find the process that has the row j.
                     processRank = j < (b * (a + 1)) ? j / (a + 1) : b + ((j - (b * (a + 1))) / a);
@@ -174,14 +174,14 @@ public class Program {
         }
 	}
 
-    private static void ComputeDistanceBlocks(PartialMatrix<Double> myRowStrip, Block[] myColumnBlocks, java.util.List<VectorPoint> vecs) {
+    private static void ComputeDistanceBlocks(PartialMatrix myRowStrip, Block[] myColumnBlocks, java.util.List<VectorPoint> vecs) {
         for (Block block : myColumnBlocks) {
             for (int r = block.RowRange.StartIndex; r <= block.RowRange.EndIndex; ++r) {
                 VectorPoint vr = vecs.get(r);
                 for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c) {
                     VectorPoint vc = vecs.get(c);
                     double dist = vr.correlation(vc);
-                    myRowStrip[r][c] = dist;
+                    myRowStrip.setValue(r, c, dist);
                     if (dist > _dmax) {
                         _dmax = dist;
                     }
@@ -204,7 +204,6 @@ public class Program {
                 String parts[] = line.split(" ");
                 String key = parts[0];
                 double []numbers = new double[vectorLength];
-
                 if (vectorLength != parts.length - 1) {
                     throw new RuntimeException("The number of points in file " + (parts.length - 1) +
                             " is not equal to the expected value: " + vectorLength);

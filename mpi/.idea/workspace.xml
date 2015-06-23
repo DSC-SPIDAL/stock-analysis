@@ -26,13 +26,25 @@
       <file leaf-file-name="Program.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/Program.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="2.892857" vertical-offset="0" max-vertical-offset="3675">
-              <caret line="189" column="55" selection-start-line="189" selection-start-column="37" selection-end-line="189" selection-end-column="37" />
+            <state vertical-scroll-proportion="0.82653064" vertical-offset="0" max-vertical-offset="3660">
+              <caret line="54" column="40" selection-start-line="54" selection-start-column="28" selection-end-line="54" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1070#1078#0" expanded="true" />
-                <element signature="e#4593#4600#0" expanded="true" />
-                <element signature="e#8278#8291#0" expanded="true" />
+                <element signature="e#4569#4576#0" expanded="true" />
+                <element signature="e#8272#8285#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PartialMatrix.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/Salsa/Core/Blas/PartialMatrix.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="8.035714" vertical-offset="1530" max-vertical-offset="4170">
+              <caret line="90" column="34" selection-start-line="90" selection-start-column="34" selection-end-line="90" selection-end-column="34" />
+              <folding>
+                <element signature="e#3287#3288#0" expanded="true" />
+                <element signature="e#3328#3329#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -126,18 +138,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Range.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/Salsa/Core/Range.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="1545">
-              <caret line="41" column="28" selection-start-line="41" selection-start-column="28" selection-end-line="41" selection-end-column="28" />
-              <folding>
-                <element signature="e#902#903#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="RangePartitioner64.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/Salsa/Core/RangePartitioner64.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -166,7 +166,6 @@
         <option value="$PROJECT_DIR$/src/main/java/Range.java" />
         <option value="$PROJECT_DIR$/src/main/java/Salsa/Core/Block.java" />
         <option value="$PROJECT_DIR$/src/main/java/Salsa/Core/Block64.java" />
-        <option value="$PROJECT_DIR$/src/main/java/Salsa/Core/Blas/PartialMatrix.java" />
         <option value="$PROJECT_DIR$/src/main/java/VectorPoint.java" />
         <option value="$PROJECT_DIR$/src/main/java/Salsa/Core/Range.java" />
         <option value="$PROJECT_DIR$/src/main/java/Salsa/Core/RangePartitioner.java" />
@@ -176,6 +175,7 @@
         <option value="$PROJECT_DIR$/src/main/java/Salsa/Core/Blas/Matrix.java" />
         <option value="$PROJECT_DIR$/src/main/java/mpi/MpiOps.java" />
         <option value="$PROJECT_DIR$/src/main/java/Salsa/Core/BlockPartitioner.java" />
+        <option value="$PROJECT_DIR$/src/main/java/Salsa/Core/Blas/PartialMatrix.java" />
         <option value="$PROJECT_DIR$/src/main/java/Program.java" />
       </list>
     </option>
@@ -773,16 +773,16 @@
       <updated>1434981751906</updated>
       <workItem from="1434981753613" duration="4306000" />
       <workItem from="1434987351021" duration="2703000" />
-      <workItem from="1434993153642" duration="10022000" />
+      <workItem from="1434993153642" duration="10820000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17031000" />
+    <option name="totallyTimeSpent" value="17829000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="25" width="1922" height="1151" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -803,7 +803,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21671991" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18210863" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18210863" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -864,9 +864,8 @@
           <caret line="39" column="35" selection-start-line="39" selection-start-column="23" selection-end-line="39" selection-end-column="35" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1070#1078#0" expanded="true" />
-            <element signature="e#4593#4600#0" expanded="true" />
-            <element signature="e#8278#8291#0" expanded="true" />
+            <element signature="e#4569#4576#0" expanded="true" />
+            <element signature="e#8272#8285#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1091,15 +1090,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Salsa/Core/Blas/PartialMatrix.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="8.035714" vertical-offset="1530" max-vertical-offset="4170">
+          <caret line="90" column="34" selection-start-line="90" selection-start-column="34" selection-end-line="90" selection-end-column="34" />
+          <folding>
+            <element signature="e#3287#3288#0" expanded="true" />
+            <element signature="e#3328#3329#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/Program.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.892857" vertical-offset="0" max-vertical-offset="3675">
-          <caret line="189" column="55" selection-start-line="189" selection-start-column="37" selection-end-line="189" selection-end-column="37" />
+        <state vertical-scroll-proportion="0.82653064" vertical-offset="0" max-vertical-offset="3660">
+          <caret line="54" column="40" selection-start-line="54" selection-start-column="28" selection-end-line="54" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1070#1078#0" expanded="true" />
-            <element signature="e#4593#4600#0" expanded="true" />
-            <element signature="e#8278#8291#0" expanded="true" />
+            <element signature="e#4569#4576#0" expanded="true" />
+            <element signature="e#8272#8285#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -4,9 +4,9 @@ import Salsa.Core.*;
 
 import java.io.Serializable;
 
-public class PartialMatrix<T> implements Serializable {
+public class PartialMatrix implements Serializable {
     private int _colCount;
-    private T[][] _elements;
+    private double[][] _elements;
     private int _globalColStartIndex;
     private int _globalRowStartIndex;
     private int _rowCount;
@@ -39,7 +39,7 @@ public class PartialMatrix<T> implements Serializable {
         _elements = CreateElements(_rowCount, _colCount);
     }
 
-    public PartialMatrix(int globalRowStartIndex, int globalRowEndIndex, int globalColumnStartIndex, int globalColumnEndIndex, T[][] values) {
+    public PartialMatrix(int globalRowStartIndex, int globalRowEndIndex, int globalColumnStartIndex, int globalColumnEndIndex, double[][] values) {
         _globalRowStartIndex = globalRowStartIndex;
         _globalColStartIndex = globalColumnStartIndex;
         _rowCount = globalRowEndIndex - globalRowStartIndex + 1;
@@ -47,11 +47,11 @@ public class PartialMatrix<T> implements Serializable {
         _elements = values;
     }
 
-    public final T getItem(int globalRowIndex, int globalColumnIndex) {
+    public final double getItem(int globalRowIndex, int globalColumnIndex) {
         return _elements[globalRowIndex - _globalRowStartIndex][globalColumnIndex - _globalColStartIndex];
     }
 
-    public final void setItem(int globalRowIndex, int globalColumnIndex, T value) {
+    public final void setItem(int globalRowIndex, int globalColumnIndex, double value) {
         _elements[globalRowIndex - _globalRowStartIndex][globalColumnIndex - _globalColStartIndex] = value;
     }
 
@@ -83,12 +83,16 @@ public class PartialMatrix<T> implements Serializable {
         return (_rowCount == _colCount);
     }
 
-    public final T[][] getElements() {
+    public final double[][] getElements() {
         return _elements;
     }
 
-    public final PartialMatrix<T> Transpose() {
-        T[][] leftElements = CreateElements(_colCount, _rowCount);
+    public void setValue(int row, int col, double val) {
+        _elements[row][col] = val;
+    }
+
+    public final PartialMatrix Transpose() {
+        double[][] leftElements = CreateElements(_colCount, _rowCount);
 
         for (int i = 0; i < _rowCount; i++) {
             for (int j = 0; j < _colCount; j++) {
@@ -96,19 +100,15 @@ public class PartialMatrix<T> implements Serializable {
             }
         }
 
-        return new PartialMatrix<T>(getGlobalColumnStartIndex(), getGlobalColumnEndIndex(), getGlobalRowStartIndex(), getGlobalRowEndIndex(), leftElements);
+        return new PartialMatrix(getGlobalColumnStartIndex(), getGlobalColumnEndIndex(), getGlobalRowStartIndex(), getGlobalRowEndIndex(), leftElements);
     }
 
-    public final void SetAllValues(T value) {
+    public final void SetAllValues(double value) {
         for (int i = 0; i < getRowCount(); i++) {
             for (int j = 0; j < getColumnCount(); j++) {
                 _elements[i][j] = value;
             }
         }
-    }
-
-    public final void CopyTo(Matrix<T> matrix) {
-        matrix.SetBlockValues(getGlobalRowStartIndex(), getGlobalRowEndIndex(), getGlobalColumnStartIndex(), getGlobalColumnEndIndex(), _elements);
     }
 
     @Override
@@ -134,15 +134,15 @@ public class PartialMatrix<T> implements Serializable {
         return sb.toString();
     }
 
-    public T[][] CreateElements(int rowCount, int columnCount) {
-        T[][] elements = (T[][]) new Object[rowCount][];
+    public double[][] CreateElements(int rowCount, int columnCount) {
+        double[][] elements = new double[rowCount][];
         for (int i = 0; i < rowCount; i++) {
-            elements[i] = (T[]) new Object[columnCount];
+            elements[i] = new double[columnCount];
         }
         return elements;
     }
 
-    public void GetRowColumnCount(T[][] data, tangible.RefObject<Integer> rows, tangible.RefObject<Integer> columns) {
+    public void GetRowColumnCount(double[][] data, tangible.RefObject<Integer> rows, tangible.RefObject<Integer> columns) {
         rows.argValue = data.length;
         columns.argValue = (rows.argValue == 0) ? 0 : data[0].length;
     }
@@ -150,21 +150,21 @@ public class PartialMatrix<T> implements Serializable {
 //C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
     ///#region Row Operations
 
-    public final T[] GetRowValues(int globalRowIndex) {
+    public final double[] GetRowValues(int globalRowIndex) {
         globalRowIndex = globalRowIndex - _globalRowStartIndex;
-        T[] values = new T[_colCount];
+        double[] values = new double[_colCount];
         System.arraycopy(_elements[globalRowIndex], 0, values, 0, _colCount);
         return values;
     }
 
-    public final void SetRowValues(int globalRowIndex, T[] values) {
+    public final void SetRowValues(int globalRowIndex, double[] values) {
         globalRowIndex = globalRowIndex - _globalRowStartIndex;
         System.arraycopy(values, 0, _elements[globalRowIndex], 0, values.length);
     }
 
-    public final T[] GetColumnValues(int globalColumnIndex) {
+    public final double[] GetColumnValues(int globalColumnIndex) {
         globalColumnIndex = globalColumnIndex - _globalColStartIndex;
-        T[] leftElements = new T[_rowCount];
+        double[] leftElements = new double[_rowCount];
 
         for (int i = 0; i < _rowCount; i++) {
             leftElements[i] = _elements[i][globalColumnIndex];
@@ -173,7 +173,7 @@ public class PartialMatrix<T> implements Serializable {
         return leftElements;
     }
 
-	public final void SetColumnValues(int globalColumnIndex, T[] values) {
+	public final void SetColumnValues(int globalColumnIndex, double[] values) {
 		globalColumnIndex = globalColumnIndex - _globalColStartIndex;
 		for (int i = 0; i < values.length; i++) {
 			_elements[i][globalColumnIndex] = values[i];
@@ -186,21 +186,21 @@ public class PartialMatrix<T> implements Serializable {
 //C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
 		///#region Block Operations
 
-	public final T[][] GetBlockValues(Block globalBlock) {
+	public final double[][] GetBlockValues(Block globalBlock) {
 		return GetBlockValues(globalBlock.RowRange, globalBlock.ColumnRange);
 	}
 
-	public final T[][] GetBlockValues(Range globalRowRange, Range globalColumnRange) {
+	public final double[][] GetBlockValues(Range globalRowRange, Range globalColumnRange) {
 		return GetBlockValues(globalRowRange.StartIndex, globalRowRange.EndIndex, globalColumnRange.StartIndex, globalColumnRange.EndIndex);
 	}
 
-	public final T[][] GetBlockValues(int globalRowStartIndex, int globalRowEndIndex, int globalColumnStartIndex, int globalColumnEndIndex) {
+	public final double[][] GetBlockValues(int globalRowStartIndex, int globalRowEndIndex, int globalColumnStartIndex, int globalColumnEndIndex) {
 		globalRowStartIndex = globalRowStartIndex - _globalRowStartIndex;
 		globalRowEndIndex = globalRowEndIndex - _globalRowStartIndex;
 		globalColumnStartIndex = globalColumnStartIndex - _globalColStartIndex;
 		globalColumnEndIndex = globalColumnEndIndex - _globalColStartIndex;
 
-		T[][] leftElements = CreateElements(globalRowEndIndex - globalRowStartIndex + 1, globalColumnEndIndex - globalColumnStartIndex + 1);
+		double[][] leftElements = CreateElements(globalRowEndIndex - globalRowStartIndex + 1, globalColumnEndIndex - globalColumnStartIndex + 1);
 
 		for (int i = globalRowStartIndex; i <= globalRowEndIndex; i++) {
 			for (int j = globalColumnStartIndex; j <= globalColumnEndIndex; j++) {
@@ -220,7 +220,7 @@ public class PartialMatrix<T> implements Serializable {
 	 @param globalBlock The block to retrieve
 	 @return 
 	*/
-	public final T[][] GetTransposedBlock(Block globalBlock) {
+	public final double[][] GetTransposedBlock(Block globalBlock) {
 		return GetTransposedBlock(globalBlock.RowRange, globalBlock.ColumnRange);
 	}
 
@@ -232,7 +232,7 @@ public class PartialMatrix<T> implements Serializable {
 	 @param globalColumnRange The range specifiying the columns to retrieve
 	 @return 
 	*/
-	public final T[][] GetTransposedBlock(Range globalRowRange, Range globalColumnRange) {
+	public final double[][] GetTransposedBlock(Range globalRowRange, Range globalColumnRange) {
 		return GetTransposedBlock(globalRowRange.StartIndex, globalRowRange.EndIndex, globalColumnRange.StartIndex, globalColumnRange.EndIndex);
 	}
 
@@ -246,13 +246,13 @@ public class PartialMatrix<T> implements Serializable {
 	 @param globalColumnEndIndex Inclusive ending column index.
 	 @return 
 	*/
-    public final T[][] GetTransposedBlock(int globalRowStartIndex, int globalRowEndIndex, int globalColumnStartIndex, int globalColumnEndIndex) {
+    public final double[][] GetTransposedBlock(int globalRowStartIndex, int globalRowEndIndex, int globalColumnStartIndex, int globalColumnEndIndex) {
         globalRowStartIndex = globalRowStartIndex - _globalRowStartIndex;
         globalRowEndIndex = globalRowEndIndex - _globalRowStartIndex;
         globalColumnStartIndex = globalColumnStartIndex - _globalColStartIndex;
         globalColumnEndIndex = globalColumnEndIndex - _globalColStartIndex;
 
-        T[][] leftElements = CreateElements(globalColumnEndIndex - globalColumnStartIndex + 1, globalRowEndIndex - globalRowStartIndex + 1);
+        double[][] leftElements = CreateElements(globalColumnEndIndex - globalColumnStartIndex + 1, globalRowEndIndex - globalRowStartIndex + 1);
 
         for (int i = globalRowStartIndex; i <= globalRowEndIndex; i++) {
             for (int j = globalColumnStartIndex; j <= globalColumnEndIndex; j++) {
@@ -263,15 +263,15 @@ public class PartialMatrix<T> implements Serializable {
         return leftElements;
     }
 
-    public final void SetBlockValues(Block globalBlock, T[][] blockValues) {
+    public final void SetBlockValues(Block globalBlock, double[][] blockValues) {
         SetBlockValues(globalBlock.RowRange, globalBlock.ColumnRange, blockValues);
     }
 
-    public final void SetBlockValues(Range globalRowRange, Range globalColumnRange, T[][] blockValues) {
+    public final void SetBlockValues(Range globalRowRange, Range globalColumnRange, double[][] blockValues) {
         SetBlockValues(globalRowRange.StartIndex, globalRowRange.EndIndex, globalColumnRange.StartIndex, globalColumnRange.EndIndex, blockValues);
     }
 
-    public final void SetBlockValues(int globalRowStartIndex, int globalRowEndIndex, int globalColumnStartIndex, int globalColumnEndIndex, T[][] blockValues) {
+    public final void SetBlockValues(int globalRowStartIndex, int globalRowEndIndex, int globalColumnStartIndex, int globalColumnEndIndex, double[][] blockValues) {
         globalRowStartIndex = globalRowStartIndex - _globalRowStartIndex;
         globalRowEndIndex = globalRowEndIndex - _globalRowStartIndex;
         globalColumnStartIndex = globalColumnStartIndex - _globalColStartIndex;
