@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Program {
-
 	private static String _vectorFile;
 	private static String _distFile;
 	private static boolean _normalize;
@@ -41,8 +40,7 @@ public class Program {
             _dmin = mpiOps.allReduce(_dmin, MPI.MIN);
             _dmax = mpiOps.allReduce(_dmax, MPI.MAX);
 
-            if (_dmax < 1) // no need to normalize whe max distance is also less than 1
-            {
+            if (_dmax < 1) { // no need to normalize whe max distance is also less than 1
                 _normalize = false;
             }
 
@@ -51,15 +49,16 @@ public class Program {
                 System.out.println("Max distance: " + _dmax);
             }
 
-            WriteFullMatrixOnRank0(_distFile, _size, rank, myRowStrip, myColumnBlocks[0].RowRange, processToCloumnBlocks[0][0].RowRange, _normalize, _dmax);
+            WriteFullMatrixOnRank0(_distFile, _size, rank, myRowStrip, myColumnBlocks[0].RowRange,
+                    processToCloumnBlocks[0][0].RowRange, _normalize, _dmax);
             mpiOps.barrier();
             if (rank == 0) {
                 System.out.println("Done.");
             }
         } catch (MPIException e) {
-            e.printStackTrace();
+            throw new RuntimeException("MPI Error: ", e);
         }
-	}
+    }
 
 	private static void WriteFullMatrixOnRank0(String fileName, int size, int rank, PartialMatrix<Double> partialMatrix,
                                                Range myRowRange, Range rootRowRange, boolean normalize, double dmax) {
