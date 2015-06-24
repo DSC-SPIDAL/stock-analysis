@@ -22,7 +22,8 @@ public class Block implements Serializable
 	{
 		RowRange = rowRange;
 		ColumnRange = colRange;
-	}
+//        System.out.println("Block rowrange: " + rowRange + " column range: " + colRange);
+    }
 
 	private boolean privateIsDiagonal;
 	public final boolean getIsDiagonal()

@@ -1,5 +1,6 @@
 import mpi.MPI;
 import mpi.MPIException;
+import mpi.MPIPacket;
 import mpi.MpiOps;
 import Salsa.Core.*;
 import Salsa.Core.Blas.*;
@@ -81,25 +82,30 @@ public class Program {
 
         Range nextRowRange = null;
 
-        DataOutputStream writer = null;
+//        DataOutputStream writer = null;
+        PrintWriter writer = null;
         if (rank == 0) {
 
             try {
-                writer = new DataOutputStream(new FileOutputStream(fileName));
-            } catch (FileNotFoundException e) {
+//                writer = new DataOutputStream(new FileOutputStream(fileName));
+                writer = new PrintWriter(new FileWriter(fileName));
+            } catch (IOException e) {
                 throw new RuntimeException("Cannot find filename: " + fileName);
             }
 
             // I am rank0 and I am the one who will fill the fullMatrix. So let's fill what I have already.
             for (int i = partialMatrix.getGlobalRowStartIndex(); i <= partialMatrix.getGlobalRowEndIndex(); i++) {
                 double[] values = partialMatrix.GetRowValues(i);
-                for (double value : values) {
-                    try {
-                        writer.writeShort((int) ((normalize ? value / dmax : value) * Short.MAX_VALUE));
-                    } catch (IOException e) {
-                        throw new RuntimeException("Cannot write to file: " + fileName);
+//                try {
+                    for (double value : values) {
+                        int val = (int) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
+                        // writer.writeShort(val);
+                        writer.print(value + " ");
                     }
-                }
+                    writer.print("\n");
+//                } catch (IOException e) {
+//                    throw new RuntimeException("Cannot write to file: " + fileName);
+//                }
             }
         }
 
@@ -117,7 +123,8 @@ public class Program {
             }
             // Announce everyone about the next row ranges that rank0 has declared.
             try {
-                mpiOps.getComm().bcast(rowRange, 0, MPI.INT, 100);
+                mpiOps.broadcast(rowRange, 0);
+                //System.out.println("Process: " + rank + " Row range: " + rowRange[0] + ", " + rowRange[1]);
             } catch (MPIException e) {
                 throw new RuntimeException("Failed to do broadcast", e);
 
@@ -130,26 +137,39 @@ public class Program {
                 // A variable to hold the rank of the process, which has the row that I am (rank0) going to receive
                 int processRank;
 
-                double[] values = new double[vectorLength];
+                double[] values = new double[size];
                 for (int j = nextRowRange.StartIndex; j <= nextRowRange.EndIndex; j++) {
                     // Let's find the process that has the row j.
                     processRank = j < (b * (a + 1)) ? j / (a + 1) : b + ((j - (b * (a + 1))) / a);
 
                     // For each row that I (rank0) require I will receive from the process, which has that row.
                     try {
-                        mpiOps.getComm().recv(values, 0, MPI.DOUBLE, processRank, 100);
+                        //System.out.println("Process: " + rank + "Waiting to recv: " + processRank);
+                        String s = "";
+                        MPIPacket p = mpiOps.receive(processRank, 100, MPIPacket.Type.Double);
+                        for (int z = 0; z < p.getMArrayLength(); z++) {
+                            values[z] = p.getMArrayDoubleAt(z);
+                            s += p.getMArrayDoubleAt(z);
+                        }
+                        System.out.println("Process: " + rank + "recved: " + processRank + " doubles: " + s);
+                        //System.out.println("Process: " + rank + "Reved: " + processRank);
                     } catch (MPIException e) {
                         e.printStackTrace();
                     }
 
                     // Set the received values in the fullMatrix
                     for (double value : values) {
-                        try {
-                            writer.writeShort((int) ((normalize ? value / dmax : value) * Short.MAX_VALUE));
-                        } catch (IOException e) {
-                            throw new RuntimeException("Cannot write to file: " + fileName);
-                        }
+//                        try {
+                            int val = (int) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
+//                            double val = value;
+//                            writer.writeShort(i1);
+                            writer.print(value + " ");
+//                        } catch (IOException e) {
+//                            throw new RuntimeException("Cannot write to file: " + fileName);
+//                        }
                     }
+
+                    writer.print("\n");
                 }
             } else {
 				/* I am just an ordinary process and I am ready to give rank0 whatever the row it requests if I have that row */
@@ -159,7 +179,17 @@ public class Program {
                     Range intersection = myRowRange.GetIntersectionWith(nextRowRange);
                     for (int k = intersection.StartIndex; k <= intersection.EndIndex; k++) {
                         try {
-                            mpiOps.getComm().send(partialMatrix.GetRowValues(k), 0, MPI.DOUBLE, 0, 100);
+                            //System.out.println("Sending to: " + 0 + " from: " + rank);
+                            double[] doubles = partialMatrix.GetRowValues(k);
+                            MPIPacket p = MPIPacket.newDoublePacket(doubles.length);
+                            String s = "";
+                            for (int j = 0; j < doubles.length; j++) {
+                                p.setMArrayDoubleAt(j, doubles[j]);
+                                s += doubles[j] + " ";
+                            }
+                            System.out.println("Sending to: " + 0 + " from: " + rank + " doubles: " + s);
+                            mpiOps.send(p, 0, 100);
+                            //System.out.println("Done send:" + 0 + " from: " + rank);
                         } catch (MPIException e) {
                             throw new RuntimeException("Failed to send the data", e);
                         }
@@ -172,12 +202,12 @@ public class Program {
 
         // I am rank0 and I came here means that I wrote full matrix to disk. So I will clear the writer and stream.
         if (rank == 0) {
-            try {
+//            try {
                 writer.flush();
                 writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -188,7 +218,7 @@ public class Program {
                 for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c) {
                     VectorPoint vc = vecs.get(c);
                     double dist = vr.correlation(vc);
-                    myRowStrip.setValue(r, c, dist);
+                    myRowStrip.setValue(r , c, dist);
                     if (dist > _dmax) {
                         _dmax = dist;
                     }

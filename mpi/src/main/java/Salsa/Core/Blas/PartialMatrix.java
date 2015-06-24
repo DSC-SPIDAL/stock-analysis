@@ -88,6 +88,14 @@ public class PartialMatrix implements Serializable {
     }
 
     public void setValue(int row, int col, double val) {
+//        if (row == 750 || row == 250) {
+//            System.out.println("********** row ************" + row);
+//        }
+//        if (col == 750 || col == 250) {
+//            System.out.println("********** col ************" + col);
+//        }
+        row = row - _globalRowStartIndex;
+        col =  col - _globalColStartIndex;
         _elements[row][col] = val;
     }
 
@@ -139,6 +147,7 @@ public class PartialMatrix implements Serializable {
         for (int i = 0; i < rowCount; i++) {
             elements[i] = new double[columnCount];
         }
+        System.out.println("Partial matrix size: " + rowCount + " x " + columnCount);
         return elements;
     }
 
