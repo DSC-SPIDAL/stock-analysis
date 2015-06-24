@@ -1,3 +1,6 @@
+/**
+ * A vector read from the file. It has a key to identify and a list of numbers
+ */
 
 public class VectorPoint {
     String key;
