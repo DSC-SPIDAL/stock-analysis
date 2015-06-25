@@ -3,10 +3,18 @@
  */
 
 public class VectorPoint {
-    String key;
+    int key;
     double []numbers;
 
-    public VectorPoint(String key, double[] numbers) {
+    public VectorPoint(int key, int size) {
+        this.key = key;
+        this.numbers = new double[size];
+        for (double d : numbers) {
+            d = -1;
+        }
+    }
+
+    public VectorPoint(int key, double[] numbers) {
         this.key = key;
         this.numbers = numbers;
     }
@@ -17,5 +25,18 @@ public class VectorPoint {
             sum += numbers[i];
         }
         return sum / numbers.length;
+    }
+
+    public void add(int index, double number) {
+        numbers[index] = number;
+    }
+
+    public boolean isFull() {
+        for (double n : numbers) {
+            if (n == -1) {
+                return false;
+            }
+        }
+        return true;
     }
 }
