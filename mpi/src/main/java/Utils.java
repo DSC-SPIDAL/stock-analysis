@@ -17,7 +17,7 @@ public class Utils {
                     int permNo = Integer.parseInt(array[0]);
                     Date date = formatter.parse(array[1]);
                     double price = Double.parseDouble(array[2]);
-                    return new Record(price, permNo, date);
+                    return new Record(price, permNo, date, array[1]);
                 }
             }
         } catch (IOException | ParseException | NumberFormatException e) {
