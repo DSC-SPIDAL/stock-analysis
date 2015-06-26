@@ -1,3 +1,5 @@
+import org.apache.commons.cli.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -31,7 +33,7 @@ public class VectorGenerator {
         try {
             FileReader input = new FileReader(inFile);
             bufRead = new BufferedReader(input);
-            Record record = null;
+            Record record;
             while ((record = Utils.parseFile(bufRead)) != null && !done) {
                 // check weather this date is greater than what we need
                 if (startDate.after(record.getDate())) {
@@ -79,7 +81,7 @@ public class VectorGenerator {
         return null;
     }
 
-    public void processFile(String inFile, List<String> dates, String outFile) {
+    private void processFile(String inFile, List<String> dates, String outFile) {
         BufferedWriter bufWriter = null;
         BufferedReader bufRead = null;
         try {
@@ -107,6 +109,8 @@ public class VectorGenerator {
                         String sv = point.serialize();
                         bufWriter.write(sv);
                         bufWriter.newLine();
+                        // remove it from map
+                        currentPoints.remove(key);
                     }
                 }
             }
@@ -125,10 +129,25 @@ public class VectorGenerator {
         }
     }
 
-    /**
-     *  We need to do some sanity checks in case some of the stocks doesn't have complete data for the date range
-     */
-    private void sanityCheck() {
+    public static void main(String[] args) {
+        Options options = new Options();
+        options.addOption("i", true, "Input file");
+        options.addOption("o", true, "Output file");
+        options.addOption("s", true, "Start date");
+        options.addOption("d", true, "Number of days");
+        CommandLineParser commandLineParser = new BasicParser();
+        try {
+            CommandLine cmd = commandLineParser.parse(options, args);
+            String input = cmd.getOptionValue("i");
+            String output = cmd.getOptionValue("o");
+            String date = cmd.getOptionValue("s");
+            String days = cmd.getOptionValue("d");
+
+            VectorGenerator vg = new VectorGenerator(input, output, date, Integer.parseInt(days));
+            vg.process();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
     }
 }
