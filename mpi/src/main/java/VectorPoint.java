@@ -9,8 +9,8 @@ public class VectorPoint {
     public VectorPoint(int key, int size) {
         this.key = key;
         this.numbers = new double[size];
-        for (double d : numbers) {
-            d = -1;
+        for (int i = 0; i < numbers.length; i++) {
+            numbers[i] = -1;
         }
     }
 

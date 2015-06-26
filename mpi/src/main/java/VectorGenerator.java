@@ -50,7 +50,9 @@ public class VectorGenerator {
                     initialDates.put(record.getSymbol(), datesForSymbol);
                 }
                 // now add these dates
-                datesForSymbol.add(record.getDateString());
+                if (datesForSymbol.size() < days) {
+                    datesForSymbol.add(record.getDateString());
+                }
                 // check weather we have a complete set
                 if (initialDates.keySet().size() == 10) {
                     boolean complete = true;
