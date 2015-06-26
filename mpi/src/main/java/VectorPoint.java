@@ -39,4 +39,12 @@ public class VectorPoint {
         }
         return true;
     }
+
+    public String serialize() {
+        StringBuilder sb = new StringBuilder(Integer.toString(key)).append(" ");
+        for (double d : numbers) {
+            sb.append(Double.toString(d)).append(" ");
+        }
+        return sb.toString();
+    }
 }

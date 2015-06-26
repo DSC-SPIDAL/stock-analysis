@@ -239,7 +239,7 @@ public class Program {
             while ((line = br.readLine()) != null) {
                 // process the line.
                 String parts[] = line.split(" ");
-                String key = parts[0];
+                int key = Integer.parseInt(parts[0]);
                 double[] numbers = new double[vectorLength];
                 if (vectorLength != parts.length - 1) {
                     throw new RuntimeException("The number of points in file " + (parts.length - 1) +

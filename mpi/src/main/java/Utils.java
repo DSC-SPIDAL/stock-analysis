@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Utils {
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+    public static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
     public static Record parseFile(BufferedReader reader) throws FileNotFoundException {
         String myLine = null;
@@ -24,5 +24,17 @@ public class Utils {
             throw new RuntimeException("Failed to read content from file", e);
         }
         return null;
+    }
+
+    public static Date parseDateString(String date) {
+        try {
+            return formatter.parse(date);
+        } catch (ParseException e) {
+            throw new RuntimeException("Failed to parse date", e);
+        }
+    }
+
+    public static String dateToString(Date date) {
+        return formatter.format(date);
     }
 }
