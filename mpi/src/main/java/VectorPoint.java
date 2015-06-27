@@ -5,6 +5,7 @@
 public class VectorPoint {
     int key;
     double []numbers;
+    int elements;
 
     public VectorPoint(int key, int size) {
         this.key = key;
@@ -12,11 +13,13 @@ public class VectorPoint {
         for (int i = 0; i < numbers.length; i++) {
             numbers[i] = -1;
         }
+        elements = 0;
     }
 
     public VectorPoint(int key, double[] numbers) {
         this.key = key;
         this.numbers = numbers;
+        this.elements = 0;
     }
 
     public double correlation(VectorPoint vc) {
@@ -27,8 +30,9 @@ public class VectorPoint {
         return sum / numbers.length;
     }
 
-    public void add(int index, double number) {
-        numbers[index] = number;
+    public void add(double number) {
+        numbers[elements] = number;
+        elements++;
     }
 
     public boolean isFull() {
@@ -40,10 +44,14 @@ public class VectorPoint {
         return true;
     }
 
+    public int noOfElements() {
+        return elements;
+    }
+
     public String serialize() {
         StringBuilder sb = new StringBuilder(Integer.toString(key)).append(" ");
-        for (double d : numbers) {
-            sb.append(Double.toString(d)).append(" ");
+        for (int i = 0; i < elements; i++) {
+            sb.append(Double.toString(numbers[i])).append(" ");
         }
         return sb.toString();
     }

@@ -11,12 +11,7 @@ public class Utils {
     public static Record parseFile(BufferedReader reader) throws FileNotFoundException {
         String myLine = null;
         try {
-            int count = 0;
             while ((myLine = reader.readLine()) != null) {
-                count++;
-                if (count == 1) {
-                    continue;
-                }
                 String[] array = myLine.trim().split(",");
                 if (array.length >= 3) {
                     int permNo = Integer.parseInt(array[0]);

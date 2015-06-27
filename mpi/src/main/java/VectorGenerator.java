@@ -12,6 +12,11 @@ public class VectorGenerator {
 
     private Date startDate;
 
+    private enum DateCheckType {
+        MONTH,
+        YEAR
+    }
+
     public VectorGenerator(String inFile, String outFile, String startDate, int days) {
         this.days = days;
         this.inFile = inFile;
@@ -20,8 +25,24 @@ public class VectorGenerator {
     }
 
     public void process() {
-        List<String> dates = getDates(inFile, startDate);
-        processFile(inFile, dates, outFile);
+//        List<String> dates = getDates(inFile, startDate);
+//        printDates(dates);
+        processFile(inFile, startDate, outFile);
+        //printExistingVectors();
+    }
+
+    private void printExistingVectors() {
+        for (Map.Entry<Integer, VectorPoint> e : currentPoints.entrySet()) {
+            System.out.println(e.getValue().serialize());
+        }
+    }
+
+    private void printDates(List dates) {
+        StringBuilder sb = new StringBuilder("");
+        for (Object s : dates) {
+            sb.append(s.toString()).append(" ,");
+        }
+        System.out.println(sb.toString());
     }
 
     public List<String> getDates(String inFile, Date startDate) {
@@ -83,37 +104,66 @@ public class VectorGenerator {
         return null;
     }
 
-    private void processFile(String inFile, List<String> dates, String outFile) {
+    private void processFile(String inFile, Date date, String outFile) {
         BufferedWriter bufWriter = null;
         BufferedReader bufRead = null;
+        int size = -1;
         try {
             FileReader input = new FileReader(inFile);
             FileOutputStream fos = new FileOutputStream(new File(outFile));
             bufWriter = new BufferedWriter(new OutputStreamWriter(fos));
 
             bufRead = new BufferedReader(input);
-            Record record = null;
-            int size = dates.size();
+            Record record;
             while ((record = Utils.parseFile(bufRead)) != null) {
                 // check weather we are interested in this record
-                if (dates.contains(record.getDateString())) {
+                if (check(date, record.getDate(), DateCheckType.MONTH)) {
                     int key = record.getSymbol();
                     // check weather we already have the key
                     VectorPoint point = currentPoints.get(key);
                     if (point == null) {
-                        point = new VectorPoint(key, size);
+                        point = new VectorPoint(key, 30);
                         currentPoints.put(key, point);
                     }
-                    point.add(dates.indexOf(record.getDateString()), record.getPrice());
+                    point.add(record.getPrice());
 
-                    // now lets check weather this point is full
-                    if (point.isFull()) {
-                        String sv = point.serialize();
-                        bufWriter.write(sv);
-                        bufWriter.newLine();
-                        // remove it from map
-                        currentPoints.remove(key);
+                    if (currentPoints.size() > 1000 && size == -1) {
+                        List<Integer> pointSizes = new ArrayList<Integer>();
+                        for (VectorPoint v : currentPoints.values()) {
+                            pointSizes.add(v.noOfElements());
+                        }
+                        Collections.sort(pointSizes);
+                        size = pointSizes.get(pointSizes.size() - 1);
+                        printDates(pointSizes);
+                        System.out.println("Number of stocks per month: " + size);
                     }
+
+                    if (currentPoints.size() > 1000 && size != -1) {
+                        for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
+                            Map.Entry<Integer, VectorPoint> entry = it.next();
+                            VectorPoint v = entry.getValue();
+                            if (v.noOfElements() == size) {
+                                String sv = v.serialize();
+                                bufWriter.write(sv);
+                                bufWriter.newLine();
+                                // remove it from map
+                                it.remove();
+                            }
+                        }
+                    }
+                }
+            }
+
+            System.out.println("Size: " + size);
+            for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<Integer, VectorPoint> entry = it.next();
+                VectorPoint v = entry.getValue();
+                if (v.noOfElements() == size) {
+                    String sv = v.serialize();
+                    bufWriter.write(sv);
+                    bufWriter.newLine();
+                    // remove it from map
+                    it.remove();
                 }
             }
         } catch (IOException e) {
@@ -129,6 +179,23 @@ public class VectorGenerator {
             } catch (IOException ignore) {
             }
         }
+    }
+
+    private boolean check(Date data1, Date date2, DateCheckType check) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(data1);
+        cal2.setTime(date2);
+        if (check == DateCheckType.MONTH) {
+            if(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH)) {
+                return true;
+            }
+        } else if (check == DateCheckType.YEAR) {
+            if(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void main(String[] args) {
@@ -150,6 +217,5 @@ public class VectorGenerator {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
     }
 }
