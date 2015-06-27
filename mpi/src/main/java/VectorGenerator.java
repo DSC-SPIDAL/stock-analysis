@@ -1,5 +1,6 @@
 import org.apache.commons.cli.*;
 
+import javax.rmi.CORBA.*;
 import java.io.*;
 import java.util.*;
 
@@ -11,24 +12,28 @@ public class VectorGenerator {
     private int days;
 
     private Date startDate;
+    private Date endDate;
 
     private enum DateCheckType {
         MONTH,
         YEAR
     }
 
-    public VectorGenerator(String inFile, String outFile, String startDate, int days) {
+    public VectorGenerator(String inFile, String outFile, String startDate, int days, String endDate) {
         this.days = days;
         this.inFile = inFile;
         this.outFile = outFile;
         this.startDate = Utils.parseDateString(startDate);
+        this.endDate = Utils.parseDateString(endDate);
     }
 
     public void process() {
-//        List<String> dates = getDates(inFile, startDate);
-//        printDates(dates);
-        processFile(inFile, startDate, outFile);
-        //printExistingVectors();
+        Date currentDate = startDate;
+        while (!check(currentDate, endDate, DateCheckType.MONTH)) {
+            processFile(inFile, currentDate, outFile + "/" + Utils.getMonthString(currentDate) + ".csv");
+            currentDate = Utils.addMonth(currentDate);
+            currentPoints.clear();
+        }
     }
 
     private void printExistingVectors() {
@@ -203,6 +208,7 @@ public class VectorGenerator {
         options.addOption("i", true, "Input file");
         options.addOption("o", true, "Output file");
         options.addOption("s", true, "Start date");
+        options.addOption("e", true, "End date");
         options.addOption("d", true, "Number of days");
         CommandLineParser commandLineParser = new BasicParser();
         try {
@@ -210,9 +216,10 @@ public class VectorGenerator {
             String input = cmd.getOptionValue("i");
             String output = cmd.getOptionValue("o");
             String date = cmd.getOptionValue("s");
+            String end = cmd.getOptionValue("e");
             String days = cmd.getOptionValue("d");
 
-            VectorGenerator vg = new VectorGenerator(input, output, date, Integer.parseInt(days));
+            VectorGenerator vg = new VectorGenerator(input, output, date, Integer.parseInt(days), end);
             vg.process();
         } catch (ParseException e) {
             e.printStackTrace();

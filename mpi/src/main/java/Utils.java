@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Utils {
@@ -32,6 +33,20 @@ public class Utils {
         } catch (ParseException e) {
             throw new RuntimeException("Failed to parse date", e);
         }
+    }
+
+    public static Date addMonth(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MONTH, 1);
+        return cal.getTime();
+    }
+
+    public static String getMonthString(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MONTH, 1);
+        return cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
     }
 
     public static String dateToString(Date date) {
