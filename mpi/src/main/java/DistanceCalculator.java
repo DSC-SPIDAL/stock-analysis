@@ -50,7 +50,7 @@ public class DistanceCalculator {
             if (fileEntry.isDirectory()) {
                 continue;
             }
-
+            System.out.println("Calculator vector file: " + fileEntry.getName());
             String outFileName = distFolder + "/" + fileEntry.getName();
             writer = new WriterWrapper(outFileName, false);
 
