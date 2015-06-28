@@ -7,68 +7,102 @@ import Salsa.Core.Blas.*;
 import org.apache.commons.cli.*;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Program {
-    private static String _vectorFile;
-    private static String _distFile;
-    private static boolean _normalize;
+    private String vectorFolder;
+    private String distFolder;
+    private boolean normalize;
 
     private static double _dmax = -Double.MAX_VALUE;
     private static double _dmin = Double.MAX_VALUE;
-    private static int vectorLength = 10;
 
-    private static MpiOps mpiOps;
+    private MpiOps mpiOps;
+
+    public Program(String vectorFolder, String distFolder, boolean normalize) {
+        this.vectorFolder = vectorFolder;
+        this.distFolder = distFolder;
+        this.normalize = normalize;
+    }
 
     public static void main(String[] args) {
-        ReadConfiguration(args);
+        Options options = new Options();
+        options.addOption("v", true, "Vector file");
+        options.addOption("d", true, "Distance file");
+        options.addOption("n", false, "normalize");
+        CommandLineParser commandLineParser = new BasicParser();
         try {
+            CommandLine cmd = commandLineParser.parse(options, args);
+            String  _vectorFile = cmd.getOptionValue("v");
+            String _distFile = cmd.getOptionValue("d");
+            boolean _normalize = cmd.hasOption("n");
             MPI.Init(args);
-            mpiOps = new MpiOps();
-
-            List<VectorPoint> vecs = ReadVectors();
-            int _size = vecs.size();
-
-            int rank = mpiOps.getRank();
-            int worldSize = mpiOps.getSize();
-
-            Block[][] processToCloumnBlocks = BlockPartitioner.Partition(_size, _size, worldSize, worldSize);
-            Block[] myColumnBlocks = processToCloumnBlocks[rank];
-
-            PartialMatrix myRowStrip = new PartialMatrix(myColumnBlocks[0].RowRange, new Range(0, _size - 1));
-
-            ComputeDistanceBlocks(myRowStrip, myColumnBlocks, vecs);
-            _dmin = mpiOps.allReduce(_dmin, MPI.MIN);
-            _dmax = mpiOps.allReduce(_dmax, MPI.MAX);
-
-            if (_dmax < 1) { // no need to normalize whe max distance is also less than 1
-                _normalize = false;
-            }
-
-            if (rank == 0) {
-                System.out.println("Min distance: " + _dmin);
-                System.out.println("Max distance: " + _dmax);
-            }
-
-            WriteFullMatrixOnRank0(_distFile, _size, rank, myRowStrip, myColumnBlocks[0].RowRange,
-                    processToCloumnBlocks[0][0].RowRange, _normalize, _dmax);
-            mpiOps.barrier();
-            if (rank == 0) {
-                System.out.println("Done.");
-            }
-
+            Program program = new Program(_vectorFile, _distFile, _normalize);
+            program.process();
             MPI.Finalize();
+        } catch (ParseException | MPIException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void process() {
+        try {
+            mpiOps = new MpiOps();
+            File inFolder = new File(vectorFolder);
+
+            if (!inFolder.isDirectory()) {
+                System.out.println("In should be a folder");
+                return;
+            }
+
+            for (File fileEntry : inFolder.listFiles()) {
+                if (fileEntry.isDirectory()) {
+                    continue;
+                }
+
+                List<VectorPoint> vecs = ReadVectors(fileEntry);
+                int _size = vecs.size();
+
+                int rank = mpiOps.getRank();
+                int worldSize = mpiOps.getSize();
+
+                Block[][] processToCloumnBlocks = BlockPartitioner.Partition(_size, _size, worldSize, worldSize);
+                Block[] myColumnBlocks = processToCloumnBlocks[rank];
+
+                PartialMatrix myRowStrip = new PartialMatrix(myColumnBlocks[0].RowRange, new Range(0, _size - 1));
+
+                computeDistanceBlocks(myRowStrip, myColumnBlocks, vecs);
+                System.out.println("Rank: " + rank + " Done computations");
+                _dmin = mpiOps.allReduce(_dmin, MPI.MIN);
+                _dmax = mpiOps.allReduce(_dmax, MPI.MAX);
+                if (_dmax < 1) { // no need to normalize whe max distance is also less than 1
+                    normalize = false;
+                }
+
+                if (rank == 0) {
+                    System.out.println("Min distance: " + _dmin);
+                    System.out.println("Max distance: " + _dmax);
+                }
+
+                WriteFullMatrixOnRank0(distFolder + "/" + fileEntry.getName(), _size, rank, myRowStrip, myColumnBlocks[0].RowRange,
+                        processToCloumnBlocks[0][0].RowRange, normalize, _dmax);
+                mpiOps.barrier();
+                if (rank == 0) {
+                    System.out.println("Done.");
+                }
+            }
         } catch (MPIException e) {
             throw new RuntimeException("MPI Error: ", e);
         }
     }
 
-    private static void WriteFullMatrixOnRank0(String fileName, int size, int rank, PartialMatrix partialMatrix,
+    private void WriteFullMatrixOnRank0(String fileName, int size, int rank, PartialMatrix partialMatrix,
                                                Range myRowRange, Range rootRowRange, boolean normalize, double dmax) {
         int a = size / mpiOps.getSize();
         int b = size % mpiOps.getSize();
-
+        DecimalFormat df = new DecimalFormat("#.00");
 		/*
          * A note on row ranges and assigned process numbers.
 		 * First b number of process will have (a + 1) number of rows each.
@@ -99,10 +133,10 @@ public class Program {
 //                try {
                     for (double value : values) {
                         int val = (int) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
-                        // writer.writeShort(val);
+//                        writer.writeShort(val);
                         writer.print(value + " ");
                     }
-                    writer.print("\n");
+//                    writer.print("\n");
 //                } catch (IOException e) {
 //                    throw new RuntimeException("Cannot write to file: " + fileName);
 //                }
@@ -124,7 +158,6 @@ public class Program {
             // Announce everyone about the next row ranges that rank0 has declared.
             try {
                 mpiOps.broadcast(rowRange, 0);
-                //System.out.println("Process: " + rank + " Row range: " + rowRange[0] + ", " + rowRange[1]);
             } catch (MPIException e) {
                 throw new RuntimeException("Failed to do broadcast", e);
 
@@ -132,6 +165,7 @@ public class Program {
             nextRowRange = new Range(rowRange[0], rowRange[1]);
 
             if (rank == 0) {
+                System.out.println("Process: " + rank + " Row range: " + rowRange[0] + ", " + rowRange[1]);
                 /* I am rank0 and now let's try to receive the declared next row range from others */
 
                 // A variable to hold the rank of the process, which has the row that I am (rank0) going to receive
@@ -145,13 +179,11 @@ public class Program {
                     // For each row that I (rank0) require I will receive from the process, which has that row.
                     try {
                         //System.out.println("Process: " + rank + "Waiting to recv: " + processRank);
-                        String s = "";
                         MPIPacket p = mpiOps.receive(processRank, 100, MPIPacket.Type.Double);
                         for (int z = 0; z < p.getMArrayLength(); z++) {
                             values[z] = p.getMArrayDoubleAt(z);
-                            s += p.getMArrayDoubleAt(z);
                         }
-                        System.out.println("Process: " + rank + "recved: " + processRank + " doubles: " + s);
+                        // System.out.println("Process: " + rank + "recved: " + processRank + " doubles: " + s);
                         //System.out.println("Process: " + rank + "Reved: " + processRank);
                     } catch (MPIException e) {
                         e.printStackTrace();
@@ -162,8 +194,8 @@ public class Program {
 //                        try {
                             int val = (int) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
 //                            double val = value;
-//                            writer.writeShort(i1);
-                            writer.print(value + " ");
+//                            writer.writeShort(val);
+                            writer.print(df.format(value) + " ");
 //                        } catch (IOException e) {
 //                            throw new RuntimeException("Cannot write to file: " + fileName);
 //                        }
@@ -187,7 +219,7 @@ public class Program {
                                 p.setMArrayDoubleAt(j, doubles[j]);
                                 s += doubles[j] + " ";
                             }
-                            System.out.println("Sending to: " + 0 + " from: " + rank + " doubles: " + s);
+                            // System.out.println("Sending to: " + 0 + " from: " + rank + " doubles: " + s);
                             mpiOps.send(p, 0, 100);
                             //System.out.println("Done send:" + 0 + " from: " + rank);
                         } catch (MPIException e) {
@@ -211,7 +243,7 @@ public class Program {
         }
     }
 
-    private static void ComputeDistanceBlocks(PartialMatrix myRowStrip, Block[] myColumnBlocks, java.util.List<VectorPoint> vecs) {
+    private static void computeDistanceBlocks(PartialMatrix myRowStrip, Block[] myColumnBlocks, java.util.List<VectorPoint> vecs) {
         for (Block block : myColumnBlocks) {
             for (int r = block.RowRange.StartIndex; r <= block.RowRange.EndIndex; ++r) {
                 VectorPoint vr = vecs.get(r);
@@ -231,15 +263,16 @@ public class Program {
         }
     }
 
-    private static List<VectorPoint> ReadVectors() {
+    private List<VectorPoint> ReadVectors(File file) {
         List<VectorPoint> vecs = new ArrayList<VectorPoint>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(_vectorFile));
+            BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
             while ((line = br.readLine()) != null) {
                 // process the line.
                 String parts[] = line.split(" ");
                 int key = Integer.parseInt(parts[0]);
+                int vectorLength = parts.length - 1;
                 double[] numbers = new double[vectorLength];
                 if (vectorLength != parts.length - 1) {
                     throw new RuntimeException("The number of points in file " + (parts.length - 1) +
@@ -256,21 +289,5 @@ public class Program {
             e.printStackTrace();
         }
         return vecs;
-    }
-
-    private static void ReadConfiguration(String[] args) {
-        Options options = new Options();
-        options.addOption("v", true, "Vector file");
-        options.addOption("d", true, "Distance file");
-        options.addOption("n", false, "normalize");
-        CommandLineParser commandLineParser = new BasicParser();
-        try {
-            CommandLine cmd = commandLineParser.parse(options, args);
-            _vectorFile = cmd.getOptionValue("v");
-            _distFile = cmd.getOptionValue("d");
-            _normalize = cmd.hasOption("n");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 }
