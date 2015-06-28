@@ -4,6 +4,8 @@ import org.apache.commons.cli.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class DistanceCalculator {
     private String vectorFolder;
@@ -45,85 +47,120 @@ public class DistanceCalculator {
             return;
         }
 
-        WriterWrapper writer = null;
+        BlockingQueue<File> files = new LinkedBlockingQueue<>();
         for (File fileEntry : inFolder.listFiles()) {
-            if (fileEntry.isDirectory()) {
-                continue;
+            try {
+                files.put(fileEntry);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            System.out.println("Calculator vector file: " + fileEntry.getName());
-            String outFileName = distFolder + "/" + fileEntry.getName();
-            writer = new WriterWrapper(outFileName, false);
+        }
 
-            int lineCount = countLines(fileEntry);
+        // start 4 threads
+        for (int i = 0; i < 4; i++) {
+            Thread t = new Thread(new Worker(files));
+            t.start();
+        }
+    }
 
-            // initialize the double arrays for this block
-            double values[][] = new double[INC][];
-            for (int i = 0; i < values.length; i++) {
-                values[i] = new double[lineCount];
+    private class Worker implements Runnable {
+        private BlockingQueue<File> queue;
+
+        private Worker(BlockingQueue<File> queue) {
+            this.queue = queue;
+        }
+
+        @Override
+        public void run() {
+            while (queue.isEmpty()) {
+                try {
+                    File f = queue.take();
+                    processFile(f);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    private void processFile(File fileEntry) {
+        WriterWrapper writer = null;
+        if (fileEntry.isDirectory()) {
+            return;
+        }
+        System.out.println("Calculator vector file: " + fileEntry.getName());
+        String outFileName = distFolder + "/" + fileEntry.getName();
+        writer = new WriterWrapper(outFileName, false);
+
+        int lineCount = countLines(fileEntry);
+
+        // initialize the double arrays for this block
+        double values[][] = new double[INC][];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = new double[lineCount];
+        }
+
+        int startIndex = 0;
+        int endIndex = -1;
+
+        List<VectorPoint> vectors;
+        do {
+            startIndex = endIndex + 1;
+            endIndex = startIndex + INC - 1;
+
+            int readStartIndex = 0;
+            int readEndIndex = INC - 1;
+
+            vectors = readVectors(fileEntry, startIndex, endIndex);
+            if (vectors.size() == 0) {
+                break;
             }
 
-            int startIndex = 0;
-            int endIndex = -1;
-
-            List<VectorPoint> vectors;
+            System.out.println("Processing block: " + startIndex + " : " + endIndex);
+            // now start from the begining and go through the whole file
+            List<VectorPoint> secondVectors;
             do {
-                startIndex = endIndex + 1;
-                endIndex = startIndex + INC - 1;
+                System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
+                if (readStartIndex != startIndex) {
+                    secondVectors = readVectors(fileEntry, readStartIndex, readEndIndex);
+                } else {
+                    secondVectors = vectors;
+                }
 
-                int readStartIndex = 0;
-                int readEndIndex = INC - 1;
-
-                vectors = readVectors(fileEntry, startIndex, endIndex);
-                if (vectors.size() == 0) {
+                if (secondVectors.size() == 0) {
                     break;
                 }
 
-                System.out.println("Processing block: " + startIndex + " : " + endIndex);
-                // now start from the begining and go through the whole file
-                List<VectorPoint> secondVectors;
-                do {
-                    System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
-                    if (readStartIndex != startIndex) {
-                        secondVectors = readVectors(fileEntry, readStartIndex, readEndIndex);
-                    } else {
-                        secondVectors = vectors;
-                    }
-
-                    if (secondVectors.size() == 0) {
-                        break;
-                    }
-
-                    for (int i = 0; i < secondVectors.size(); i++) {
-                        VectorPoint sv = secondVectors.get(i);
-                        for (int j = 0; j < vectors.size(); j++) {
-                            VectorPoint fv = vectors.get(j);
-                            double cor = sv.correlation(fv);
-                            if (cor > dmax) {
-                                dmax = cor;
-                            }
-
-                            if (cor < dmin) {
-                                dmin = cor;
-                            }
-                            values[j][readStartIndex + i] = cor;
+                for (int i = 0; i < secondVectors.size(); i++) {
+                    VectorPoint sv = secondVectors.get(i);
+                    for (int j = 0; j < vectors.size(); j++) {
+                        VectorPoint fv = vectors.get(j);
+                        double cor = sv.correlation(fv);
+                        if (cor > dmax) {
+                            dmax = cor;
                         }
-                    }
-                    readStartIndex = readEndIndex + 1;
-                    readEndIndex = readStartIndex + INC - 1;
-                } while (true);
 
-                // write the vectors to file
-                for (int i = 0; i < vectors.size(); i++) {
-                    double[] row = values[i];
-                    for (double value : row) {
-                        int val = (int) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
-                        writer.write(val);
+                        if (cor < dmin) {
+                            dmin = cor;
+                        }
+                        values[j][readStartIndex + i] = cor;
                     }
-                    writer.line();
                 }
+                readStartIndex = readEndIndex + 1;
+                readEndIndex = readStartIndex + INC - 1;
             } while (true);
-        }
 
+            // write the vectors to file
+            for (int i = 0; i < vectors.size(); i++) {
+                double[] row = values[i];
+                for (double value : row) {
+                    int val = (int) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
+                    writer.write(val);
+                }
+                writer.line();
+            }
+        } while (true);
         if (writer != null) {
             writer.close();
         }
