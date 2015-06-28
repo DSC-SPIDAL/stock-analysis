@@ -139,7 +139,7 @@ public class VectorGenerator {
                         }
                         Collections.sort(pointSizes);
                         size = pointSizes.get(pointSizes.size() - 1);
-                        printDates(pointSizes);
+                        // printDates(pointSizes);
                         System.out.println("Number of stocks per month: " + size);
                     }
 

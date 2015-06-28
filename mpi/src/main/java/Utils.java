@@ -18,6 +18,9 @@ public class Utils {
                     int permNo = Integer.parseInt(array[0]);
                     Date date = formatter.parse(array[1]);
                     double price = Double.parseDouble(array[2]);
+                    if (price < 0) {
+                        price *= -1;
+                    }
                     return new Record(price, permNo, date, array[1]);
                 }
             }
@@ -45,7 +48,6 @@ public class Utils {
     public static String getMonthString(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.add(Calendar.MONTH, 1);
         return cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
     }
 
