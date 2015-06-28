@@ -9,6 +9,8 @@ public class DistanceCalculator {
     private String vectorFolder;
     private String distFolder;
     private boolean normalize;
+    private double dmax;
+    private double dmin;
 
     public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize) {
         this.vectorFolder = vectorFolder;
@@ -43,20 +45,14 @@ public class DistanceCalculator {
             return;
         }
 
-//      DataOutputStream writer = null;
-        PrintWriter writer = null;
-
+        WriterWrapper writer = null;
         for (File fileEntry : inFolder.listFiles()) {
             if (fileEntry.isDirectory()) {
                 continue;
             }
 
             String outFileName = distFolder + "/" + fileEntry.getName();
-            try {
-                writer = new PrintWriter(new FileWriter(outFileName));
-            } catch (IOException e) {
-                throw new RuntimeException("Cannot find filename: " + outFileName);
-            }
+            writer = new WriterWrapper(outFileName, false);
 
             int lineCount = countLines(fileEntry);
 
@@ -102,6 +98,13 @@ public class DistanceCalculator {
                         for (int j = 0; j < vectors.size(); j++) {
                             VectorPoint fv = vectors.get(j);
                             double cor = sv.correlation(fv);
+                            if (cor > dmax) {
+                                dmax = cor;
+                            }
+
+                            if (cor < dmin) {
+                                dmin = cor;
+                            }
                             values[j][readStartIndex + i] = cor;
                         }
                     }
@@ -110,12 +113,13 @@ public class DistanceCalculator {
                 } while (true);
 
                 // write the vectors to file
-                for (int i = 0; i < values.length; i++) {
+                for (int i = 0; i < vectors.size(); i++) {
                     double[] row = values[i];
                     for (double value : row) {
-                        writer.print(value + " ");
+                        int val = (int) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
+                        writer.write(val);
                     }
-                    writer.write("\n");
+                    writer.line();
                 }
             } while (true);
         }
