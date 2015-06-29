@@ -47,7 +47,7 @@ public class DistanceCalculator {
             return;
         }
 
-        BlockingQueue<File> files = new LinkedBlockingQueue<>();
+        BlockingQueue<File> files = new LinkedBlockingQueue<File>();
         for (File fileEntry : inFolder.listFiles()) {
             try {
                 files.put(fileEntry);
@@ -56,10 +56,20 @@ public class DistanceCalculator {
             }
         }
 
+        List<Thread> threads = new ArrayList<>();
         // start 4 threads
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             Thread t = new Thread(new Worker(files));
             t.start();
+            threads.add(t);
+        }
+
+        for (Thread t : threads) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -72,7 +82,7 @@ public class DistanceCalculator {
 
         @Override
         public void run() {
-            while (queue.isEmpty()) {
+            while (!queue.isEmpty()) {
                 try {
                     File f = queue.take();
                     processFile(f);
