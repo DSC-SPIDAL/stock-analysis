@@ -1,4 +1,6 @@
 import mpi.MPI;
+import mpi.MPIException;
+import mpi.MpiOps;
 import org.apache.commons.cli.*;
 
 import java.io.*;
@@ -13,8 +15,10 @@ public class DistanceCalculator {
     private boolean normalize;
     private double dmax;
     private double dmin;
+    private static boolean mpi = false;
+    private MpiOps mpiOps;
 
-    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize) {
+    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.normalize = normalize;
@@ -25,15 +29,23 @@ public class DistanceCalculator {
         options.addOption("v", true, "Input Vector folder");
         options.addOption("d", true, "Distance matrix folder");
         options.addOption("n", false, "normalize");
+        options.addOption("m", false, "mpi");
         CommandLineParser commandLineParser = new BasicParser();
         try {
+            if (mpi) {
+                MPI.Init(args);
+            }
             CommandLine cmd = commandLineParser.parse(options, args);
             String  _vectorFile = cmd.getOptionValue("v");
             String _distFile = cmd.getOptionValue("d");
             boolean _normalize = cmd.hasOption("n");
-            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize);
+            boolean mpi = cmd.hasOption("m");
+            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi);
             program.process();
-        } catch (ParseException e) {
+            if (mpi) {
+                MPI.Finalize();
+            }
+        } catch (MPIException | ParseException e) {
             e.printStackTrace();
         }
     }
@@ -46,30 +58,51 @@ public class DistanceCalculator {
             System.out.println("In should be a folder");
             return;
         }
-
-        BlockingQueue<File> files = new LinkedBlockingQueue<File>();
-        for (File fileEntry : inFolder.listFiles()) {
-            try {
-                files.put(fileEntry);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        int rank = 0;
+        int size = 0;
+        int filesPerProcess = 0;
+        try {
+            if (mpi) {
+                mpiOps = new MpiOps();
+                rank = mpiOps.getRank();
+                size = mpiOps.getSize();
             }
-        }
 
-        List<Thread> threads = new ArrayList<>();
-        // start 4 threads
-        for (int i = 0; i < 2; i++) {
-            Thread t = new Thread(new Worker(files));
-            t.start();
-            threads.add(t);
-        }
+            BlockingQueue<File> files = new LinkedBlockingQueue<File>();
+            filesPerProcess = inFolder.listFiles().length / size;
 
-        for (Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (int i = 0; i < inFolder.listFiles().length; i++) {
+                File fileEntry = inFolder.listFiles()[i];
+                try {
+                    if (mpi) {
+                        if (i >= rank * filesPerProcess && i < rank * filesPerProcess + filesPerProcess) {
+                            files.put(fileEntry);
+                        }
+                    } else {
+                        files.put(fileEntry);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+
+            List<Thread> threads = new ArrayList<>();
+            // start 4 threads
+            for (int i = 0; i < 2; i++) {
+                Thread t = new Thread(new Worker(files));
+                t.start();
+                threads.add(t);
+            }
+
+            for (Thread t : threads) {
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (MPIException e) {
+            throw new RuntimeException("Failed to communicate");
         }
     }
 
