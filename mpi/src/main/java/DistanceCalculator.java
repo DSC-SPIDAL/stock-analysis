@@ -15,13 +15,14 @@ public class DistanceCalculator {
     private boolean normalize;
     private double dmax;
     private double dmin;
-    private static boolean mpi = false;
+    private boolean mpi = false;
     private MpiOps mpiOps;
 
     public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.normalize = normalize;
+        this.mpi = mpi;
     }
 
     public static void main(String[] args) {
@@ -32,14 +33,14 @@ public class DistanceCalculator {
         options.addOption("m", false, "mpi");
         CommandLineParser commandLineParser = new BasicParser();
         try {
-            if (mpi) {
-                MPI.Init(args);
-            }
             CommandLine cmd = commandLineParser.parse(options, args);
             String  _vectorFile = cmd.getOptionValue("v");
             String _distFile = cmd.getOptionValue("d");
             boolean _normalize = cmd.hasOption("n");
             boolean mpi = cmd.hasOption("m");
+            if (mpi) {
+                MPI.Init(args);
+            }
             DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi);
             program.process();
             if (mpi) {
