@@ -58,6 +58,10 @@ public class DistanceCalculator {
             System.out.println("In should be a folder");
             return;
         }
+
+        // create the out directory
+        Utils.createDirectory(distFolder);
+
         int rank = 0;
         int size = 0;
         int filesPerProcess = 0;
@@ -86,7 +90,7 @@ public class DistanceCalculator {
                 }
             }
 
-            List<Thread> threads = new ArrayList<>();
+            List<Thread> threads = new ArrayList<Thread>();
             // start 4 threads
             for (int i = 0; i < 2; i++) {
                 Thread t = new Thread(new Worker(files));
@@ -105,6 +109,8 @@ public class DistanceCalculator {
             throw new RuntimeException("Failed to communicate");
         }
     }
+
+
 
     private class Worker implements Runnable {
         private BlockingQueue<File> queue;
@@ -133,6 +139,7 @@ public class DistanceCalculator {
             return;
         }
         System.out.println("Calculator vector file: " + fileEntry.getName());
+
         String outFileName = distFolder + "/" + fileEntry.getName();
         writer = new WriterWrapper(outFileName, false);
 

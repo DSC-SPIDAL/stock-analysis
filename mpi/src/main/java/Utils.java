@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
@@ -28,6 +29,18 @@ public class Utils {
             throw new RuntimeException("Failed to read content from file", e);
         }
         return null;
+    }
+
+    public static void createDirectory(String directoryName) {
+        File theDir = new File(directoryName);
+        if (!theDir.exists()) {
+            System.out.println("creating directory: " + directoryName);
+            try {
+                theDir.mkdir();
+            } catch (SecurityException se) {
+                //handle it
+            }
+        }
     }
 
     public static Date parseDateString(String date) {
