@@ -1,6 +1,9 @@
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+
 /**
  * A vector read from the file. It has a key to identify and a list of numbers
  */
+
 
 public class VectorPoint {
     int key;
@@ -25,6 +28,10 @@ public class VectorPoint {
     public double correlation(VectorPoint vc) {
         double []xs = vc.numbers;
         double []ys = this.numbers;
+
+//        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+//        double cor = pearsonsCorrelation.correlation(xs, ys);
+//        return (1 - cor) / 2;
 
         double sx = 0.0;
         double sy = 0.0;
@@ -53,7 +60,7 @@ public class VectorPoint {
         double sigmay = Math.sqrt(syy / n -  sy * sy / n / n);
 
         // correlation is just a normalized covariation
-        return cov / (sigmax * sigmay);
+        return (1 -cov / (sigmax * sigmay)) /2;
     }
 
     public void add(double number) {

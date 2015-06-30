@@ -51,7 +51,7 @@ public class DistanceCalculator {
         }
     }
 
-    private static int INC = 1000;
+    private static int INC = 5;
 
     private void process() {
         File inFolder = new File(vectorFolder);
@@ -71,10 +71,11 @@ public class DistanceCalculator {
                 mpiOps = new MpiOps();
                 rank = mpiOps.getRank();
                 size = mpiOps.getSize();
+                filesPerProcess = inFolder.listFiles().length / size;
             }
 
             BlockingQueue<File> files = new LinkedBlockingQueue<File>();
-            filesPerProcess = inFolder.listFiles().length / size;
+
 
             for (int i = 0; i < inFolder.listFiles().length; i++) {
                 File fileEntry = inFolder.listFiles()[i];
@@ -142,7 +143,7 @@ public class DistanceCalculator {
         System.out.println("Calculator vector file: " + fileEntry.getName());
 
         String outFileName = distFolder + "/" + fileEntry.getName();
-        writer = new WriterWrapper(outFileName, false);
+        writer = new WriterWrapper(outFileName, true);
 
         int lineCount = countLines(fileEntry);
 
