@@ -173,11 +173,11 @@ public class DistanceCalculator {
                 break;
             }
 
-            System.out.println("Processing block: " + startIndex + " : " + endIndex);
+            // System.out.println("Processing block: " + startIndex + " : " + endIndex);
             // now start from the begining and go through the whole file
             List<VectorPoint> secondVectors;
             do {
-                System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
+                // System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
                 if (readStartIndex != startIndex) {
                     secondVectors = readVectors(fileEntry, readStartIndex, readEndIndex);
                 } else {
