@@ -55,7 +55,7 @@ public class DistanceCalculator {
         }
     }
 
-    private static int INC = 5;
+    private static int INC = 3000;
 
     private void process() {
         File inFolder = new File(vectorFolder);
