@@ -147,7 +147,7 @@ public class DistanceCalculator {
         System.out.println("Calculator vector file: " + fileEntry.getName());
 
         String outFileName = distFolder + "/" + fileEntry.getName();
-        writer = new WriterWrapper(outFileName, true);
+        writer = new WriterWrapper(outFileName, false);
 
         int lineCount = countLines(fileEntry);
 
