@@ -31,7 +31,7 @@ public class VectorPoint {
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         double cor = pearsonsCorrelation.correlation(xs, ys);
-        return (1 - cor) / 2;
+        return 1 - (1 + cor) / 2;
 
 //        double sx = 0.0;
 //        double sy = 0.0;

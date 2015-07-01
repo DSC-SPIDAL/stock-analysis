@@ -2,6 +2,7 @@ import mpi.MPI;
 import mpi.MPIException;
 import mpi.MpiOps;
 import org.apache.commons.cli.*;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class DistanceCalculator {
     }
 
     public static void main(String[] args) {
+        PearsonsCorrelation cor = new PearsonsCorrelation();
+        double c = cor.correlation(new double[]{1, 2, 3, 4, 5, 6}, new double[]{6, 5, 4, 3, 2, 1});
+        System.out.println(c);
         Options options = new Options();
         options.addOption("v", true, "Input Vector folder");
         options.addOption("d", true, "Distance matrix folder");

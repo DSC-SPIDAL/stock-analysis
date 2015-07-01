@@ -127,7 +127,7 @@ public class VectorGenerator {
                     // check weather we already have the key
                     VectorPoint point = currentPoints.get(key);
                     if (point == null) {
-                        point = new VectorPoint(key, 30);
+                        point = new VectorPoint(key, days);
                         currentPoints.put(key, point);
                     }
                     point.add(record.getPrice());
