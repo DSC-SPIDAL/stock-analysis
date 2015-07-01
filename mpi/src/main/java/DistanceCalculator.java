@@ -98,7 +98,7 @@ public class DistanceCalculator {
 
             List<Thread> threads = new ArrayList<Thread>();
             // start 4 threads
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 1; i++) {
                 Thread t = new Thread(new Worker(files));
                 t.start();
                 threads.add(t);
