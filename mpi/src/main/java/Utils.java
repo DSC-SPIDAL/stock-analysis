@@ -18,7 +18,7 @@ public class Utils {
                 if (array.length >= 3) {
                     int permNo = Integer.parseInt(array[0]);
                     Date date = formatter.parse(array[1]);
-                    double price = Double.parseDouble(array[2]);
+                    double price = Double.parseDouble(array[3]);
                     if (price < 0) {
                         price *= -1;
                     }
