@@ -19,6 +19,18 @@ public class VectorPoint {
         elements = 0;
     }
 
+    public int getKey() {
+        return key;
+    }
+
+    public double[] getNumbers() {
+        return numbers;
+    }
+
+    public int getElements() {
+        return elements;
+    }
+
     public VectorPoint(int key, double[] numbers) {
         this.key = key;
         this.numbers = numbers;
@@ -83,8 +95,13 @@ public class VectorPoint {
 
     public String serialize() {
         StringBuilder sb = new StringBuilder(Integer.toString(key)).append(" ");
+        double previousVal = 0;
         for (int i = 0; i < elements; i++) {
+            if (numbers[i] == -1) {
+                numbers[i] = previousVal;
+            }
             sb.append(Double.toString(numbers[i])).append(" ");
+            previousVal = numbers[i];
         }
         return sb.toString();
     }

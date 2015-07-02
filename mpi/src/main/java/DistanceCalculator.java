@@ -168,7 +168,7 @@ public class DistanceCalculator {
             int readStartIndex = 0;
             int readEndIndex = INC - 1;
 
-            vectors = readVectors(fileEntry, startIndex, endIndex);
+            vectors = Utils.readVectors(fileEntry, startIndex, endIndex);
             if (vectors.size() == 0) {
                 break;
             }
@@ -179,7 +179,7 @@ public class DistanceCalculator {
             do {
                 // System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
                 if (readStartIndex != startIndex) {
-                    secondVectors = readVectors(fileEntry, readStartIndex, readEndIndex);
+                    secondVectors = Utils.readVectors(fileEntry, readStartIndex, readEndIndex);
                 } else {
                     secondVectors = vectors;
                 }
@@ -237,52 +237,5 @@ public class DistanceCalculator {
         }
     }
 
-    private List<VectorPoint> readVectors(File file, int startIndex, int endIndex) {
-        List<VectorPoint> vecs = new ArrayList<VectorPoint>();
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(file));
-            String line;
-            int count = 0;
-            int readCount = 0;
-            while ((line = br.readLine()) != null) {
-                if (count >= startIndex) {
-                    readCount++;
-                    // process the line.
-                    String parts[] = line.trim().split(" ");
-                    if (parts.length > 0 && !(parts.length == 1 && parts[0].equals(""))) {
-                        int key = Integer.parseInt(parts[0]);
-                        int vectorLength = parts.length - 1;
-                        double[] numbers = new double[vectorLength];
-                        if (vectorLength != parts.length - 1) {
-                            throw new RuntimeException("The number of points in file " + (parts.length - 1) +
-                                    " is not equal to the expected value: " + vectorLength);
-                        }
 
-                        for (int i = 1; i < parts.length; i++) {
-                            numbers[i - 1] = Double.parseDouble(parts[i]);
-                        }
-                        VectorPoint p = new VectorPoint(key, numbers);
-                        vecs.add(p);
-                    }
-
-                }
-                count++;
-                // we stop
-                if (readCount > endIndex - startIndex) {
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException ignore) {
-                }
-            }
-        }
-        return vecs;
-    }
 }

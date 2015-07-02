@@ -1,11 +1,10 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class Utils {
     public static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
@@ -18,11 +17,16 @@ public class Utils {
                 if (array.length >= 3) {
                     int permNo = Integer.parseInt(array[0]);
                     Date date = formatter.parse(array[1]);
-                    double price = Double.parseDouble(array[3]);
-                    if (price < 0) {
-                        price *= -1;
+                    String stringSymbol = array[2];
+                    if (array.length >= 4) {
+                        double price = Double.parseDouble(array[3]);
+                        if (price < 0) {
+                            price *= -1;
+                        }
+                        return new Record(price, permNo, date, array[1], stringSymbol);
+                    } else {
+                        return new Record(-1, permNo, date, array[1], stringSymbol);
                     }
-                    return new Record(price, permNo, date, array[1]);
                 }
             }
         } catch (IOException | ParseException | NumberFormatException e) {
@@ -66,5 +70,58 @@ public class Utils {
 
     public static String dateToString(Date date) {
         return formatter.format(date);
+    }
+
+    public static List<VectorPoint> readVectors(File file, int startIndex, int endIndex) {
+        List<VectorPoint> vecs = new ArrayList<VectorPoint>();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            String line;
+            int count = 0;
+            int readCount = 0;
+            while ((line = br.readLine()) != null) {
+                if (count >= startIndex) {
+                    readCount++;
+                    // process the line.
+                    String parts[] = line.trim().split(" ");
+                    if (parts.length > 0 && !(parts.length == 1 && parts[0].equals(""))) {
+                        int key = Integer.parseInt(parts[0]);
+                        int vectorLength = parts.length - 1;
+                        double[] numbers = new double[vectorLength];
+                        if (vectorLength != parts.length - 1) {
+                            throw new RuntimeException("The number of points in file " + (parts.length - 1) +
+                                    " is not equal to the expected value: " + vectorLength);
+                        }
+
+                        for (int i = 1; i < parts.length; i++) {
+                            numbers[i - 1] = Double.parseDouble(parts[i]);
+                        }
+                        VectorPoint p = new VectorPoint(key, numbers);
+                        vecs.add(p);
+                    }
+
+                }
+                count++;
+                // we stop
+                if (readCount > endIndex - startIndex) {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException ignore) {
+                }
+            }
+        }
+        return vecs;
+    }
+
+    public static Point readPoint(String line) {
+        return new Point();
     }
 }
