@@ -1,8 +1,11 @@
+import java.text.DecimalFormat;
 
 public class Point {
     int index;
     double x, y, z;
     int clazz;
+
+    DecimalFormat four = new DecimalFormat("#0.0000");
 
     public Point(int index, double x, double y, double z, int clazz) {
         this.index = index;
@@ -30,5 +33,17 @@ public class Point {
 
     public int getClazz() {
         return clazz;
+    }
+
+    public String serialize() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Integer.toString(index)).append("\t");
+        sb.append(four.format(x)).append("\t").append(four.format(y)).append("\t").append(four.format(z)).append("\t");
+        sb.append(Integer.toString(clazz));
+        return sb.toString();
+    }
+
+    public void setClazz(int clazz) {
+        this.clazz = clazz;
     }
 }

@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -122,6 +123,19 @@ public class Utils {
     }
 
     public static Point readPoint(String line) {
-        return new Point();
+        String []splits = line.split("\t");
+
+        int i = Integer.parseInt(splits[0]);
+        double x = Double.parseDouble(splits[1]);
+        double y = Double.parseDouble(splits[2]);
+        double z = Double.parseDouble(splits[3]);
+        int clazz = Integer.parseInt(splits[4]);
+
+        return new Point(i, x, y, z, clazz);
+    }
+
+    public static SectorRecord readSectorRecord(String line) {
+        String []splits = line.split(",");
+        return new SectorRecord(splits[5].replaceAll("^\"|\"$", ""), splits[0].replaceAll("^\"|\"$", ""));
     }
 }

@@ -27,9 +27,6 @@ public class DistanceCalculator {
     }
 
     public static void main(String[] args) {
-        PearsonsCorrelation cor = new PearsonsCorrelation();
-        double c = cor.correlation(new double[]{1, 2, 3, 4, 5, 6}, new double[]{6, 5, 4, 3, 2, 1});
-        System.out.println(c);
         Options options = new Options();
         options.addOption("v", true, "Input Vector folder");
         options.addOption("d", true, "Distance matrix folder");
