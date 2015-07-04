@@ -56,6 +56,13 @@ public class Utils {
         }
     }
 
+    public static Date addYear(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.YEAR, 1);
+        return cal.getTime();
+    }
+
     public static Date addMonth(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -67,6 +74,12 @@ public class Utils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
+    }
+
+    public static String getYearString(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.YEAR) + "";
     }
 
     public static String dateToString(Date date) {
@@ -135,7 +148,7 @@ public class Utils {
     }
 
     public static SectorRecord readSectorRecord(String line) {
-        String []splits = line.split(",");
+        String []splits = line.split("\",\"");
         return new SectorRecord(splits[5].replaceAll("^\"|\"$", ""), splits[0].replaceAll("^\"|\"$", ""));
     }
 }

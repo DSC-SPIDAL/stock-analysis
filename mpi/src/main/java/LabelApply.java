@@ -49,6 +49,10 @@ public class LabelApply {
 
     private void init() {
         permNoToSymbol = loadMapping(originalStockFile);
+        Map<String, Integer> symbolToPerm = new HashMap<String, Integer>();
+        for (Map.Entry<Integer, String> entry : permNoToSymbol.entrySet()) {
+            symbolToPerm.put(entry.getValue(), entry.getKey());
+        }
         Map<String, List<String>> sectors = loadSectors(sectorFile);
         sectorToClazz = convertSectorsToClazz(sectors);
     }
@@ -136,6 +140,8 @@ public class LabelApply {
                 int clazz = 0;
                 if (sector != null) {
                     clazz = sectorToClazz.get(sector);
+                } else {
+//                    System.out.println("No sector: " + symbol);
                 }
                 p.setClazz(clazz);
                 String s = p.serialize();

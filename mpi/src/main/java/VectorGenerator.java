@@ -1,6 +1,5 @@
 import org.apache.commons.cli.*;
 
-import javax.rmi.CORBA.*;
 import java.io.*;
 import java.util.*;
 
@@ -29,11 +28,22 @@ public class VectorGenerator {
 
     public void process() {
         Date currentDate = startDate;
-        while (!check(currentDate, endDate, DateCheckType.MONTH)) {
-            processFile(inFile, currentDate, outFile + "/" + Utils.getMonthString(currentDate) + ".csv");
-            currentDate = Utils.addMonth(currentDate);
-            currentPoints.clear();
+        if (days > 30) {
+            while (!check(currentDate, endDate, DateCheckType.YEAR)) {
+                System.out.println("Processing: " + Utils.getYearString(currentDate));
+                processFile(inFile, currentDate, outFile + "/" + Utils.getYearString(currentDate) + ".csv");
+                currentDate = Utils.addYear(currentDate);
+                currentPoints.clear();
+            }
+        } else {
+            while (!check(currentDate, endDate, DateCheckType.MONTH)) {
+                System.out.println("Processing: " + Utils.getMonthString(currentDate));
+                processFile(inFile, currentDate, outFile + "/" + Utils.getMonthString(currentDate) + ".csv");
+                currentDate = Utils.addMonth(currentDate);
+                currentPoints.clear();
+            }
         }
+
     }
 
     private void printExistingVectors() {
@@ -122,7 +132,14 @@ public class VectorGenerator {
             Record record;
             while ((record = Utils.parseFile(bufRead)) != null) {
                 // check weather we are interested in this record
-                if (check(date, record.getDate(), DateCheckType.MONTH)) {
+                boolean check = true;
+                if (days > 30) {
+                    check = check(date, record.getDate(), DateCheckType.YEAR);
+                } else {
+                    check = check(date, record.getDate(), DateCheckType.MONTH);
+                }
+
+                if (check) {
                     int key = record.getSymbol();
                     // check weather we already have the key
                     VectorPoint point = currentPoints.get(key);
@@ -140,7 +157,7 @@ public class VectorGenerator {
                         Collections.sort(pointSizes);
                         size = pointSizes.get(pointSizes.size() - 1);
                         // printDates(pointSizes);
-                        System.out.println("Number of stocks per month: " + size);
+                        System.out.println("Number of stocks per period: " + size);
                     }
 
                     if (currentPoints.size() > 1000 && size != -1) {
@@ -196,7 +213,7 @@ public class VectorGenerator {
                 return true;
             }
         } else if (check == DateCheckType.YEAR) {
-            if(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH)) {
+            if(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)) {
                 return true;
             }
         }
