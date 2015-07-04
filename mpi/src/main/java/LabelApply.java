@@ -55,6 +55,9 @@ public class LabelApply {
         }
         Map<String, List<String>> sectors = loadSectors(sectorFile);
         sectorToClazz = convertSectorsToClazz(sectors);
+        for (Map.Entry<String, Integer> entry : sectorToClazz.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
     }
 
     public void process() {
@@ -120,7 +123,7 @@ public class LabelApply {
         FileReader input;
         BufferedWriter bufWriter = null;
         try {
-            FileOutputStream fos = new FileOutputStream(new File(outPointsFile));
+            FileOutputStream fos = new FileOutputStream(outPointsFile);
             bufWriter = new BufferedWriter(new OutputStreamWriter(fos));
 
             File inFile = new File(inPointsFile);
