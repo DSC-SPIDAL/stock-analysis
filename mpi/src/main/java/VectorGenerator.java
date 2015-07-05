@@ -119,6 +119,9 @@ public class VectorGenerator {
         return null;
     }
 
+    /**
+     * Process a stock file and generate vectors for a month or year period
+     */
     private void processFile(String inFile, Date date, String outFile) {
         BufferedWriter bufWriter = null;
         BufferedReader bufRead = null;
@@ -132,16 +135,17 @@ public class VectorGenerator {
             Record record;
             while ((record = Utils.parseFile(bufRead)) != null) {
                 // check weather we are interested in this record
-                boolean check = true;
+                boolean check;
                 if (days > 30) {
                     check = check(date, record.getDate(), DateCheckType.YEAR);
                 } else {
                     check = check(date, record.getDate(), DateCheckType.MONTH);
                 }
 
+                // if we are interested in this record
                 if (check) {
                     int key = record.getSymbol();
-                    // check weather we already have the key
+                    // check weather we already have the vector seen
                     VectorPoint point = currentPoints.get(key);
                     if (point == null) {
                         point = new VectorPoint(key, days);
@@ -149,6 +153,8 @@ public class VectorGenerator {
                     }
                     point.add(record.getPrice());
 
+                    // sort the already seen symbols and determine how many days are there in this period
+                    // we take the highest number as the number of days
                     if (currentPoints.size() > 1000 && size == -1) {
                         List<Integer> pointSizes = new ArrayList<Integer>();
                         for (VectorPoint v : currentPoints.values()) {
@@ -160,34 +166,16 @@ public class VectorGenerator {
                         System.out.println("Number of stocks per period: " + size);
                     }
 
+                    // now write the current vectors, also make sure we have the size determined correctly
                     if (currentPoints.size() > 1000 && size != -1) {
-                        for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
-                            Map.Entry<Integer, VectorPoint> entry = it.next();
-                            VectorPoint v = entry.getValue();
-                            if (v.noOfElements() == size) {
-                                String sv = v.serialize();
-                                bufWriter.write(sv);
-                                bufWriter.newLine();
-                                // remove it from map
-                                it.remove();
-                            }
-                        }
+                        writeVectors(bufWriter, size);
                     }
                 }
             }
 
             System.out.println("Size: " + size);
-            for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext();) {
-                Map.Entry<Integer, VectorPoint> entry = it.next();
-                VectorPoint v = entry.getValue();
-                if (v.noOfElements() == size) {
-                    String sv = v.serialize();
-                    bufWriter.write(sv);
-                    bufWriter.newLine();
-                    // remove it from map
-                    it.remove();
-                }
-            }
+            // write the rest of the vectors in the map after finish reading the file
+            writeVectors(bufWriter, size);
         } catch (IOException e) {
             throw new RuntimeException("Failed to open the file");
         } finally {
@@ -199,6 +187,26 @@ public class VectorGenerator {
                     bufRead.close();
                 }
             } catch (IOException ignore) {
+            }
+        }
+    }
+
+    /**
+     * Write the current vector to file
+     * @param bufWriter stream
+     * @param size
+     * @throws IOException
+     */
+    private void writeVectors(BufferedWriter bufWriter, int size) throws IOException {
+        for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<Integer, VectorPoint> entry = it.next();
+            VectorPoint v = entry.getValue();
+            if (v.noOfElements() == size) {
+                String sv = v.serialize();
+                bufWriter.write(sv);
+                bufWriter.newLine();
+                // remove it from map
+                it.remove();
             }
         }
     }
