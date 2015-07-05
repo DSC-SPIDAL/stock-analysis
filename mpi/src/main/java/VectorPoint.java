@@ -96,13 +96,16 @@ public class VectorPoint {
     public String serialize() {
         StringBuilder sb = new StringBuilder(Integer.toString(key)).append(" ");
         double previousVal = 0;
+        int missingCount = 0;
         for (int i = 0; i < elements; i++) {
             if (numbers[i] == -1) {
+                missingCount++;
                 numbers[i] = previousVal;
             }
             sb.append(Double.toString(numbers[i])).append(" ");
             previousVal = numbers[i];
         }
+        System.out.printf("Missing count: " + missingCount);
         return sb.toString();
     }
 }
