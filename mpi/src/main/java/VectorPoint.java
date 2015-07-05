@@ -106,7 +106,7 @@ public class VectorPoint {
             previousVal = numbers[i];
         }
         // if missing count is greater than 5% print and  ignore
-        if (missingCount > (elements * 0.05)) {
+        if (missingCount > (elements * 0.025)) {
             System.out.println("Missing count: " + missingCount);
             return null;
         }
