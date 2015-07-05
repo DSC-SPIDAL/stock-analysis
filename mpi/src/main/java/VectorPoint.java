@@ -105,7 +105,11 @@ public class VectorPoint {
             sb.append(Double.toString(numbers[i])).append(" ");
             previousVal = numbers[i];
         }
-        System.out.printf("Missing count: " + missingCount);
+        // if missing count is greater than 5% print and  ignore
+        if (missingCount > (elements * 0.05)) {
+            System.out.println("Missing count: " + missingCount);
+            return null;
+        }
         return sb.toString();
     }
 }

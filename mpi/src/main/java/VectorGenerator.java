@@ -203,10 +203,13 @@ public class VectorGenerator {
             VectorPoint v = entry.getValue();
             if (v.noOfElements() == size) {
                 String sv = v.serialize();
-                bufWriter.write(sv);
-                bufWriter.newLine();
-                // remove it from map
-                it.remove();
+                // if many points are missing, this can return null
+                if (sv != null) {
+                    bufWriter.write(sv);
+                    bufWriter.newLine();
+                    // remove it from map
+                    it.remove();
+                }
             }
         }
     }
