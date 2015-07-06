@@ -1,4 +1,5 @@
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.util.*;
@@ -35,15 +36,21 @@ public class VectorGenerator {
                 currentDate = Utils.addYear(currentDate);
                 currentPoints.clear();
             }
-        } else {
+        } else if (days < 400) {
             while (!check(currentDate, endDate, DateCheckType.MONTH)) {
                 System.out.println("Processing: " + Utils.getMonthString(currentDate));
                 processFile(inFile, currentDate, outFile + "/" + Utils.getMonthString(currentDate) + ".csv");
                 currentDate = Utils.addMonth(currentDate);
                 currentPoints.clear();
             }
+        } else {
+            System.out.println("Processing whole file");
+            File in = new File(inFile);
+            String fileName = in.getName();
+            String fileNameWithOutExt = FilenameUtils.removeExtension(fileName);
+            processFile(inFile, currentDate, outFile + "/" + fileNameWithOutExt + ".csv");
+            currentPoints.clear();
         }
-
     }
 
     private void printExistingVectors() {
