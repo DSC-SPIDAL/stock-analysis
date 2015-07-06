@@ -60,65 +60,6 @@ public class VectorGenerator {
         System.out.println(sb.toString());
     }
 
-    public List<String> getDates(String inFile, Date startDate) {
-        // first lets go through 10 stocks to figure out the correct dates
-        // we assume the records appear sorted according to date
-        BufferedReader bufRead = null;
-        Map<Integer, List<String>> initialDates = new HashMap<Integer, List<String>>();
-        boolean done = false;
-        try {
-            FileReader input = new FileReader(inFile);
-            bufRead = new BufferedReader(input);
-            Record record;
-            while ((record = Utils.parseFile(bufRead)) != null && !done) {
-                // check weather this date is greater than what we need
-                if (startDate.after(record.getDate())) {
-                    continue;
-                }
-                // check weather we are interested in this record
-                List<String> datesForSymbol = initialDates.get(record.getSymbol());
-                if (datesForSymbol == null) {
-                    // check how many symbols we have
-                    if (initialDates.keySet().size() == 10) {
-                        continue;
-                    }
-                    datesForSymbol = new ArrayList<>();
-                    initialDates.put(record.getSymbol(), datesForSymbol);
-                }
-                // now add these dates
-                if (datesForSymbol.size() < days) {
-                    datesForSymbol.add(record.getDateString());
-                }
-                // check weather we have a complete set
-                if (initialDates.keySet().size() == 10) {
-                    boolean complete = true;
-                    for (Map.Entry<Integer, List<String>> entry : initialDates.entrySet()) {
-                        if (entry.getValue().size() < days) {
-                            complete = false;
-                        }
-                    }
-                    if (complete) {
-                        done = true;
-                    }
-                }
-            }
-            // for now lets return the first list as dates
-            for (Map.Entry<Integer, List<String>> entry : initialDates.entrySet()) {
-                return entry.getValue();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to open the file");
-        } finally {
-            try {
-                if (bufRead != null) {
-                    bufRead.close();
-                }
-            } catch (IOException ignore) {
-            }
-        }
-        return null;
-    }
-
     /**
      * Process a stock file and generate vectors for a month or year period
      */
@@ -126,6 +67,7 @@ public class VectorGenerator {
         BufferedWriter bufWriter = null;
         BufferedReader bufRead = null;
         int size = -1;
+        vectorCounter = 0;
         try {
             FileReader input = new FileReader(inFile);
             FileOutputStream fos = new FileOutputStream(new File(outFile));
@@ -160,9 +102,7 @@ public class VectorGenerator {
                         for (VectorPoint v : currentPoints.values()) {
                             pointSizes.add(v.noOfElements());
                         }
-                        Collections.sort(pointSizes);
-                        size = pointSizes.get(pointSizes.size() - 1);
-                        // printDates(pointSizes);
+                        size = mostCommon(pointSizes);
                         System.out.println("Number of stocks per period: " + size);
                     }
 
@@ -176,6 +116,7 @@ public class VectorGenerator {
             System.out.println("Size: " + size);
             // write the rest of the vectors in the map after finish reading the file
             writeVectors(bufWriter, size);
+            System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
         } catch (IOException e) {
             throw new RuntimeException("Failed to open the file");
         } finally {
@@ -191,6 +132,21 @@ public class VectorGenerator {
         }
     }
 
+    public static <T> T mostCommon(List<T> list) {
+        Map<T, Integer> map = new HashMap<T, Integer>();
+        for (T t : list) {
+            Integer val = map.get(t);
+            map.put(t, val == null ? 1 : val + 1);
+        }
+        Map.Entry<T, Integer> max = null;
+        for (Map.Entry<T, Integer> e : map.entrySet()) {
+            if (max == null || e.getValue() > max.getValue())
+                max = e;
+        }
+        return max.getKey();
+    }
+
+    int vectorCounter = 0;
     /**
      * Write the current vector to file
      * @param bufWriter stream
@@ -209,6 +165,7 @@ public class VectorGenerator {
                     bufWriter.newLine();
                     // remove it from map
                     it.remove();
+                    vectorCounter++;
                 }
             }
         }
