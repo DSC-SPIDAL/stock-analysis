@@ -29,18 +29,18 @@ public class VectorGenerator {
 
     public void process() {
         Date currentDate = startDate;
-        if (days > 30) {
-            while (!check(currentDate, endDate, DateCheckType.YEAR)) {
-                System.out.println("Processing: " + Utils.getYearString(currentDate));
-                processFile(inFile, currentDate, outFile + "/" + Utils.getYearString(currentDate) + ".csv");
-                currentDate = Utils.addYear(currentDate);
-                currentPoints.clear();
-            }
-        } else if (days < 400) {
+        if (days <= 30) {
             while (!check(currentDate, endDate, DateCheckType.MONTH)) {
                 System.out.println("Processing: " + Utils.getMonthString(currentDate));
                 processFile(inFile, currentDate, outFile + "/" + Utils.getMonthString(currentDate) + ".csv");
                 currentDate = Utils.addMonth(currentDate);
+                currentPoints.clear();
+            }
+        } else if (days < 400) {
+            while (!check(currentDate, endDate, DateCheckType.YEAR)) {
+                System.out.println("Processing: " + Utils.getYearString(currentDate));
+                processFile(inFile, currentDate, outFile + "/" + Utils.getYearString(currentDate) + ".csv");
+                currentDate = Utils.addYear(currentDate);
                 currentPoints.clear();
             }
         } else {
@@ -85,10 +85,12 @@ public class VectorGenerator {
             while ((record = Utils.parseFile(bufRead)) != null) {
                 // check weather we are interested in this record
                 boolean check;
-                if (days > 30) {
+                if (days <= 30) {
+                    check = check(date, record.getDate(), DateCheckType.MONTH);
+                } else if (days < 400) {
                     check = check(date, record.getDate(), DateCheckType.YEAR);
                 } else {
-                    check = check(date, record.getDate(), DateCheckType.MONTH);
+                    check = true;
                 }
 
                 // if we are interested in this record
