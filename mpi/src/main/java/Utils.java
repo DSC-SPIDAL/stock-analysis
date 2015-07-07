@@ -133,8 +133,8 @@ public class Utils {
         return vecs;
     }
 
-    public static TreeSet<Integer> readVectorKeys(File file) {
-        TreeSet<Integer> keys = new TreeSet<>();
+    public static List<Integer> readVectorKeys(File file) {
+        List<Integer> keys = new ArrayList<Integer>();
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(file));
