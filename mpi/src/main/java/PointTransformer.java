@@ -93,9 +93,7 @@ public class PointTransformer {
         try {
             FileOutputStream fos = new FileOutputStream(commonPointFile);
             bufWriter = new BufferedWriter(new OutputStreamWriter(fos));
-            Iterator<Integer> keyIterator = commonKeys.iterator();
-            while (keyIterator.hasNext()) {
-                Integer key = keyIterator.next();
+            for (Integer key : commonKeys) {
                 Point p = pointMap.get(key);
                 bufWriter.write(p.serialize());
                 bufWriter.newLine();
@@ -114,9 +112,9 @@ public class PointTransformer {
 
     /**
      * Load the mapping from permno to point
-     * @param pointFile
-     * @param keys
-     * @return
+     * @param pointFile the point file
+     * @param keys keys
+     * @return map
      */
     private Map<Integer, Point> loadPoints(File pointFile, List<Integer> keys) {
         BufferedReader bufRead = null;
