@@ -82,7 +82,10 @@ public class VectorGenerator {
 
             bufRead = new BufferedReader(input);
             Record record;
+            int count = 0;
+            int fullCount = 0;
             while ((record = Utils.parseFile(bufRead)) != null) {
+                count++;
                 // check weather we are interested in this record
                 boolean check;
                 if (days <= 30) {
@@ -103,7 +106,9 @@ public class VectorGenerator {
                         currentPoints.put(key, point);
                     }
                     point.add(record.getPrice());
-
+                    if (point.noOfElements() == size) {
+                        fullCount++;
+                    }
                     // sort the already seen symbols and determine how many days are there in this period
                     // we take the highest number as the number of days
                     if (currentPoints.size() > 1000 && size == -1) {
@@ -116,8 +121,10 @@ public class VectorGenerator {
                     }
 
                     // now write the current vectors, also make sure we have the size determined correctly
-                    if (currentPoints.size() > 1000 && size != -1) {
+                    if (currentPoints.size() > 1000 && size != -1 && fullCount > 750) {
+                        System.out.println("Processed: " + count);
                         writeVectors(bufWriter, size);
+                        fullCount = 0;
                     }
                 }
             }
