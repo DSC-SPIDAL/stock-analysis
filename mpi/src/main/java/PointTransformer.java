@@ -18,29 +18,32 @@ public class PointTransformer {
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("g", true, "Global file");
+        options.addOption("gp", true, "Global pooint file");
         options.addOption("v", true, "Input Vector folder");
         options.addOption("p", true, "Points folder");
         options.addOption("d", true, "Destination point folder");
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
+            String globalPointFile = cmd.getOptionValue("gp");
             String globalFile = cmd.getOptionValue("g");
             String vectorFile = cmd.getOptionValue("v");
             String pointsFolder = cmd.getOptionValue("p");
             String distFolder = cmd.getOptionValue("d");
 
-            PointTransformer pointTransformer = new PointTransformer(globalFile, pointsFolder, vectorFile, distFolder);
+            PointTransformer pointTransformer = new PointTransformer(globalFile, pointsFolder, vectorFile, distFolder, globalPointFile);
             pointTransformer.process();
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public PointTransformer(String globalVectorFile, String pointFolder, String vectorFolder, String destPointFolder) {
+    public PointTransformer(String globalVectorFile, String pointFolder, String vectorFolder, String destPointFolder, String globalPointFile) {
         this.globalVectorFile = globalVectorFile;
         this.pointFolder = pointFolder;
         this.vectorFolder = vectorFolder;
         this.destPointFolder = destPointFolder;
+        this.globalPointFile = globalPointFile;
     }
 
     public void process() {
