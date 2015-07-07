@@ -2,9 +2,7 @@ import java.awt.*;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
 
 public class Utils {
@@ -133,6 +131,34 @@ public class Utils {
             }
         }
         return vecs;
+    }
+
+    public static TreeSet<Integer> readVectorKeys(File file) {
+        TreeSet<Integer> keys = new TreeSet<>();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                // process the line.
+                String parts[] = line.trim().split(" ");
+                if (parts.length > 0 && !(parts.length == 1 && parts[0].equals(""))) {
+                    int key = Integer.parseInt(parts[0]);
+                    keys.add(key);
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException ignore) {
+                }
+            }
+        }
+        return keys;
     }
 
     public static Point readPoint(String line) {
