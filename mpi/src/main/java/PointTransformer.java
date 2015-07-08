@@ -92,8 +92,10 @@ public class PointTransformer {
         try {
             FileOutputStream fos = new FileOutputStream(file);
             bufWriter = new BufferedWriter(new OutputStreamWriter(fos));
+            int i = 0;
             for (Integer key : commonKeys) {
                 Point p = pointMap.get(key);
+                p.setIndex(i++);
                 bufWriter.write(p.serialize());
                 bufWriter.newLine();
             }

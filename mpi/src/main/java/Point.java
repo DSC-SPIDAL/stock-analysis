@@ -46,4 +46,8 @@ public class Point {
     public void setClazz(int clazz) {
         this.clazz = clazz;
     }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
 }
