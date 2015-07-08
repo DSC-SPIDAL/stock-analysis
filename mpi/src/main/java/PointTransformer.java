@@ -67,7 +67,7 @@ public class PointTransformer {
             // load the corresponding points file
             String fileName = inFile.getName();
             String fileNameWithOutExt = FilenameUtils.removeExtension(fileName);
-            String pointFile = pointFolder + "/" + fileNameWithOutExt;
+            String pointFile = pointFolder + "/" + fileNameWithOutExt + "points.txt";
             Map<Integer, Point> points = loadPoints(new File(pointFile), partKeys);
             filesToPoint.put(fileName, points);
             commonKeys.retainAll(partKeys);
@@ -83,15 +83,14 @@ public class PointTransformer {
             // get the file
             Map<Integer, Point> pointMap = entry.getValue();
             String file =  entry.getKey();
-            writePoints(commonKeys, pointMap, file);
+            writePoints(commonKeys, pointMap, destPointFolder + "/" + file);
         }
     }
 
     private void writePoints(TreeSet<Integer> commonKeys, Map<Integer, Point> pointMap, String file) {
-        File commonPointFile = new File(destPointFolder + "/" + file);
         BufferedWriter bufWriter = null;
         try {
-            FileOutputStream fos = new FileOutputStream(commonPointFile);
+            FileOutputStream fos = new FileOutputStream(file);
             bufWriter = new BufferedWriter(new OutputStreamWriter(fos));
             for (Integer key : commonKeys) {
                 Point p = pointMap.get(key);
@@ -126,10 +125,11 @@ public class PointTransformer {
             while ((inputLine = bufRead.readLine()) != null) {
                 Point p = Utils.readPoint(inputLine);
                 points.put(keys.get(index), p);
+                index++;
             }
             return points;
         } catch (IOException e) {
-            throw new RuntimeException("Faile to read file");
+            throw new RuntimeException("Faile to read file: " + pointFile.getAbsolutePath());
         }
     }
 }
