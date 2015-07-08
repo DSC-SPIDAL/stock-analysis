@@ -2,7 +2,6 @@ import mpi.MPI;
 import mpi.MPIException;
 import mpi.MpiOps;
 import org.apache.commons.cli.*;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import java.io.*;
 import java.util.ArrayList;
