@@ -10,7 +10,7 @@ public class VectorPoint {
     double []numbers;
     int elements;
     /** the totalCap of a stock for this period */
-    double totalCap;
+    double totalCap = 0.0;
 
     public VectorPoint(int key, int size) {
         this.key = key;
@@ -36,11 +36,19 @@ public class VectorPoint {
     public VectorPoint(int key, double[] numbers) {
         this.key = key;
         this.numbers = numbers;
-        this.elements = 0;
+        this.elements = numbers.length;
     }
 
     public void addCap(double cap) {
         this.totalCap += cap;
+    }
+
+    public double weight(VectorPoint vc) {
+        return 0;
+    }
+
+    public double getTotalCap() {
+        return totalCap;
     }
 
     public double correlation(VectorPoint vc) {

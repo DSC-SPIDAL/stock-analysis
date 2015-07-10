@@ -105,17 +105,15 @@ public class Utils {
                     String parts[] = line.trim().split(" ");
                     if (parts.length > 0 && !(parts.length == 1 && parts[0].equals(""))) {
                         int key = Integer.parseInt(parts[0]);
-                        int vectorLength = parts.length - 1;
-                        double[] numbers = new double[vectorLength];
-                        if (vectorLength != parts.length - 1) {
-                            throw new RuntimeException("The number of points in file " + (parts.length - 1) +
-                                    " is not equal to the expected value: " + vectorLength);
-                        }
+                        double cap = Double.parseDouble(parts[1]);
 
-                        for (int i = 1; i < parts.length; i++) {
+                        int vectorLength = parts.length - 2;
+                        double[] numbers = new double[vectorLength];
+                        for (int i = 2; i < parts.length; i++) {
                             numbers[i - 1] = Double.parseDouble(parts[i]);
                         }
                         VectorPoint p = new VectorPoint(key, numbers);
+                        p.addCap(cap);
                         vecs.add(p);
                     }
 
