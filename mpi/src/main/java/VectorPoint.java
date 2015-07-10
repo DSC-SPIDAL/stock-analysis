@@ -9,6 +9,8 @@ public class VectorPoint {
     int key;
     double []numbers;
     int elements;
+    /** the totalCap of a stock for this period */
+    double totalCap;
 
     public VectorPoint(int key, int size) {
         this.key = key;
@@ -35,6 +37,10 @@ public class VectorPoint {
         this.key = key;
         this.numbers = numbers;
         this.elements = 0;
+    }
+
+    public void addCap(double cap) {
+        this.totalCap += cap;
     }
 
     public double correlation(VectorPoint vc) {
@@ -94,7 +100,8 @@ public class VectorPoint {
     }
 
     public String serialize() {
-        StringBuilder sb = new StringBuilder(Integer.toString(key)).append(" ");
+        double marketCap = this.totalCap / this.elements;
+        StringBuilder sb = new StringBuilder(Integer.toString(key)).append(" ").append(Double.toString(marketCap)).append(" ");
         double previousVal = 0;
         int missingCount = 0;
         for (int i = 0; i < elements; i++) {

@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,14 +16,21 @@ public class Utils {
                     int permNo = Integer.parseInt(array[0]);
                     Date date = formatter.parse(array[1]);
                     String stringSymbol = array[2];
-                    if (array.length >= 4) {
-                        double price = Double.parseDouble(array[3]);
-                        if (price < 0) {
-                            price *= -1;
+                    if (array.length >= 5) {
+                        double price = -1;
+                        if (!array[3].equals("")) {
+                            price = Double.parseDouble(array[3]);
+                            if (price < 0) {
+                                price *= -1;
+                            }
                         }
-                        return new Record(price, permNo, date, array[1], stringSymbol);
+                        int volume = 0;
+                        if (!array[4].equals("")) {
+                            volume = Integer.parseInt(array[4]);
+                        }
+                        return new Record(price, permNo, date, array[1], stringSymbol, volume);
                     } else {
-                        return new Record(-1, permNo, date, array[1], stringSymbol);
+                        return new Record(-1, permNo, date, array[1], stringSymbol, 0);
                     }
                 }
             }

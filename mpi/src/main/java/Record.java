@@ -6,12 +6,14 @@ public class Record {
     private Date date;
     private String dateString;
     private String symbolString;
+    private int volume;
 
-    public Record(double price, int symbol, Date date, String dateString, String symbolString) {
+    public Record(double price, int symbol, Date date, String dateString, String symbolString, int volume) {
         this.price = price;
         this.symbol = symbol;
         this.date = date;
         this.dateString = dateString;
+        this.volume = volume;
         this.symbolString = symbolString;
     }
 
@@ -20,6 +22,10 @@ public class Record {
         this.symbol = symbol;
         this.date = date;
         this.dateString = dateString;
+    }
+
+    public int getVolume() {
+        return volume;
     }
 
     public String getSymbolString() {

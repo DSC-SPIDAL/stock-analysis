@@ -106,6 +106,7 @@ public class VectorGenerator {
                         currentPoints.put(key, point);
                     }
                     point.add(record.getPrice());
+                    point.addCap(record.getVolume() * record.getPrice());
                     if (point.noOfElements() == size) {
                         fullCount++;
                     }
