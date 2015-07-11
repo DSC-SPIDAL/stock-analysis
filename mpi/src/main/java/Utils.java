@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -45,9 +46,27 @@ public class Utils {
         if (!theDir.exists()) {
             System.out.println("creating directory: " + directoryName);
             try {
-                theDir.mkdir();
+                theDir.mkdirs();
             } catch (SecurityException se) {
                 //handle it
+            }
+        }
+    }
+
+    private static void copyFileUsingFileChannels(File source, File dest)
+            throws IOException {
+        FileChannel inputChannel = null;
+        FileChannel outputChannel = null;
+        try {
+            inputChannel = new FileInputStream(source).getChannel();
+            outputChannel = new FileOutputStream(dest).getChannel();
+            outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+        } finally {
+            if (inputChannel != null) {
+                inputChannel.close();
+            }
+            if (outputChannel != null) {
+                outputChannel.close();
             }
         }
     }
