@@ -46,12 +46,11 @@ public class FileBreaker {
                 mpiOps = new MpiOps();
                 int rank = mpiOps.getRank();
                 int size = mpiOps.getSize();
-                int devide = dates.size() / size;
                 Iterator<String> datesItr = dates.keySet().iterator();
                 int i = 0;
                 while (datesItr.hasNext()) {
+                    String next = datesItr.next();
                     if (i == rank) {
-                        String next = datesItr.next();
                         this.dates.put(next, dates.get(next));
                     }
                     i++;
