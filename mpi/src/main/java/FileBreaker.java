@@ -175,7 +175,7 @@ public class FileBreaker {
                 totalCount++;
                 Set<String> files = getDatesForThisRecord(record);
                 for (String f : files) {
-                    List l = records.get(f);
+                    List<Record> l = records.get(f);
                     if (l == null) {
                         l = new ArrayList<Record>();
                         records.put(f, l);
