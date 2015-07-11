@@ -47,4 +47,14 @@ public class Record {
     public String getDateString() {
         return dateString;
     }
+
+    public String serialize() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.symbol).append(",");
+        sb.append(Utils.formatter.format(this.date)).append(",");
+        sb.append(symbolString).append(",");
+        sb.append(price).append(",");
+        sb.append(volume);
+        return sb.toString();
+    }
 }

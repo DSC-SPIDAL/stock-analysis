@@ -77,7 +77,7 @@ public class Utils {
     public static String getMonthString(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        return cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
+        return cal.get(Calendar.YEAR) + "_" + (cal.get(Calendar.MONTH) + 1);
     }
 
     public static String getYearString(Date date) {

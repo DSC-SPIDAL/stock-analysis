@@ -1,18 +1,20 @@
+import mpi.MPI;
+import mpi.MPIException;
+import mpi.MpiOps;
 import org.apache.commons.cli.*;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-public class VectorGenerator {
-    private final String inFile;
-    private final String outFile;
+public class PVectorGenerator {
+    private final String inFolder;
+    private final String outFolder;
     private Map<Integer, VectorPoint> currentPoints = new HashMap<Integer, VectorPoint>();
-
     private int days;
-
-    private Date startDate;
-    private Date endDate;
+    private boolean mpi = false;
+    private MpiOps mpiOps;
 
     private enum DateCheckType {
         MONTH,
@@ -20,37 +22,88 @@ public class VectorGenerator {
         CONT_YEAR,
     }
 
-    public VectorGenerator(String inFile, String outFile, String startDate, int days, String endDate) {
+    public PVectorGenerator(String inFile, String outFile, int days, boolean mpi) {
         this.days = days;
-        this.inFile = inFile;
-        this.outFile = outFile;
-        this.startDate = Utils.parseDateString(startDate);
-        this.endDate = Utils.parseDateString(endDate);
+        this.inFolder = inFile;
+        this.outFolder = outFile;
+        this.mpi = mpi;
     }
 
     public void process() {
-        Date currentDate = startDate;
-        if (days <= 30) {
-            while (!check(currentDate, endDate, DateCheckType.MONTH)) {
-                System.out.println("Processing: " + Utils.getMonthString(currentDate));
-                processFile(inFile, currentDate, outFile + "/" + Utils.getMonthString(currentDate) + ".csv");
-                currentDate = Utils.addMonth(currentDate);
-                currentPoints.clear();
+        File inFolder = new File(this.inFolder);
+        if (!inFolder.isDirectory()) {
+            System.out.println("In should be a folder");
+            return;
+        }
+
+        // create the out directory
+        Utils.createDirectory(outFolder);
+
+        int rank = 0;
+        int size = 0;
+        int filesPerProcess = 0;
+        try {
+            if (mpi) {
+                mpiOps = new MpiOps();
+                rank = mpiOps.getRank();
+                size = mpiOps.getSize();
+                filesPerProcess = inFolder.listFiles().length / size;
             }
-        } else if (days < 400) {
-            while (!check(currentDate, endDate, DateCheckType.YEAR)) {
-                System.out.println("Processing: " + Utils.getYearString(currentDate));
-                processFile(inFile, currentDate, outFile + "/" + Utils.getYearString(currentDate) + ".csv");
-                currentDate = Utils.addYear(currentDate);
-                currentPoints.clear();
+            BlockingQueue<File> files = new LinkedBlockingQueue<File>();
+
+            for (int i = 0; i < inFolder.listFiles().length; i++) {
+                File fileEntry = inFolder.listFiles()[i];
+                try {
+                    if (mpi) {
+                        if (i >= rank * filesPerProcess && i < rank * filesPerProcess + filesPerProcess) {
+                            files.put(fileEntry);
+                        }
+                    } else {
+                        files.put(fileEntry);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            System.out.println("Processing whole file");
-            File in = new File(inFile);
-            String fileName = in.getName();
-            String fileNameWithOutExt = FilenameUtils.removeExtension(fileName);
-            processFile(inFile, currentDate, outFile + "/" + fileNameWithOutExt + ".csv");
-            currentPoints.clear();
+
+            List<Thread> threads = new ArrayList<Thread>();
+            // start 4 threads
+            for (int i = 0; i < 1; i++) {
+                Thread t = new Thread(new Worker(files));
+                t.start();
+                threads.add(t);
+            }
+
+            for (Thread t : threads) {
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (MPIException e) {
+            throw new RuntimeException("Failed to communicate");
+        }
+    }
+
+    private class Worker implements Runnable {
+        private BlockingQueue<File> queue;
+
+        private Worker(BlockingQueue<File> queue) {
+            this.queue = queue;
+        }
+
+        @Override
+        public void run() {
+            while (!queue.isEmpty()) {
+                try {
+                    File f = queue.take();
+                    processFile(f);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
         }
     }
 
@@ -71,14 +124,15 @@ public class VectorGenerator {
     /**
      * Process a stock file and generate vectors for a month or year period
      */
-    private void processFile(String inFile, Date date, String outFile) {
+    private void processFile(File inFile) {
         BufferedWriter bufWriter = null;
         BufferedReader bufRead = null;
         int size = -1;
         vectorCounter = 0;
+        String outFileName = outFolder + "/" + inFile.getName();
         try {
             FileReader input = new FileReader(inFile);
-            FileOutputStream fos = new FileOutputStream(new File(outFile));
+            FileOutputStream fos = new FileOutputStream(new File(outFileName));
             bufWriter = new BufferedWriter(new OutputStreamWriter(fos));
 
             bufRead = new BufferedReader(input);
@@ -87,47 +141,34 @@ public class VectorGenerator {
             int fullCount = 0;
             while ((record = Utils.parseFile(bufRead)) != null) {
                 count++;
-                // check weather we are interested in this record
-                boolean check;
-                if (days <= 30) {
-                    check = check(date, record.getDate(), DateCheckType.MONTH);
-                } else if (days < 400) {
-                    check = check(date, record.getDate(), DateCheckType.YEAR);
-                } else {
-                    check = true;
+                int key = record.getSymbol();
+                // check weather we already have the vector seen
+                VectorPoint point = currentPoints.get(key);
+                if (point == null) {
+                    point = new VectorPoint(key, days);
+                    currentPoints.put(key, point);
+                }
+                point.add(record.getPrice());
+                point.addCap(record.getVolume() * record.getPrice());
+                if (point.noOfElements() == size) {
+                    fullCount++;
+                }
+                // sort the already seen symbols and determine how many days are there in this period
+                // we take the highest number as the number of days
+                if (currentPoints.size() > 1000 && size == -1) {
+                    List<Integer> pointSizes = new ArrayList<Integer>();
+                    for (VectorPoint v : currentPoints.values()) {
+                        pointSizes.add(v.noOfElements());
+                    }
+                    size = mostCommon(pointSizes);
+                    System.out.println("Number of stocks per period: " + size);
                 }
 
-                // if we are interested in this record
-                if (check) {
-                    int key = record.getSymbol();
-                    // check weather we already have the vector seen
-                    VectorPoint point = currentPoints.get(key);
-                    if (point == null) {
-                        point = new VectorPoint(key, days);
-                        currentPoints.put(key, point);
-                    }
-                    point.add(record.getPrice());
-                    point.addCap(record.getVolume() * record.getPrice());
-                    if (point.noOfElements() == size) {
-                        fullCount++;
-                    }
-                    // sort the already seen symbols and determine how many days are there in this period
-                    // we take the highest number as the number of days
-                    if (currentPoints.size() > 1000 && size == -1) {
-                        List<Integer> pointSizes = new ArrayList<Integer>();
-                        for (VectorPoint v : currentPoints.values()) {
-                            pointSizes.add(v.noOfElements());
-                        }
-                        size = mostCommon(pointSizes);
-                        System.out.println("Number of stocks per period: " + size);
-                    }
-
-                    // now write the current vectors, also make sure we have the size determined correctly
-                    if (currentPoints.size() > 1000 && size != -1 && fullCount > 750) {
-                        System.out.println("Processed: " + count);
-                        writeVectors(bufWriter, size);
-                        fullCount = 0;
-                    }
+                // now write the current vectors, also make sure we have the size determined correctly
+                if (currentPoints.size() > 1000 && size != -1 && fullCount > 750) {
+                    System.out.println("Processed: " + count);
+                    writeVectors(bufWriter, size);
+                    fullCount = 0;
                 }
             }
 
@@ -210,21 +251,26 @@ public class VectorGenerator {
         Options options = new Options();
         options.addOption("i", true, "Input file");
         options.addOption("o", true, "Output file");
-        options.addOption("s", true, "Start date");
-        options.addOption("e", true, "End date");
         options.addOption("d", true, "Number of days");
+        options.addOption("m", false, "MPI");
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
             String input = cmd.getOptionValue("i");
             String output = cmd.getOptionValue("o");
-            String date = cmd.getOptionValue("s");
-            String end = cmd.getOptionValue("e");
             String days = cmd.getOptionValue("d");
-
-            VectorGenerator vg = new VectorGenerator(input, output, date, Integer.parseInt(days), end);
+            boolean mpi = cmd.hasOption("m");
+            if (mpi) {
+                MPI.Init(args);
+            }
+            PVectorGenerator vg = new PVectorGenerator(input, output, Integer.parseInt(days), mpi);
             vg.process();
+            if (mpi) {
+                MPI.Finalize();
+            }
         } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (MPIException e) {
             e.printStackTrace();
         }
     }
