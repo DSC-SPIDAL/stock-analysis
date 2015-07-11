@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #SBATCH -A skamburu
-#SBATCH -N 2
+#SBATCH -N 24
 #SBATCH --tasks-per-node=1
 #SBATCH --time=04:00:00
 
