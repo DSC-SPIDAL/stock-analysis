@@ -81,9 +81,10 @@ public class DistanceCalculator {
                 File fileEntry = inFolder.listFiles()[i];
                 try {
                     if (mpi) {
-                        if (i >= rank * filesPerProcess && i < rank * filesPerProcess + filesPerProcess) {
-                            files.put(fileEntry);
-                        }
+//                        if (i >= rank * filesPerProcess && i < rank * filesPerProcess + filesPerProcess) {
+//                            files.put(fileEntry);
+//                        }
+                        files.put(fileEntry);
                     } else {
                         files.put(fileEntry);
                     }

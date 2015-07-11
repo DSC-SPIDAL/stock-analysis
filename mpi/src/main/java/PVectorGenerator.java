@@ -55,9 +55,7 @@ public class PVectorGenerator {
                 File fileEntry = inFolder.listFiles()[i];
                 try {
                     if (mpi) {
-                        if (i >= rank * filesPerProcess && i < rank * filesPerProcess + filesPerProcess) {
-                            files.put(fileEntry);
-                        }
+                        files.put(fileEntry);
                     } else {
                         files.put(fileEntry);
                     }
