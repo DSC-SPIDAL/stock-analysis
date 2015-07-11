@@ -196,6 +196,15 @@ public class FileBreaker {
                     }
                 }
             }
+
+            for (Map.Entry<String, List<Record>> e : records.entrySet()) {
+                BufferedWriter w = writers.get(e.getKey());
+                for (Record r : e.getValue()) {
+                    w.write(r.serialize());
+                    w.newLine();
+                }
+                e.getValue().clear();
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to open the file", e);
         } finally {
