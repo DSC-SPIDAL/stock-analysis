@@ -151,6 +151,8 @@ public class PVectorGenerator {
                 if (!point.isFull()) {
                     point.add(record.getPrice());
                     point.addCap(record.getVolume() * record.getPrice());
+                } else {
+                    System.out.println("Point full cannot add more....");
                 }
                 if (point.noOfElements() == size) {
                     fullCount++;
@@ -178,6 +180,7 @@ public class PVectorGenerator {
             // write the rest of the vectors in the map after finish reading the file
             writeVectors(bufWriter, size);
             System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
+            currentPoints.clear();
         } catch (IOException e) {
             throw new RuntimeException("Failed to open the file");
         } finally {
