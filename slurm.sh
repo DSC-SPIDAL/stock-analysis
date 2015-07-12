@@ -10,10 +10,12 @@ srun -l echo "Hello"
 srun -l rm -rf /scratch/2004_2014/continous_breaks
 srun -l rm -rf /scratch/2004_2014/continous_vectors
 srun -l rm -rf /scratch/2004_2014/continous_matrix
+srun -l rm -rf /scratch/2004_2014/continous_weight
 
 srun -l mkdir -p /scratch/2004_2014/continous_breaks
 srun -l mkdir -p /scratch/2004_2014/continous_vectors
 srun -l mkdir -p /scratch/2004_2014/continous_matrix
+srun -l mkdir -p /scratch/2004_2014/continous_weight
 srun -l cp /N/u/skamburu/data/W2004_2014/2004_2014.csv /scratch/2004_2014/2004_2014.csv
 
 
@@ -29,6 +31,10 @@ srun -l cp -rf /scratch/2004_2014/continous_vectors /N/u/skamburu/data/W2004_201
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp /N/u/skamburu/projects/apps/stock-analysis/mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar DistanceCalculator -v /scratch/2004_2014/continous_vectors -d /scratch/2004_2014/continous_matrix -m
 srun -l mkdir -p /N/u/skamburu/data/W2004_2014/continous_matrix
 srun -l cp -rf /scratch/2004_2014/continous_matrix /N/u/skamburu/data/W2004_2014/
+
+/N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp /N/u/skamburu/projects/apps/stock-analysis/mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar WeightCalculator -v /scratch/2004_2014/continous_vectors -d /scratch/2004_2014/continous_weight -m -n
+srun -l mkdir -p /N/u/skamburu/data/W2004_2014/continous_weight
+srun -l cp -rf /scratch/2004_2014/continous_weight /N/u/skamburu/data/W2004_2014/
 
 #srun "cp /tmp/matrx/* /N/u/skamburu/data/2004_2014/matrix/"
 #srun -l rm -rf /scratch/2004_2014/continous_breaks/*
