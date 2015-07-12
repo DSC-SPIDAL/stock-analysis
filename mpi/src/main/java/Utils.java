@@ -129,7 +129,7 @@ public class Utils {
                         int vectorLength = parts.length - 2;
                         double[] numbers = new double[vectorLength];
                         for (int i = 2; i < parts.length; i++) {
-                            numbers[i - 1] = Double.parseDouble(parts[i]);
+                            numbers[i - 2] = Double.parseDouble(parts[i]);
                         }
                         VectorPoint p = new VectorPoint(key, numbers);
                         p.addCap(cap);
