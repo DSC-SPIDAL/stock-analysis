@@ -95,12 +95,7 @@ public class VectorPoint {
     }
 
     public boolean isFull() {
-        for (double n : numbers) {
-            if (n == -1) {
-                return false;
-            }
-        }
-        return true;
+        return elements == numbers.length - 1;
     }
 
     public int noOfElements() {

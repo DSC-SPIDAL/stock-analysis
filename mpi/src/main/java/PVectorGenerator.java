@@ -146,8 +146,10 @@ public class PVectorGenerator {
                     point = new VectorPoint(key, days);
                     currentPoints.put(key, point);
                 }
-                point.add(record.getPrice());
-                point.addCap(record.getVolume() * record.getPrice());
+                if (!point.isFull()) {
+                    point.add(record.getPrice());
+                    point.addCap(record.getVolume() * record.getPrice());
+                }
                 if (point.noOfElements() == size) {
                     fullCount++;
                 }
