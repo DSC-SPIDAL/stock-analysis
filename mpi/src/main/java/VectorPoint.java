@@ -44,7 +44,7 @@ public class VectorPoint {
     }
 
     public double weight(VectorPoint vc) {
-        return 0;
+        return vc.getTotalCap() * this.totalCap;
     }
 
     public double getTotalCap() {
