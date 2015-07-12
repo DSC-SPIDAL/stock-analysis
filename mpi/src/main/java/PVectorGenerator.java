@@ -30,6 +30,7 @@ public class PVectorGenerator {
     }
 
     public void process() {
+        System.out.println("starting vector generator...");
         File inFolder = new File(this.inFolder);
         if (!inFolder.isDirectory()) {
             System.out.println("In should be a folder");
@@ -79,6 +80,7 @@ public class PVectorGenerator {
                     e.printStackTrace();
                 }
             }
+            System.out.println("Vector generator finished...");
         } catch (MPIException e) {
             throw new RuntimeException("Failed to communicate");
         }
