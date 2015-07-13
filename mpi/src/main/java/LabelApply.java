@@ -111,7 +111,7 @@ public class LabelApply {
 
     private void processFile(String file) {
         String vectorFile = vectorFolder + "/" + file + ".csv";
-        String pointsFile = pointsFolder + "/" + file + "points.txt";
+        String pointsFile = pointsFolder + "/" + file + ".txt";
         String pointsOutFile = distFolder + "/" + file + ".txt";
         List<String> symbols = loadSymbols(vectorFile);
 
@@ -128,6 +128,7 @@ public class LabelApply {
 
             File inFile = new File(inPointsFile);
             if (!inFile.exists()) {
+                System.out.println("ERROR: In file doens't exist");
                 return;
             }
             input = new FileReader(inPointsFile);
@@ -152,6 +153,7 @@ public class LabelApply {
                 bufWriter.newLine();
                 index++;
             }
+            System.out.println("Read lines: " + index);
         } catch (IOException e) {
             throw new RuntimeException("Failed to read/write file", e);
         } finally {
@@ -177,6 +179,7 @@ public class LabelApply {
             while ((record = Utils.parseFile(bufRead)) != null) {
                 maps.put(record.getSymbol(), record.getSymbolString());
             }
+            System.out.println("No of stocks: " + maps.size());
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Failed to open file");
         }
@@ -194,6 +197,7 @@ public class LabelApply {
             String symbol =  permNoToSymbol.get(v.getKey());
             symbols.add(symbol);
         }
+        System.out.println("No of symbols for point: " + symbols.size());
         return symbols;
     }
 }
