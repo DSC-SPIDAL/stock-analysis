@@ -67,7 +67,7 @@ public class PointTransformer {
             // load the corresponding points file
             String fileName = inFile.getName();
             String fileNameWithOutExt = FilenameUtils.removeExtension(fileName);
-            String pointFile = pointFolder + "/" + fileNameWithOutExt + "points.txt";
+            String pointFile = pointFolder + "/" + fileNameWithOutExt + ".txt";
             Map<Integer, Point> points = loadPoints(new File(pointFile), partKeys);
             filesToPoint.put(fileName, points);
             commonKeys.retainAll(partKeys);
