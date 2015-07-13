@@ -18,24 +18,39 @@ mkdir -p $CONT_COMMON_POINTS
 
 # rotate the points
 MANXCAT_JAR=/home/supun/dev/projects/dsspidal/rotate/target/mdsaschisq-1.0-ompi1.8.1-jar-with-dependencies.jar
+
 ROTATE_POINTS=$CONT_COMMON_POINTS/*
+ROTATE_POINT_DIR=$CONT_COMMON_POINTS
+ROTATE_BASE_FILE=$CONT_COMMON_POINTS/2004_2014.csv
 ROTATE_OUT=$BASE_DIR/continous_rotate
-ROTATE_CONTROL=$ROTATE_OUT/rotate
+ROTATE_CONTROL=$ROTATE_OUT/rotate_control
 FULL_POINTS=$CONT_POINTS
+
+mkdir -p $ROTATE_OUT
+mkdir -p $ROTATE_CONTROL
+
 for f in $ROTATE_POINTS
 do
   common_filename="${f##*/}"
-  common_filenameWithoutExtension="${common_filename%.*}"
-  echo $common_filename
+  common_filename_ext="${common_filename%.*}"
   common_file=$CONT_COMMON_POINTS/$common_filename
+  echo 'common file' $common_file
   no_of_common_lines=`sed -n '$=' $common_file`
   echo $no_of_common_lines
 
   ext='.txt'
-  full_file=$FULL_POINTS/$common_filenameWithoutExtension$ext
-  echo $full_file
+  full_file=$FULL_POINTS/$common_filename_ext$ext
+  echo 'full file' $full_file
   no_of_full_lines=`sed -n '$=' $full_file`
   echo $no_of_full_lines
 
-  java -DBaseResultDirectoryName=$ROTATE_OUT -DControlDirectoryName=$ROTATE_CONTROL -DInitializationFileName= -cp $MANXCAT_JAR salsa.mdsaschisq.ManxcatCentral -c config.properties -n 1 -t 1
+  full='full'
+  java -DBaseResultDirectoryName=$ROTATE_OUT \
+  -DControlDirectoryName=$ROTATE_CONTROL \
+  -DInitializationFileName=$ROTATE_BASE_FILE -DReducedVectorOutputFileName=$ROTATE_OUT/$common_filename_ext$ext \
+  -DRotationLabelsFileName=$common_file \
+  -DfinalRotationFileName=$full_file \
+  -DfinalRotationPointCount=$no_of_full_lines \
+  -DDataPoints=$no_of_common_lines \
+  -cp $MANXCAT_JAR salsa.mdsaschisq.ManxcatCentral -c config.properties -n 1 -t 1
 done
