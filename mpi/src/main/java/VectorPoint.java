@@ -1,6 +1,12 @@
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
+import org.apache.commons.math3.random.CorrelatedRandomVectorGenerator;
+import org.apache.commons.math3.random.GaussianRandomGenerator;
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+
+import java.util.Random;
 
 /**
  * A vector read from the file. It has a key to identify and a list of numbers
@@ -183,5 +189,20 @@ public class VectorPoint {
         System.out.println((1 - correlation) / 2);
         double x1 = vc.modCorrelation(x, y);
         System.out.println(x1);
+
+        double a[] = new double[2048];
+        double b[] = new double[2048];
+        Random rand = new Random();
+        for (int i = 0; i < 2048; i++) {
+            a[i] = rand.nextDouble();
+            b[i] = rand.nextDouble();
+        }
+
+        long t = System.currentTimeMillis();
+        double []z = StatUtils.normalize(a);
+        double k[] = StatUtils.normalize(b);
+        EuclideanDistance distance = new EuclideanDistance();
+        distance.compute(z, k);
+        System.out.println(System.currentTimeMillis() - t);
     }
 }
