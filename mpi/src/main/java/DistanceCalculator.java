@@ -2,10 +2,10 @@ import mpi.MPI;
 import mpi.MPIException;
 import mpi.MpiOps;
 import org.apache.commons.cli.*;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -18,12 +18,15 @@ public class DistanceCalculator {
     private boolean mpi = false;
     private MpiOps mpiOps;
     private int distanceType;
+    private boolean sharedInput = false;
 
-    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, int distanceType) {
+    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, int distanceType, boolean sharedInput) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.normalize = normalize;
         this.mpi = mpi;
+        this.distanceType = distanceType;
+        this.sharedInput = sharedInput;
     }
 
     public static void main(String[] args) {
@@ -33,6 +36,7 @@ public class DistanceCalculator {
         options.addOption("n", false, "normalize");
         options.addOption("m", false, "mpi");
         options.addOption("t", true, "distance type");
+        options.addOption("s", false, "shared input directory");
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -41,10 +45,11 @@ public class DistanceCalculator {
             boolean _normalize = cmd.hasOption("n");
             boolean mpi = cmd.hasOption("m");
             int distanceType = Integer.parseInt(cmd.getOptionValue("t"));
+            boolean sharedInput = cmd.hasOption("s");
             if (mpi) {
                 MPI.Init(args);
             }
-            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType);
+            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType, sharedInput);
             program.process();
             if (mpi) {
                 MPI.Finalize();
@@ -69,32 +74,33 @@ public class DistanceCalculator {
 
         int rank = 0;
         int size = 0;
-        int filesPerProcess = 0;
         try {
             if (mpi) {
                 mpiOps = new MpiOps();
                 rank = mpiOps.getRank();
                 size = mpiOps.getSize();
-                filesPerProcess = inFolder.listFiles().length / size;
             }
 
             BlockingQueue<File> files = new LinkedBlockingQueue<File>();
 
-
-            for (int i = 0; i < inFolder.listFiles().length; i++) {
-                File fileEntry = inFolder.listFiles()[i];
-                try {
-                    if (mpi) {
-//                        if (i >= rank * filesPerProcess && i < rank * filesPerProcess + filesPerProcess) {
-//                            files.put(fileEntry);
-//                        }
-                        files.put(fileEntry);
-                    } else {
-                        files.put(fileEntry);
+            List<File> list = new ArrayList<File>();
+            Collections.addAll(list, inFolder.listFiles());
+            Collections.sort(list);
+            if (mpi && sharedInput) {
+                Iterator<File> datesItr = list.iterator();
+                int i = 0;
+                while (datesItr.hasNext()) {
+                    File next = datesItr.next();
+                    if (i == rank) {
+                        files.add(next);
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    i++;
+                    if (i == size) {
+                        i = 0;
+                    }
                 }
+            } else {
+                files.addAll(list);
             }
 
             List<Thread> threads = new ArrayList<Thread>();
@@ -194,7 +200,7 @@ public class DistanceCalculator {
                     VectorPoint sv = secondVectors.get(i);
                     for (int j = 0; j < vectors.size(); j++) {
                         VectorPoint fv = vectors.get(j);
-                        double cor = sv.correlation(fv);
+                        double cor = sv.correlation(fv, distanceType);
                         if (cor > dmax) {
                             dmax = cor;
                         }
