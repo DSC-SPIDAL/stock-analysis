@@ -17,8 +17,9 @@ public class DistanceCalculator {
     private double dmin;
     private boolean mpi = false;
     private MpiOps mpiOps;
+    private int distanceType;
 
-    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi) {
+    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, int distanceType) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.normalize = normalize;
@@ -31,6 +32,7 @@ public class DistanceCalculator {
         options.addOption("d", true, "Distance matrix folder");
         options.addOption("n", false, "normalize");
         options.addOption("m", false, "mpi");
+        options.addOption("t", true, "distance type");
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -38,16 +40,17 @@ public class DistanceCalculator {
             String _distFile = cmd.getOptionValue("d");
             boolean _normalize = cmd.hasOption("n");
             boolean mpi = cmd.hasOption("m");
+            int distanceType = Integer.parseInt(cmd.getOptionValue("t"));
             if (mpi) {
                 MPI.Init(args);
             }
-            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi);
+            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType);
             program.process();
             if (mpi) {
                 MPI.Finalize();
             }
         } catch (MPIException | ParseException e) {
-            e.printStackTrace();
+            System.out.println(options.toString());
         }
     }
 

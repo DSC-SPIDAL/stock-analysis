@@ -18,7 +18,7 @@ mkdir -p $CONT_COMMON_POINTS
 
 # generate the common points
 # --------------------------
-#java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/2004_2014.csv -gp $GLOBAL_POINTS/2004_2014.txt -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS
+java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/2004_2014.csv -gp $GLOBAL_POINTS/2004_2014.txt -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS
 
 # rotate the points
 # ******************
@@ -63,26 +63,26 @@ mkdir -p $ROTATE_CONTROL
 # apply labels to points
 # ------------------------
 # copy the fully rotated files to directory
-FINAL_ROTATE=$BASE_DIR/continous_rotate_final
-mkdir -p $FINAL_ROTATE
-cp $ROTATE_OUT/*full.txt $FINAL_ROTATE
-dir=`pwd`
-cd $FINAL_ROTATE
-for i in SIMPLE*
-do
-    mv "$i" "`echo $i | sed 's/SIMPLE//'`"
-done
-for i in *full.txt
-do
-    mv "$i" "`echo $i | sed 's/full\.txt//'`"
-done
-cd $dir
-LABEL_OUT=$BASE_DIR/coninous_label_points
-mkdir -p $LABEL_OUT
-
-java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
--v $CONT_VECS \
--p $FINAL_ROTATE \
--d $LABEL_OUT \
--o $ORIGINAL_STOCK_FILE \
--s $CAT_FILE
+#FINAL_ROTATE=$BASE_DIR/continous_rotate_final
+#mkdir -p $FINAL_ROTATE
+#cp $ROTATE_OUT/*full.txt $FINAL_ROTATE
+#dir=`pwd`
+#cd $FINAL_ROTATE
+#for i in SIMPLE*
+#do
+#    mv "$i" "`echo $i | sed 's/SIMPLE//'`"
+#done
+#for i in *full.txt
+#do
+#    mv "$i" "`echo $i | sed 's/full\.txt//'`"
+#done
+#cd $dir
+#LABEL_OUT=$BASE_DIR/coninous_label_points
+#mkdir -p $LABEL_OUT
+#
+#java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
+#-v $CONT_VECS \
+#-p $FINAL_ROTATE \
+#-d $LABEL_OUT \
+#-o $ORIGINAL_STOCK_FILE \
+#-s $CAT_FILE

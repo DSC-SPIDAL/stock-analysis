@@ -1,3 +1,4 @@
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 /**
@@ -49,6 +50,20 @@ public class VectorPoint {
 
     public double getTotalCap() {
         return totalCap;
+    }
+
+    public double correlation(VectorPoint vc, int type) {
+        double []xs = vc.numbers;
+        double []ys = this.numbers;
+        if (type == 0) {
+            return correlation(vc);
+        } else if (type == 1) {
+            EuclideanDistance distance = new EuclideanDistance();
+            return distance.compute(xs, ys);
+        } else if (type == 2) {
+            return 0;
+        }
+        return 0;
     }
 
     public double correlation(VectorPoint vc) {
