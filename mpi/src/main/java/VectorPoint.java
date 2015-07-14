@@ -61,9 +61,66 @@ public class VectorPoint {
             EuclideanDistance distance = new EuclideanDistance();
             return distance.compute(xs, ys);
         } else if (type == 2) {
-            return 0;
+            return modCorrelation(xs, ys);
         }
         return 0;
+    }
+
+    public double modCorrelation(double []xs, double []ys) {
+        double sx = 0.0;
+        double sy = 0.0;
+        double sxx = 0.0;
+        double syy = 0.0;
+        double sxy = 0.0;
+
+        int n = xs.length;
+
+        for(int i = 0; i < n; ++i) {
+            double x = xs[i];
+            double y = ys[i];
+
+            sx += x;
+            sy += y;
+        }
+
+        double sum = 0;
+        for (int i = 0; i < n; i++) {
+            double x = xs[i];
+            double y = ys[i];
+             sum += Math.abs(n * x / sx - n * y / sy);
+        }
+
+        return sum / n;
+    }
+
+    public double correlation(double []xs, double []ys) {
+        double sx = 0.0;
+        double sy = 0.0;
+        double sxx = 0.0;
+        double syy = 0.0;
+        double sxy = 0.0;
+
+        int n = xs.length;
+
+        for(int i = 0; i < n; ++i) {
+            double x = xs[i];
+            double y = ys[i];
+
+            sx += x;
+            sy += y;
+            sxx += x * x;
+            syy += y * y;
+            sxy += x * y;
+        }
+
+        // covariation
+        double cov = sxy / n - sx * sy / n / n;
+        // standard error of x
+        double sigmax = Math.sqrt(sxx / n -  sx * sx / n / n);
+        // standard error of y
+        double sigmay = Math.sqrt(syy / n -  sy * sy / n / n);
+        // correlation is just a normalized covariation
+        return (1 -cov / (sigmax * sigmay)) /2;
     }
 
     public double correlation(VectorPoint vc) {
@@ -73,35 +130,6 @@ public class VectorPoint {
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         double cor = pearsonsCorrelation.correlation(xs, ys);
         return (1 - (1 + cor) / 2) * (1 - (1 + cor) / 2);
-
-//        double sx = 0.0;
-//        double sy = 0.0;
-//        double sxx = 0.0;
-//        double syy = 0.0;
-//        double sxy = 0.0;
-//
-//        int n = xs.length;
-//
-//        for(int i = 0; i < n; ++i) {
-//            double x = xs[i];
-//            double y = ys[i];
-//
-//            sx += x;
-//            sy += y;
-//            sxx += x * x;
-//            syy += y * y;
-//            sxy += x * y;
-//        }
-//
-//        // covariation
-//        double cov = sxy / n - sx * sy / n / n;
-//        // standard error of x
-//        double sigmax = Math.sqrt(sxx / n -  sx * sx / n / n);
-//        // standard error of y
-//        double sigmay = Math.sqrt(syy / n -  sy * sy / n / n);
-//
-//        // correlation is just a normalized covariation
-//        return (1 -cov / (sigmax * sigmay)) /2;
     }
 
     public void add(double number) {
@@ -136,5 +164,18 @@ public class VectorPoint {
             return null;
         }
         return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        double x[] = {1, 2, 3, 4, 5, 6, 7, 8};
+//        double y[] = {2, 4, 8, 16, 32, 64, 128, 256};
+//        double y[] = {1, 2, 3, 4, 5, 6, 7, 8};
+        double y[] = {8, 7, 6, 5, 3, 2, 1, 0};
+
+        VectorPoint vc = new VectorPoint(1, 10);
+        double correlation = vc.correlation(x, y);
+        System.out.println((1 - correlation) / 2);
+        double x1 = vc.modCorrelation(x, y);
+        System.out.println(x1);
     }
 }
