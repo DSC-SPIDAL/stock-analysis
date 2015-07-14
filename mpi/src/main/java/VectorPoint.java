@@ -1,4 +1,5 @@
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
+import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 /**
@@ -62,6 +63,11 @@ public class VectorPoint {
             return distance.compute(xs, ys);
         } else if (type == 2) {
             return modCorrelation(xs, ys);
+        } else if (type == 3) {
+            double []x = StatUtils.normalize(xs);
+            double y[] = StatUtils.normalize(ys);
+            EuclideanDistance distance = new EuclideanDistance();
+            return distance.compute(x, y);
         }
         return 0;
     }
