@@ -49,7 +49,7 @@ srun -l echo "Hello"
 #srun -l mkdir -p /N/u/skamburu/data/W2004_2014/continous_matrix
 #srun -l cp -rf /scratch/2004_2014/continous_matrix /N/u/skamburu/data/W2004_2014/
 
-/N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $MATRIX_DIR -m -n
+/N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $MATRIX_DIR -m -n -sh
 #srun -l mkdir -p /N/u/skamburu/data/W2004_2014/continous_weight
 #srun -l cp -rf /scratch/2004_2014/continous_weight /N/u/skamburu/data/W2004_2014/
 

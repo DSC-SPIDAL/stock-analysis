@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,6 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * We need two types of weights. First is for rotations and the second is for damds
  */
 public class WeightCalculator {
+    private final boolean sharedInput;
     private String vectorFolder;
     private String distFolder;
     private boolean normalize;
@@ -25,12 +28,13 @@ public class WeightCalculator {
     private boolean simple = true;
     private MpiOps mpiOps;
 
-    public WeightCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, boolean simple) {
+    public WeightCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, boolean simple, boolean sharedInput) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.normalize = normalize;
         this.simple = simple;
         this.mpi = mpi;
+        this.sharedInput = sharedInput;
     }
 
     public static void main(String[] args) {
@@ -40,6 +44,7 @@ public class WeightCalculator {
         options.addOption("n", false, "normalize");
         options.addOption("m", false, "mpi");
         options.addOption("s", false, "True: gen simple list, False: Gen matrix");
+        options.addOption("sh", false, "Shared file system");
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -48,10 +53,11 @@ public class WeightCalculator {
             boolean _normalize = cmd.hasOption("n");
             boolean mpi = cmd.hasOption("m");
             boolean simple = cmd.hasOption("s");
+            boolean sharedInput = cmd.hasOption("sh");
             if (mpi) {
                 MPI.Init(args);
             }
-            WeightCalculator program = new WeightCalculator(_vectorFile, _distFile, _normalize, mpi, simple);
+            WeightCalculator program = new WeightCalculator(_vectorFile, _distFile, _normalize, mpi, simple, sharedInput);
             program.process();
             if (mpi) {
                 MPI.Finalize();
@@ -75,29 +81,33 @@ public class WeightCalculator {
 
         int rank = 0;
         int size = 0;
-        int filesPerProcess = 0;
         try {
             if (mpi) {
                 mpiOps = new MpiOps();
                 rank = mpiOps.getRank();
                 size = mpiOps.getSize();
-                filesPerProcess = inFolder.listFiles().length / size;
             }
 
             BlockingQueue<File> files = new LinkedBlockingQueue<File>();
 
-
-            for (int i = 0; i < inFolder.listFiles().length; i++) {
-                File fileEntry = inFolder.listFiles()[i];
-                try {
-                    if (mpi) {
-                        files.put(fileEntry);
-                    } else {
-                        files.put(fileEntry);
+            List<File> list = new ArrayList<File>();
+            Collections.addAll(list, inFolder.listFiles());
+            Collections.sort(list);
+            if (mpi && sharedInput) {
+                Iterator<File> datesItr = list.iterator();
+                int i = 0;
+                while (datesItr.hasNext()) {
+                    File next = datesItr.next();
+                    if (i == rank) {
+                        files.add(next);
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    i++;
+                    if (i == size) {
+                        i = 0;
+                    }
                 }
+            } else {
+                files.addAll(list);
             }
 
             List<Thread> threads = new ArrayList<Thread>();
