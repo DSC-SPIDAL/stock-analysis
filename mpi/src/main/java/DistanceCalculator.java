@@ -185,7 +185,7 @@ public class DistanceCalculator {
             // now start from the begining and go through the whole file
             List<VectorPoint> secondVectors;
             do {
-                // System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
+
                 if (readStartIndex != startIndex) {
                     secondVectors = Utils.readVectors(fileEntry, readStartIndex, readEndIndex);
                 } else {
@@ -195,7 +195,7 @@ public class DistanceCalculator {
                 if (secondVectors.size() == 0) {
                     break;
                 }
-
+                System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex + " read size: " + secondVectors.size());
                 for (int i = 0; i < secondVectors.size(); i++) {
                     VectorPoint sv = secondVectors.get(i);
                     for (int j = 0; j < vectors.size(); j++) {
