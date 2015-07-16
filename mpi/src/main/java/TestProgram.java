@@ -11,7 +11,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Program {
+public class TestProgram {
     private String vectorFolder;
     private String distFolder;
     private boolean normalize;
@@ -21,7 +21,7 @@ public class Program {
 
     private MpiOps mpiOps;
 
-    public Program(String vectorFolder, String distFolder, boolean normalize) {
+    public TestProgram(String vectorFolder, String distFolder, boolean normalize) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.normalize = normalize;
@@ -39,7 +39,7 @@ public class Program {
             String _distFile = cmd.getOptionValue("d");
             boolean _normalize = cmd.hasOption("n");
             MPI.Init(args);
-            Program program = new Program(_vectorFile, _distFile, _normalize);
+            TestProgram program = new TestProgram(_vectorFile, _distFile, _normalize);
             program.process();
             MPI.Finalize();
         } catch (ParseException | MPIException e) {

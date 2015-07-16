@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BASE_DIR=/home/supun/dev/projects/dsspidal/data/E2004_2014
+BASE_DIR=/home/supun/dev/projects/dsspidal/data/EN2004_2014
 GLOBAL_VECS=$BASE_DIR/global_vectors
 GLOBAL=$BASE_DIR/global
 ORIGINAL_STOCK_FILE=$GLOBAL/2004_2014.csv
@@ -18,10 +18,12 @@ mkdir -p $CONT_COMMON_POINTS
 
 # generate the common points
 # --------------------------
+echo "generating common points"
 java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/2004_2014.csv -gp $GLOBAL_POINTS/2004_2014.txt -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS
 
 # rotate the points
 # ******************
+echo "Rotating points"
 MANXCAT_JAR=/home/supun/dev/projects/dsspidal/rotate/target/mdsaschisq-1.0-ompi1.8.1-jar-with-dependencies.jar
 
 ROTATE_POINTS=$CONT_COMMON_POINTS/*

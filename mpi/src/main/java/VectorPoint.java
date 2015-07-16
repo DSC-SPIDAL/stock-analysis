@@ -135,6 +135,52 @@ public class VectorPoint {
         return (1 -cov / (sigmax * sigmay)) /2;
     }
 
+//    public double correlation(VectorPoint vc) {
+//        double []xs = vc.numbers;
+//        double []ys = this.numbers;
+//        double sumxs = 0;
+//        double sumys = 0;
+//        double sumxsys = 0;
+//        double sumxs2 = 0;
+//        double sumys2 = 0;
+//        double r;
+//        double nr=0;
+//        double dr_1=0;
+//        double dr_2=0;
+//        double dr_3=0;
+//        double dr=0;
+//
+//        double n= xs.length;
+//        double xs1[] = new double[xs.length];
+//        double ys1[] = new double[xs.length];
+//        for(int i = 0; i < n; ++i)
+//        {
+//            xs1[i]= xs[i] * xs[i];
+//            ys1[i]= ys[i] * ys[i];
+//        }
+//
+//        for(int i=0;i<n;i++)
+//        {
+//            sumxs+=xs1[i];
+//            sumys+=ys1[i];
+//            sumxsys+= xs1[i] * ys1[i];
+//            sumxs2+= sumxs * sumxs;
+//            sumys2+= sumys * sumys;
+//        }
+//
+//        nr =(n * sumxsys)-(sumxs * sumys);
+//        dr_1=(n*sumxs2)- sumxs2;
+//        dr_2=(n*sumys2)-sumys2;
+//        dr_3=dr_1*dr_2;
+//        dr=Math.sqrt(dr_3);
+//        r=(nr/dr);
+//        String s = String.format("%.2f",r);
+//        r = Double.parseDouble(s);
+//        System.out.println("Total Numbers:"+n+"\nCorrelation Coefficient:"+r);
+//
+//        return  r;
+//    }
+
     public double correlation(VectorPoint vc) {
         double []xs = vc.numbers;
         double []ys = this.numbers;
