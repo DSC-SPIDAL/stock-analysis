@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BASE_DIR=/home/supun/dev/projects/dsspidal/data/E2004_2014
+BASE_DIR=/home/supun/dev/projects/dsspidal/data/10W2004_2014
 GLOBAL_VECS=$BASE_DIR/global_vectors
 GLOBAL=$BASE_DIR/global
 ORIGINAL_STOCK_FILE=$GLOBAL/2004_2014.csv

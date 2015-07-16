@@ -18,7 +18,7 @@ public class WriterWrapper {
         }
     }
 
-    public void write(int val) {
+    public void write(short val) {
         try {
             if (!print) {
                 dataOutputStream.writeShort(val);

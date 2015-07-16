@@ -219,7 +219,7 @@ public class DistanceCalculator {
             for (int i = 0; i < vectors.size(); i++) {
                 double[] row = values[i];
                 for (double value : row) {
-                    int val = (int) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
+                    short val = (short) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
                     writer.write(val);
                 }
                 writer.line();
