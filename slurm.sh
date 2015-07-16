@@ -7,7 +7,7 @@
 
 JAR_FILE=/N/u/skamburu/projects/apps/stock-analysis/mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar
 
-BASE_DIR=/N/u/skamburu/data/M2004_2014
+BASE_DIR=/N/u/skamburu/data/C2004_2014
 VECTOR_DIR=$BASE_DIR/vectors
 MATRIX_DIR=$BASE_DIR/matrix
 WEIGHT_MATRIX_DIR=$BASE_DIR/weight_matrix
