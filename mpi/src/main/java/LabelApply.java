@@ -48,7 +48,7 @@ public class LabelApply {
     }
 
     private void init() {
-        permNoToSymbol = loadMapping(originalStockFile);
+        permNoToSymbol = Utils.loadMapping(originalStockFile);
         Map<String, Integer> symbolToPerm = new HashMap<String, Integer>();
         for (Map.Entry<Integer, String> entry : permNoToSymbol.entrySet()) {
             symbolToPerm.put(entry.getValue(), entry.getKey());
@@ -166,25 +166,7 @@ public class LabelApply {
         }
     }
 
-    // first read the original stock file and load the mapping from permno to stock symbol
-    private Map<Integer, String> loadMapping(String inFile) {
-        System.out.println("Reading original stock file: " + inFile);
-        BufferedReader bufRead = null;
-        Map<Integer, String> maps = new HashMap<Integer, String>();
-        try {
-            FileReader input = new FileReader(inFile);
-            bufRead = new BufferedReader(input);
 
-            Record record;
-            while ((record = Utils.parseFile(bufRead)) != null) {
-                maps.put(record.getSymbol(), record.getSymbolString());
-            }
-            System.out.println("No of stocks: " + maps.size());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Failed to open file");
-        }
-        return maps;
-    }
 
     // load symbols for each point in file
     private List<String> loadSymbols(String vectorFile) {

@@ -200,4 +200,24 @@ public class Utils {
         String []splits = line.split("\",\"");
         return new SectorRecord(splits[5].replaceAll("^\"|\"$", ""), splits[0].replaceAll("^\"|\"$", ""));
     }
+
+    // first read the original stock file and load the mapping from permno to stock symbol
+    public static Map<Integer, String> loadMapping(String inFile) {
+        System.out.println("Reading original stock file: " + inFile);
+        BufferedReader bufRead = null;
+        Map<Integer, String> maps = new HashMap<Integer, String>();
+        try {
+            FileReader input = new FileReader(inFile);
+            bufRead = new BufferedReader(input);
+
+            Record record;
+            while ((record = Utils.parseFile(bufRead)) != null) {
+                maps.put(record.getSymbol(), record.getSymbolString());
+            }
+            System.out.println("No of stocks: " + maps.size());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Failed to open file");
+        }
+        return maps;
+    }
 }

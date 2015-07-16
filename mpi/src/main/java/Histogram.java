@@ -36,21 +36,51 @@ public class Histogram {
     private class Bin {
         double start;
         double end;
-        int freq;
+        List<Integer> permNos = new ArrayList<Integer>();
+        List<String> symbols = new ArrayList<>();
+
+        public void serialize() {
+
+        }
     }
 
-    public void genHistoGram(File inFile, String outFile) {
+    public Bin[] genHistoGram(File inFile, String outFile, String originalStockFile, int noOfBins) {
         Map<Integer, Double> vecs = proceeVectorFile(inFile);
         List<Double> values = new ArrayList<Double>(vecs.values());
         Collections.sort(values);
 
         int binSize = values.size() / bins;
         int currentCount = 0;
-        for (int i = 0; i < values.size(); i++) {
-            if (currentCount < 0) {
+        Map<Integer, String> permNoToSymbol = Utils.loadMapping(originalStockFile);
 
+        Bin []bins = new Bin[noOfBins];
+        for (int i = 0; i < noOfBins; i++) {
+            Bin bin = new Bin();
+            bin.start = values.get(i * binSize);
+            bin.end = values.get((i + 1) * binSize);
+            bins[i] = bin;
+        }
+
+        for (Map.Entry<Integer, Double> e : vecs.entrySet()) {
+            int perm = e.getKey();
+            double val = e.getValue();
+            Bin b = getBinIndex(val, bins);
+            b.permNos.add(perm);
+            b.symbols.add(permNoToSymbol.get(perm));
+        }
+        return bins;
+    }
+
+    private Bin getBinIndex(double val, Bin []bins) {
+        for (int i = 0; i < bins.length - 1; i++) {
+            Bin b = bins[i];
+            if (b.start >= val) {
+                return b;
+            } else if (b.end < val) {
+                return b;
             }
         }
+        return bins[bins.length - 1];
     }
 
     public Map<Integer, Double> proceeVectorFile(File inFile) {
