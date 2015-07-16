@@ -227,7 +227,7 @@ public class WeightCalculator {
             // now start from the begining and go through the whole file
             List<VectorPoint> secondVectors;
             do {
-                // System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
+                System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
                 if (readStartIndex != startIndex) {
                     secondVectors = Utils.readVectors(fileEntry, readStartIndex, readEndIndex);
                 } else {
