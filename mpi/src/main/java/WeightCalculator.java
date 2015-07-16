@@ -162,9 +162,9 @@ public class WeightCalculator {
         if (fileEntry.isDirectory()) {
             return;
         }
-        System.out.println("Calculator vector file: " + fileEntry.getName());
 
         String outFileName = distFolder + "/" + fileEntry.getName();
+        System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
         writer = new WriterWrapper(outFileName, false);
 
         int startIndex = 0;
@@ -194,9 +194,9 @@ public class WeightCalculator {
         if (fileEntry.isDirectory()) {
             return;
         }
-        System.out.println("Calculator vector file: " + fileEntry.getName());
 
         String outFileName = distFolder + "/" + fileEntry.getName();
+        System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
         writer = new WriterWrapper(outFileName, false);
 
         int lineCount = countLines(fileEntry);
@@ -227,7 +227,7 @@ public class WeightCalculator {
             // now start from the begining and go through the whole file
             List<VectorPoint> secondVectors;
             do {
-                // System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
+                System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
                 if (readStartIndex != startIndex) {
                     secondVectors = Utils.readVectors(fileEntry, readStartIndex, readEndIndex);
                 } else {
