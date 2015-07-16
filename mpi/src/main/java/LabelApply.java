@@ -10,6 +10,7 @@ public class LabelApply {
     private String distFolder;
     private String originalStockFile;
     private String sectorFile;
+    private boolean histogram;
 
     private Map<Integer, String> permNoToSymbol = new HashMap<Integer, String>();
     private Map<String, Integer> sectorToClazz = new HashMap<String, Integer>();
@@ -22,6 +23,7 @@ public class LabelApply {
         options.addOption("d", true, "Destination folder");
         options.addOption("o", true, "Original stock file");
         options.addOption("s", true, "Sector file");
+        options.addOption("h", false, "Gen from histogram");
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -30,19 +32,21 @@ public class LabelApply {
             String distFolder = cmd.getOptionValue("d");
             String originalStocks = cmd.getOptionValue("o");
             String sectorFile = cmd.getOptionValue("s");
+            boolean histogram = cmd.hasOption("h");
 
-            LabelApply program = new LabelApply(vectorFile, pointsFolder, distFolder, originalStocks, sectorFile);
+            LabelApply program = new LabelApply(vectorFile, pointsFolder, distFolder, originalStocks, sectorFile, histogram);
             program.process();
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public LabelApply(String vectorFolder, String pointsFolder, String distFolder, String originalStockFile, String sectorFile) {
+    public LabelApply(String vectorFolder, String pointsFolder, String distFolder, String originalStockFile, String sectorFile, boolean histogram) {
         this.vectorFolder = vectorFolder;
         this.pointsFolder = pointsFolder;
         this.distFolder = distFolder;
         this.originalStockFile = originalStockFile;
+        this.histogram = histogram;
         this.sectorFile = sectorFile;
         init();
     }
@@ -53,11 +57,8 @@ public class LabelApply {
         for (Map.Entry<Integer, String> entry : permNoToSymbol.entrySet()) {
             symbolToPerm.put(entry.getValue(), entry.getKey());
         }
-        Map<String, List<String>> sectors = loadSectors(sectorFile);
-        sectorToClazz = convertSectorsToClazz(sectors);
-        for (Map.Entry<String, Integer> entry : sectorToClazz.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
+
+
     }
 
     public void process() {
@@ -67,14 +68,57 @@ public class LabelApply {
             return;
         }
 
+        if (!histogram) {
+            Map<String, List<String>> sectors = loadStockSectors(sectorFile);
+            sectorToClazz = convertSectorsToClazz(sectors);
+            for (Map.Entry<String, Integer> entry : sectorToClazz.entrySet()) {
+                System.out.println(entry.getKey() + " : " + entry.getValue());
+            }
+        }
+
+
         for (File inFile : inFolder.listFiles()) {
             String fileName = inFile.getName();
             String fileNameWithOutExt = FilenameUtils.removeExtension(fileName);
+            if (histogram) {
+                sectorToClazz.clear();
+                invertedSectors.clear();
+
+                Map<String, List<String>> sectors = loadHistoSectors(sectorFile + "/" + fileNameWithOutExt + ".csv");
+                sectorToClazz = convertSectorsToClazz(sectors);
+                for (Map.Entry<String, Integer> entry : sectorToClazz.entrySet()) {
+                    System.out.println(entry.getKey() + " : " + entry.getValue());
+                }
+            }
             processFile(fileNameWithOutExt);
         }
     }
 
-    private Map<String, List<String>> loadSectors(String sectorFile) {
+    private Map<String, List<String>> loadHistoSectors(String sectorFile) {
+        FileReader input;
+        Map<String, List<String>> sectors = new HashMap<String, List<String>>();
+        try {
+            input = new FileReader(sectorFile);
+            BufferedReader bufRead = new BufferedReader(input);
+            String line;
+
+            int i = 0;
+            while ((line = bufRead.readLine()) != null) {
+                Bin sectorRecord = Utils.readBin(line);
+                List<String> stockList = sectorRecord.symbols;
+                String key = Integer.toString(i);
+                sectors.put(key, stockList);
+                for (String s : stockList) {
+                    invertedSectors.put(s, key);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load sector file", e);
+        }
+        return sectors;
+    }
+
+    private Map<String, List<String>> loadStockSectors(String sectorFile) {
         FileReader input;
         Map<String, List<String>> sectors = new HashMap<String, List<String>>();
         try {

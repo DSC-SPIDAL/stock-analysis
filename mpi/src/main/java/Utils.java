@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.function.DoubleUnaryOperator;
 
 public class Utils {
     public static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
@@ -199,6 +200,17 @@ public class Utils {
     public static SectorRecord readSectorRecord(String line) {
         String []splits = line.split("\",\"");
         return new SectorRecord(splits[5].replaceAll("^\"|\"$", ""), splits[0].replaceAll("^\"|\"$", ""));
+    }
+
+    public static Bin readBin(String line) {
+        String []parts = line.split(",");
+        double start = Double.parseDouble(parts[1]);
+        double end = Double.parseDouble(parts[2]);
+        Bin bin = new Bin();
+        for (int i = 3; i < parts.length; i++) {
+            bin.symbols.add(parts[i]);
+        }
+        return bin;
     }
 
     // first read the original stock file and load the mapping from permno to stock symbol

@@ -62,7 +62,7 @@ public class DistanceCalculator {
     private static int INC = 3000;
 
     private void process() {
-        System.out.printf("Starting Distance calculator...");
+        System.out.println("Starting Distance calculator...");
         File inFolder = new File(vectorFolder);
         if (!inFolder.isDirectory()) {
             System.out.println("In should be a folder");
@@ -118,7 +118,7 @@ public class DistanceCalculator {
                     e.printStackTrace();
                 }
             }
-            System.out.printf("Distance calculator finished...");
+            System.out.println("Distance calculator finished...");
         } catch (MPIException e) {
             throw new RuntimeException("Failed to communicate");
         }

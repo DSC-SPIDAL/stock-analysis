@@ -1,19 +1,22 @@
-
 import org.apache.commons.cli.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Histogram {
     private String vectorFolder;
     private String distFolder;
+    private String stockFile;
     private static int INC = 3000;
     private int bins = 6;
 
-    public Histogram(String vectorFolder, String distFolder, int bins) {
+    public Histogram(String vectorFolder, String distFolder, int bins, String stockFile) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.bins = bins;
+        this.stockFile = stockFile;
     }
 
     public static void main(String[] args) {
@@ -21,37 +24,78 @@ public class Histogram {
         options.addOption("v", true, "Input Vector folder");
         options.addOption("d", true, "Distance matrix folder");
         options.addOption("b", true, "Number of bins");
+        options.addOption("s", true, "Stock file");
+
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
             String  _vectorFile = cmd.getOptionValue("v");
             String _distFile = cmd.getOptionValue("d");
             int bins = Integer.parseInt(cmd.getOptionValue("b"));
-            Histogram histogram = new Histogram(_vectorFile, _distFile, bins);
+            String stockFile = cmd.getOptionValue("s");
+
+            Histogram histogram = new Histogram(_vectorFile, _distFile, bins, stockFile);
+            histogram.process();
         } catch (ParseException e) {
             System.out.println(options.toString());
         }
     }
 
-    private class Bin {
-        double start;
-        double end;
-        List<Integer> permNos = new ArrayList<Integer>();
-        List<String> symbols = new ArrayList<>();
+    private void process() {
+        System.out.println("Starting Histogram calculator...");
+        File inFolder = new File(vectorFolder);
+        if (!inFolder.isDirectory()) {
+            System.out.println("In should be a folder");
+            return;
+        }
+        Map<Integer, String> permNoToSymbol = Utils.loadMapping(stockFile);
 
-        public void serialize() {
+        // create the out directory
+        Utils.createDirectory(distFolder);
+        BlockingQueue<File> files = new LinkedBlockingQueue<File>();
+        List<File> list = new ArrayList<File>();
+        Collections.addAll(list, inFolder.listFiles());
+        Collections.sort(list);
+        files.addAll(list);
+        for (File f : files) {
+            String outFileName = distFolder + "/" + f.getName();
+            Bin []bins = genHistoGram(f, stockFile, this.bins, permNoToSymbol);
+            writeBins(outFileName, bins);
+        }
+        System.out.println("Histogram calculator finished...");
+    }
 
+    public void writeBins(String outFile, Bin[] bins) {
+        BufferedWriter bufWriter = null;
+        try {
+            FileOutputStream fos = new FileOutputStream(new File(outFile));
+            bufWriter = new BufferedWriter(new OutputStreamWriter(fos));
+            for (int i = 0; i < bins.length; i++) {
+                String s = i + "," + bins[i].serializeSymbols();
+                bufWriter.write(s);
+                bufWriter.newLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Faile to write bins", e);
+        } finally {
+            if (bufWriter != null) {
+                try {
+                    bufWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    public Bin[] genHistoGram(File inFile, String outFile, String originalStockFile, int noOfBins) {
+
+
+    public Bin[] genHistoGram(File inFile, String originalStockFile, int noOfBins, Map<Integer, String> permNoToSymbol) {
         Map<Integer, Double> vecs = proceeVectorFile(inFile);
         List<Double> values = new ArrayList<Double>(vecs.values());
         Collections.sort(values);
 
         int binSize = values.size() / bins;
-        int currentCount = 0;
-        Map<Integer, String> permNoToSymbol = Utils.loadMapping(originalStockFile);
 
         Bin []bins = new Bin[noOfBins];
         for (int i = 0; i < noOfBins; i++) {
@@ -76,7 +120,7 @@ public class Histogram {
             Bin b = bins[i];
             if (b.start >= val) {
                 return b;
-            } else if (b.end < val) {
+            } else if (b.end > val) {
                 return b;
             }
         }
