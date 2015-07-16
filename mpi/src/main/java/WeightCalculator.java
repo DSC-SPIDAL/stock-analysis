@@ -194,9 +194,9 @@ public class WeightCalculator {
         if (fileEntry.isDirectory()) {
             return;
         }
-        System.out.println("Calculator vector file: " + fileEntry.getName());
 
         String outFileName = distFolder + "/" + fileEntry.getName();
+        System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
         writer = new WriterWrapper(outFileName, false);
 
         int lineCount = countLines(fileEntry);
