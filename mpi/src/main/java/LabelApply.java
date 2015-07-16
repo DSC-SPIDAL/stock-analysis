@@ -111,6 +111,7 @@ public class LabelApply {
                 for (String s : stockList) {
                     invertedSectors.put(s, key);
                 }
+                i++;
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sector file", e);

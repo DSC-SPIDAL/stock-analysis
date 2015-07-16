@@ -46,6 +46,12 @@ public class DistanceCalculator {
             boolean mpi = cmd.hasOption("m");
             int distanceType = Integer.parseInt(cmd.getOptionValue("t"));
             boolean sharedInput = cmd.hasOption("s");
+            String print = "vector: " + _vectorFile + " ,distance matrix folder: "
+                    + _distFile + " ,normalize: "
+                    + _normalize + " ,mpi: " + mpi
+                    + " ,distance type: " + distanceType
+                    + " ,shared input: " + sharedInput;
+            System.out.println(print);
             if (mpi) {
                 MPI.Init(args);
             }
