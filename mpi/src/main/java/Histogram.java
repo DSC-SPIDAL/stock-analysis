@@ -164,7 +164,8 @@ public class Histogram {
             min = aN < min ? aN : min;
             max = aN > max ? aN : max;
         }
-        double delta = max - min;
+//        double delta = max - min;
+        double delta = n[0] - n[n.length - 1];
         return delta * n.length / sum;
     }
 }

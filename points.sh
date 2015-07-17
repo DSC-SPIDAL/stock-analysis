@@ -6,10 +6,10 @@ GLOBAL=$BASE_DIR/global
 ORIGINAL_STOCK_FILE=$GLOBAL/2004_2014.csv
 #CAT_FILE=$BASE_DIR/all_companylist.csv
 CAT_FILE=$BASE_DIR/histogram
-GLOBAL_POINTS=$BASE_DIR/global_points
+GLOBAL_POINTS=$BASE_DIR/w_g_points
 CONT_VECS=$BASE_DIR/vectors
-CONT_POINTS=$BASE_DIR/points
-CONT_COMMON_POINTS=$BASE_DIR/common_points
+CONT_POINTS=$BASE_DIR/w_points
+CONT_COMMON_POINTS=$BASE_DIR/w_common_points
 HIST_DIR=$BASE_DIR/histogram
 
 mkdir -p $CONT_COMMON_POINTS
@@ -31,8 +31,8 @@ MANXCAT_JAR=/home/supun/dev/projects/dsspidal/rotate/target/mdsaschisq-1.0-ompi1
 ROTATE_POINTS=$CONT_COMMON_POINTS/*
 ROTATE_POINT_DIR=$CONT_COMMON_POINTS
 ROTATE_BASE_FILE=$CONT_COMMON_POINTS/2004_2014.csv
-ROTATE_OUT=$BASE_DIR/rotate
-ROTATE_CONTROL=$ROTATE_OUT/rotate_control
+ROTATE_OUT=$BASE_DIR/W_rotate
+ROTATE_CONTROL=$ROTATE_OUT/w_rotate_control
 FULL_POINTS=$CONT_POINTS
 
 mkdir -p $ROTATE_OUT
@@ -67,7 +67,7 @@ done
 # apply labels to points
 # ------------------------
 # copy the fully rotated files to directory
-FINAL_ROTATE=$BASE_DIR/rotate_final
+FINAL_ROTATE=$BASE_DIR/w_rotate_final
 mkdir -p $FINAL_ROTATE
 cp $ROTATE_OUT/*full.txt $FINAL_ROTATE
 dir=`pwd`
@@ -81,7 +81,7 @@ do
     mv "$i" "`echo $i | sed 's/full\.txt//'`"
 done
 cd $dir
-LABEL_OUT=$BASE_DIR/label_points_hist
+LABEL_OUT=$BASE_DIR/w_label_points_hist
 mkdir -p $LABEL_OUT
 
 java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
