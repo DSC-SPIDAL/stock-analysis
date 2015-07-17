@@ -1,14 +1,16 @@
 #!/bin/sh
 
-BASE_DIR=/home/supun/dev/projects/dsspidal/data/E2004_2014
+BASE_DIR=/home/supun/dev/projects/dsspidal/data/C2004_2014
 GLOBAL_VECS=$BASE_DIR/global_vectors
 GLOBAL=$BASE_DIR/global
 ORIGINAL_STOCK_FILE=$GLOBAL/2004_2014.csv
-CAT_FILE=$BASE_DIR/all_companylist.csv
+#CAT_FILE=$BASE_DIR/all_companylist.csv
+CAT_FILE=$BASE_DIR/histogram
 GLOBAL_POINTS=$BASE_DIR/global_points
 CONT_VECS=$BASE_DIR/vectors
 CONT_POINTS=$BASE_DIR/points
 CONT_COMMON_POINTS=$BASE_DIR/common_points
+HIST_DIR=$BASE_DIR/histogram
 
 mkdir -p $CONT_COMMON_POINTS
 
@@ -19,7 +21,9 @@ mkdir -p $CONT_COMMON_POINTS
 # generate the common points
 # --------------------------
 java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/2004_2014.csv -gp $GLOBAL_POINTS/2004_2014.txt -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS
-
+# generate histogram
+# --------------------
+java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $CONT_VECS -s $ORIGINAL_STOCK_FILE -d $HIST_DIR -b 10
 # rotate the points
 # ******************
 MANXCAT_JAR=/home/supun/dev/projects/dsspidal/rotate/target/mdsaschisq-1.0-ompi1.8.1-jar-with-dependencies.jar
@@ -77,7 +81,7 @@ do
     mv "$i" "`echo $i | sed 's/full\.txt//'`"
 done
 cd $dir
-LABEL_OUT=$BASE_DIR/coninous_label_points
+LABEL_OUT=$BASE_DIR/label_points_hist
 mkdir -p $LABEL_OUT
 
 java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
@@ -85,4 +89,4 @@ java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
 -p $FINAL_ROTATE \
 -d $LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
--s $CAT_FILE
+-s $HIST_DIR -h
