@@ -20,13 +20,26 @@ FileBreaker program is used to break large stock files in to smaller files for p
 ```
 PermNo,Date,StockSym,Price,Volume
 ```
-Then these stock files are used to create vector files.
+These stock files are used to create vector files. This step isn't mandotory and vector generator can be used to create vector files directly from the stock file as wel..
+
+#### How to run
+
+
 
 ### PVectorGenerator
 
-This program creates a file with stocks in a vector format. Each row of the file contains stock identifier, stock cap and prices in as a vector for each day
+This program creates a file with stocks in a vector format. Each row of the file contains stock identifier, stock cap and day prices as a vector.
 
- PermNo,Cap,prices.....
+```
+PermNo,Cap,prices.....
+```
 
- ###
+### DistanceCalculator
+
+Produces a distance file given the vector files.
+
+
+### HistoGram
+
+Create a Histo
 
