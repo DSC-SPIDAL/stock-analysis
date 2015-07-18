@@ -7,3 +7,26 @@ java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar DistanceCalcu
 java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar VectorGenerator -i /home/supun/dev/projects/dsspidal/data/2004_2014/stock_2004_2014.csv -o /home/supun/dev/projects/dsspidal/data/2004_2014/vectors -s 20040101 -e 20140101 -d 30
 
 java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar VectorGenerator -i /home/supun/dev/projects/dsspidal/data/2004_2014/2004_2014.csv -o /home/supun/dev/projects/dsspidal/data/2004_2014/vectors -s 20040101 -e 20150101 -d 370
+
+
+The workflow of Stock Analysis is as following.
+
+### FileBreaker
+
+FileBreaker program is used to break large stock files in to smaller files for processing. For example if we are interested in processing yearly data the stock file can be broken by year to multiple files.
+
+#### Format of stock files
+
+```
+PermNo,Date,StockSym,Price,Volume
+```
+Then these stock files are used to create vector files.
+
+### PVectorGenerator
+
+This program creates a file with stocks in a vector format. Each row of the file contains stock identifier, stock cap and prices in as a vector for each day
+
+ PermNo,Cap,prices.....
+
+ ###
+
