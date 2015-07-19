@@ -21,6 +21,7 @@ mkdir -p $WEIGHT_MATRIX_DIR
 mkdir -p $GLOBAL_MATRIX_DIR
 mkdir -p $GLOBAL_WEIGHT_MATRIX_DIR
 
+
 #srun ./cp_global.sh
 srun -l echo "Hello"
 #srun -l rm -rf /scratch/2004_2014/continous_breaks
