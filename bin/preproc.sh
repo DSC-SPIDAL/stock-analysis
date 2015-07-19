@@ -38,20 +38,22 @@ mkdir -p $GLOBAL_WEIGHT_MATRIX_DIR
 mkdir -p $BREAKS_DIR
 
 # break the files
+echo "breaking files"
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE FileBreaker -i $GLOBA_DIR/$STOCK_FILE_NAME -o $BREAKS_DIR -s 20040101 -e 20150101 -d 2 -m
 
 # generate vector files
+echo "generate vector files"
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PVectorGenerator -i $BREAKS_DIR -o $VECTOR_DIR -d 300 -m
 
-# caclulate the distance matrix for normal data
+echo "caclulate the distance matrix for normal data"
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $VECTOR_DIR -d $MATRIX_DIR -m -t 0 -s
 
-# caclulate the distance matrix for global data set
+echo "caclulate the distance matrix for global data set"
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $GLOBAL_VEC_DIR -d $GLOBAL_MATRIX_DIR -m -t 0 -s
 
-# calculate the weigh matrix for yearly
+echo "calculate the weigh matrix for yearly"
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $WEIGHT_MATRIX_DIR -m -n -sh
 
-# calculate the weight matrix for global
+echo "calculate the weight matrix for global"
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings java -cp $JAR_FILE WeightCalculator -v $GLOBAL_VEC_DIR -d $GLOBAL_WEIGHT_MATRIX_DIR -m -n -sh
 
