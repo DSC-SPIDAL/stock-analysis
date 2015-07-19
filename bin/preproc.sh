@@ -36,6 +36,7 @@ mkdir -p $WEIGHT_MATRIX_DIR
 mkdir -p $GLOBAL_MATRIX_DIR
 mkdir -p $GLOBAL_WEIGHT_MATRIX_DIR
 mkdir -p $GLOBAL_VEC_DIR
+mkdir -p $VECTOR_DIR
 mkdir -p $BREAKS_DIR
 
 # break the files
