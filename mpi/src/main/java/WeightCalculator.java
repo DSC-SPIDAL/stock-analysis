@@ -72,7 +72,7 @@ public class WeightCalculator {
     private void process() {
         File inFolder = new File(vectorFolder);
         if (!inFolder.isDirectory()) {
-            System.out.println("In should be a folder");
+            System.out.println("In should be a folder: " + vectorFolder);
             return;
         }
 
