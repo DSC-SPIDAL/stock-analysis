@@ -4,7 +4,7 @@
 #---------------------------------------------------
 
 # the base directory where all the data recides
-BASE_DIR=/home/supun/dev/projects/dsspidal/data/N2004_2014
+BASE_DIR=/N/u/skamburu/data/N2004_2014
 
 #### names of directories inside the base dir
 # directory where histograms are created
@@ -32,7 +32,7 @@ STOCK_FILE_NAME=2004_2014.csv
 #global points file name, this should be in the global points directory
 GLOBAL_POINTS_FILE_NAME=2004_2014.txt
 
-MANXCAT_JAR=/home/supun/dev/projects/dsspidal/rotate/target/mdsaschisq-1.0-ompi1.8.1-jar-with-dependencies.jar
+MANXCAT_JAR=/N/u/skamburu/projects/apps/MDSasChisq/target/mdsaschisq-1.0-ompi1.8.1-jar-with-dependencies.jar
 
 ### don't change the following uness you knwo exactly what you change
 # -------------------------------------------------------------------
