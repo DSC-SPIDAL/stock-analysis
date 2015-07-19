@@ -30,7 +30,7 @@ ROTATE_FINAL_DIR_NAME=rotate_final
 # name of the global stock file name
 STOCK_FILE_NAME=2004_2014.csv
 #global points file name, this should be in the global points directory
-GLOBAL_POINTS_FILE_NAME=2004_2014.csv
+GLOBAL_POINTS_FILE_NAME=2004_2014.txt
 
 MANXCAT_JAR=/home/supun/dev/projects/dsspidal/rotate/target/mdsaschisq-1.0-ompi1.8.1-jar-with-dependencies.jar
 
