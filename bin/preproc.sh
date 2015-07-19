@@ -12,7 +12,7 @@ DISTANCE=0
 # stock file name
 STOCK_FILE_NAME=2004_2014.csv
 # base directory
-BASE_DIR=/N/u/skamburu/data/C2004_2014
+BASE_DIR=/N/u/skamburu/data/N2004_2014
 # breaks directory
 BREAKS_DIR=$BASE_DIR/breaks
 # vectors dirtectory
@@ -35,6 +35,7 @@ mkdir -p $MATRIX_DIR
 mkdir -p $WEIGHT_MATRIX_DIR
 mkdir -p $GLOBAL_MATRIX_DIR
 mkdir -p $GLOBAL_WEIGHT_MATRIX_DIR
+mkdir -p $GLOBAL_VEC_DIR
 mkdir -p $BREAKS_DIR
 
 # break the files
@@ -44,6 +45,9 @@ echo "breaking files"
 # generate vector files
 echo "generate vector files"
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PVectorGenerator -i $BREAKS_DIR -o $VECTOR_DIR -d 300 -m
+
+# generate global vector file
+java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVectorGenerator -i $GLOBAL -o $GLOBAL_VEC_DIR -d 3000
 
 echo "caclulate the distance matrix for normal data"
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $VECTOR_DIR -d $MATRIX_DIR -m -t 0 -s
