@@ -71,7 +71,7 @@ public class DistanceCalculator {
         System.out.println("Starting Distance calculator...");
         File inFolder = new File(vectorFolder);
         if (!inFolder.isDirectory()) {
-            System.out.println("In should be a folder");
+            System.out.println("In should be a folder: " + vectorFolder);
             return;
         }
 
