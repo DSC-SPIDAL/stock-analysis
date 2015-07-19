@@ -47,6 +47,7 @@ echo "generate vector files"
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PVectorGenerator -i $BREAKS_DIR -o $VECTOR_DIR -d 300 -m
 
 # generate global vector file
+echo "generate global vector files"
 java -cp $JAR_FILE PVectorGenerator -i $GLOBA_DIR/$STOCK_FILE_NAME -o $GLOBAL_VEC_DIR -d 3000
 
 echo "caclulate the distance matrix for normal data"
