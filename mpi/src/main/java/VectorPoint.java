@@ -74,6 +74,9 @@ public class VectorPoint {
             double y[] = StatUtils.normalize(ys);
             EuclideanDistance distance = new EuclideanDistance();
             return distance.compute(x, y);
+        } else if (type == 4) {
+            double c = correlation(vc);
+            return c * c;
         }
         return 0;
     }
@@ -187,7 +190,7 @@ public class VectorPoint {
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         double cor = pearsonsCorrelation.correlation(xs, ys);
-        return (1 - (1 + cor) / 2) * (1 - (1 + cor) / 2);
+        return (1 - (1 + cor) / 2);
     }
 
     public void add(double number) {

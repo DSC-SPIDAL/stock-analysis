@@ -7,13 +7,23 @@
 
 JAR_FILE=/N/u/skamburu/projects/apps/stock-analysis/mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar
 
+# distance 0 means correlation, distance 4 means correlation squared
+DISTANCE=0
+# base directory
 BASE_DIR=/N/u/skamburu/data/C2004_2014
+# vectors dirtectory
 VECTOR_DIR=$BASE_DIR/vectors
+# matrxi directory
 MATRIX_DIR=$BASE_DIR/matrix
+# weight matrix directory
 WEIGHT_MATRIX_DIR=$BASE_DIR/weight_matrix
+# global vectors directory
 GLOBAL_VEC_DIR=$BASE_DIR/global_vectors
+# global directory
 GLOBA_DIR=$BASE_DIR/global
+# global matrix directory
 GLOBAL_MATRIX_DIR=$BASE_DIR/global_matrix
+# global weight matrxi directory
 GLOBAL_WEIGHT_MATRIX_DIR=$BASE_DIR/global_weight_matrix
 
 mkdir -p $MATRIX_DIR
@@ -33,6 +43,9 @@ mkdir -p $GLOBAL_WEIGHT_MATRIX_DIR
 # caclulate the distance matrix for global data set
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $GLOBAL_VEC_DIR -d $GLOBAL_MATRIX_DIR -m -t 0 -s
 
-#/N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $WEIGHT_MATRIX_DIR -m -n -sh
+# calculate the weigh matrix for yearly
+/N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $WEIGHT_MATRIX_DIR -m -n -sh
+
+# calculate the weight matrix for global
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings java -cp $JAR_FILE WeightCalculator -v $GLOBAL_VEC_DIR -d $GLOBAL_WEIGHT_MATRIX_DIR -m -n -sh
 
