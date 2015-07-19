@@ -9,8 +9,12 @@ JAR_FILE=/N/u/skamburu/projects/apps/stock-analysis/mpi/target/stocks-1.0-ompi1.
 
 # distance 0 means correlation, distance 4 means correlation squared
 DISTANCE=0
+# stock file name
+STOCK_FILE_NAME=2004_2014.csv
 # base directory
 BASE_DIR=/N/u/skamburu/data/C2004_2014
+# breaks directory
+BREAKS_DIR=$BASE_DIR/breaks
 # vectors dirtectory
 VECTOR_DIR=$BASE_DIR/vectors
 # matrxi directory
@@ -26,13 +30,14 @@ GLOBAL_MATRIX_DIR=$BASE_DIR/global_matrix
 # global weight matrxi directory
 GLOBAL_WEIGHT_MATRIX_DIR=$BASE_DIR/global_weight_matrix
 
+
 mkdir -p $MATRIX_DIR
 mkdir -p $WEIGHT_MATRIX_DIR
 mkdir -p $GLOBAL_MATRIX_DIR
 mkdir -p $GLOBAL_WEIGHT_MATRIX_DIR
 
 # break the files
-/N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE FileBreaker -i /scratch/2004_2014/2004_2014.csv -o /scratch/2004_2014/continous_breaks -s 20040101 -e 20150101 -d 4 -m
+/N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE FileBreaker -i $GLOBA_DIR/$STOCK_FILE_NAME -o $BREAKS_DIR -s 20040101 -e 20150101 -d 4 -m
 
 # generate vector files
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PVectorGenerator -i /scratch/2004_2014/continous_breaks -o /scratch/2004_2014/continous_vectors -d 300 -m
