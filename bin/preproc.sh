@@ -35,6 +35,7 @@ mkdir -p $MATRIX_DIR
 mkdir -p $WEIGHT_MATRIX_DIR
 mkdir -p $GLOBAL_MATRIX_DIR
 mkdir -p $GLOBAL_WEIGHT_MATRIX_DIR
+mkdir -p $BREAKS_DIR
 
 # break the files
 /N/u/skamburu/projects/software/openmpi-1.8.1/build/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE FileBreaker -i $GLOBA_DIR/$STOCK_FILE_NAME -o $BREAKS_DIR -s 20040101 -e 20150101 -d 2 -m
