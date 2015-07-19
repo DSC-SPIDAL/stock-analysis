@@ -1,12 +1,21 @@
 #!/bin/bash
 
 BASE_DIR=$1
-MATRIX_FILES=$BASE_DIR/matrix/*
-VECTOR_BASE=$BASE_DIR/vectors/
-WEIGHTS_DI=$BASE_DIR/weight_matrix_n
 
-mkdir -p $BASE_DIR/w_g_points
-mkdir -p $BASE_DIR/w_points
+MATRIX_DIR_NAME=matrix
+VECTOR_DIR_NAME=vectors
+POINTS_DIR_NAME=weight_points
+WEIGHT_MATRIX_DIR_NAME=weight_matrix
+GLOBAL_POINTS_DIR_NAME=weight_global_points
+GLOBAL_MATRIX_DIR_NAME=global_matrix
+GLOBAL_VECTORS_DIR_NAME=global_vectors
+
+MATRIX_FILES=$BASE_DIR/$MATRIX_DIR_NAME/*
+VECTOR_BASE=$BASE_DIR/$VECTOR_DIR_NAME/
+WEIGHTS_DI=$BASE_DIR/$WEIGHT_MATRIX_DIR_NAME
+
+mkdir -p $BASE_DIR/$GLOBAL_POINTS_DIR_NAME
+mkdir -p $BASE_DIR/$POINTS_DIR_NAME
 
 for f in $MATRIX_FILES
 do
@@ -17,7 +26,7 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  #sbatch damnds_stocks_weights.sh $f $no_of_lines $BASE_DIR/w_points/$filenameWithoutExtension $WEIGHTS_DI/$filename
+  sbatch damnds_stocks_weights.sh $f $no_of_lines $BASE_DIR/$POINTS_DIR_NAME/$filenameWithoutExtension $WEIGHTS_DI/$filename
 done
 
 MATRIX_FILES=$BASE_DIR/global_matrix/*
@@ -32,5 +41,5 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  sbatch damnds_stocks_weights.sh $f $no_of_lines $BASE_DIR/w_g_points/$filenameWithoutExtension $WEIGHTS_DI/$filename
+  sbatch damnds_stocks_weights.sh $f $no_of_lines $BASE_DIR/$GLOBAL_POINTS_DIR_NAME/$filenameWithoutExtension $WEIGHTS_DI/$filename
 done
