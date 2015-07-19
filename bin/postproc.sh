@@ -4,7 +4,7 @@
 #---------------------------------------------------
 
 # the base directory where all the data recides
-BASE_DIR=/home/supun/dev/projects/dsspidal/data/C2004_2014
+BASE_DIR=/home/supun/dev/projects/dsspidal/data/N2004_2014
 
 #### names of directories inside the base dir
 # directory where histograms are created
