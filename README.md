@@ -100,13 +100,13 @@ To run the damnds algorithm use the stocks.sh and stocks_weight.sh files.
 stocks.sh will run the un-weighted mds algorithm
 
 ```
-sh stocks.sh
+sh stocks.sh path_to_stocks_base_directory
 ```
 
 stocks_weight.sh will run the weighted mds algorithm
 
 ```
-sh stocks_weight.sh
+sh stocks_weight.sh path_to_stocks_base_directory
 ```
 
 To run the post-processing steps, use the postproc.sh
