@@ -67,3 +67,6 @@ printf "IsSammon = $isSammon\n" >> config$pat.properties
 printf "IsBigEndian = $isBigEndian\n" >> config$pat.properties
 printf "IsMemoryMapped = $isMemoryMapped\n" >> config$pat.properties
 fi
+
+
+
