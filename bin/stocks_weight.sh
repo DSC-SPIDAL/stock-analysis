@@ -9,10 +9,12 @@ WEIGHT_MATRIX_DIR_NAME=weight_matrix
 GLOBAL_POINTS_DIR_NAME=weight_global_points
 GLOBAL_MATRIX_DIR_NAME=global_matrix
 GLOBAL_VECTORS_DIR_NAME=global_vectors
+DAMNDS_SUMMARY_DIR_NAME=summary
 
 MATRIX_FILES=$BASE_DIR/$MATRIX_DIR_NAME/*
 VECTOR_BASE=$BASE_DIR/$VECTOR_DIR_NAME/
 WEIGHTS_DI=$BASE_DIR/$WEIGHT_MATRIX_DIR_NAME
+DAMNDS_SUMMARY=$BASE_DIR/$DAMNDS_SUMMARY_DIR_NAME
 
 mkdir -p $BASE_DIR/$GLOBAL_POINTS_DIR_NAME
 mkdir -p $BASE_DIR/$POINTS_DIR_NAME
@@ -26,7 +28,7 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  sbatch damnds_stocks_weights.sh $f $no_of_lines $BASE_DIR/$POINTS_DIR_NAME/$filenameWithoutExtension $WEIGHTS_DI/$filename
+  sbatch damnds_stocks_weights.sh $f $no_of_lines $BASE_DIR/$POINTS_DIR_NAME/$filenameWithoutExtension $WEIGHTS_DI/$filename $DAMNDS_SUMMARY/$filenameWithoutExtension
 done
 
 MATRIX_FILES=$BASE_DIR/global_matrix/*
@@ -41,5 +43,5 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  sbatch damnds_stocks_weights.sh $f $no_of_lines $BASE_DIR/$GLOBAL_POINTS_DIR_NAME/$filenameWithoutExtension $WEIGHTS_DI/$filename
+  sbatch damnds_stocks_weights.sh $f $no_of_lines $BASE_DIR/$GLOBAL_POINTS_DIR_NAME/$filenameWithoutExtension $WEIGHTS_DI/$filename $DAMNDS_SUMMARY/$filenameWithoutExtension
 done

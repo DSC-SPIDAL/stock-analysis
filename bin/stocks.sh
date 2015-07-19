@@ -15,15 +15,18 @@ POINTS_DIR_NAME=points
 GLOBAL_POINTS_DIR_NAME=global_points
 GLOBAL_MATRIX_DIR_NAME=global_matrix
 GLOBAL_VECTORS_DIR_NAME=global_vectors
+DAMNDS_SUMMARY_DIR_NAME=summary
 
 # no need to change the below lines
 MATRIX_FILES=$BASE_DIR/$MATRIX_DIR_NAME/*
 VECTOR_BASE=$BASE_DIR/$VECTOR_DIR_NAME/
 POINTS=$BASE_DIR/$POINTS_DIR_NAME
 GLOBAL_POINTS=$BASE_DIR/$GLOBAL_POINTS_DIR_NAME
+DAMNDS_SUMMARY=$BASE_DIR/$DAMNDS_SUMMARY_DIR_NAME
 
 mkdir -p $POINTS
 mkdir -p $GLOBAL_POINTS
+mkdir -p $DAMNDS_SUMMARY
 
 for f in $MATRIX_FILES
 do
@@ -34,7 +37,7 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  sbatch damnds_stocks.sh $f $no_of_lines $POINTS/$filenameWithoutExtension
+  sbatch damnds_stocks.sh $f $no_of_lines $POINTS/$filenameWithoutExtension $DAMNDS_SUMMARY/$filenameWithoutExtension
 done
 
 MATRIX_FILES=$BASE_DIR/$GLOBAL_MATRIX_DIR_NAME/*
@@ -48,6 +51,6 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  sbatch damnds_stocks.sh $f $no_of_lines $GLOBAL_POINTS/$filenameWithoutExtension
+  sbatch damnds_stocks.sh $f $no_of_lines $GLOBAL_POINTS/$filenameWithoutExtension $DAMNDS_SUMMARY/$filenameWithoutExtension
 done
 
