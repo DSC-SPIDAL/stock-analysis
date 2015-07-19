@@ -14,10 +14,6 @@ HIST_DIR=$BASE_DIR/histogram
 
 mkdir -p $CONT_COMMON_POINTS
 
-# run the program to calculate the global vectors
-# ----------------------------------------------
-#java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVectorGenerator -i $GLOBAL -o $GLOBAL_VECS -d 3000
-
 # generate the common points
 # --------------------------
 java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/2004_2014.csv -gp $GLOBAL_POINTS/2004_2014.txt -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS
