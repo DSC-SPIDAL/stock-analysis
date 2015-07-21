@@ -22,9 +22,9 @@ public class Histogram {
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("v", true, "Input Vector folder");
-        options.addOption("d", true, "Distance matrix folder");
+        options.addOption("d", true, "Destination folder"); // Destination folder
         options.addOption("b", true, "Number of bins");
-        options.addOption("s", true, "Stock file");
+        options.addOption("s", true, "Stock file"); // Original global file
 
         CommandLineParser commandLineParser = new BasicParser();
         try {

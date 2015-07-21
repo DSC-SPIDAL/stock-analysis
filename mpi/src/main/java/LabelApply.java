@@ -18,11 +18,11 @@ public class LabelApply {
 
     public static void main(String[] args) {
         Options options = new Options();
-        options.addOption("v", true, "Input Vector folder");
-        options.addOption("p", true, "Points folder");
+        options.addOption("v", true, "Input Vector folder"); // yearly vector data
+        options.addOption("p", true, "Points folder"); // yearly mds (rotate) output
         options.addOption("d", true, "Destination folder");
-        options.addOption("o", true, "Original stock file");
-        options.addOption("s", true, "Sector file");
+        options.addOption("o", true, "Original stock file"); // global 10 year stock file
+        options.addOption("s", true, "Sector file"); // If Histogram true then set this as the folder to histogram output
         options.addOption("h", false, "Gen from histogram");
         CommandLineParser commandLineParser = new BasicParser();
         try {
