@@ -2,46 +2,60 @@
 
 # these has to be changed before running the program
 #---------------------------------------------------
+if [ $# -eq 0 ]
+  then
+    echo "Directory must be specified as argument"
+    exit 1
+fi
 
 # the base directory where all the data recides
-BASE_DIR=/N/u/skamburu/data/N2004_2014
+BASE_DIR=$1
+
+PREPROC_DIR_NAME=preproc
+YEARLY_PREPROC_DIR_NAME=$PREPROC_DIR_NAME/yearly
+GLOBAL_PREPROC_DIR_NAME=$PREPROC_DIR_NAME/global
+
+POSTROC_DIR_NAME=postproc
+POSTPROC_INTERMEDIATE_DIR_NAME=$POSTPROC_DIR_NAME/intermediate
+YEARLY_POSTPROC_DIR_NAME=$POSTPROC_DIR_NAME/yearly
+GLOBAL_POSTPROC_DIR_NAME=$POSTPROC_DIR_NAME/global
 
 #### names of directories inside the base dir
 # directory where histograms are created
-HIST_DIR_NAME=histogram
+HIST_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/histogram
 # directory where the global vectors
-GLOBAL_VEC_DIR_NAME=global_vectors
+GLOBAL_VEC_DIR_NAME=$GLOBAL_PREPROC_DIR_NAME/vectors
 # directory where the global stock file with all stocks for that period
-GLOBA_STOCK_DIR_NAME=global
+GLOBAL_STOCK_DIR_NAME=input
 # directory name of the vectors
-VECS_DIR_NAME=vectors
+VECS_DIR_NAME=$YEARLY_PREPROC_DIR_NAME/vectors
 #directory name of common points
-COMMON_POINTS_DIR_NAME=common_points
-#directory name of where points are created by damnds
-POINTS_DIR_NAME=points
+COMMON_POINTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/common_points
+#directory name of where points are created by damds
+POINTS_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/points
 # directory where global points
-GLOBA_POINTS_DIR_NAME=global_points
+GLOBAL_POINTS_DIR_NAME=$GLOBAL_POSTPROC_DIR_NAME/points
 # directory where final labeled point output
-LABEL_OUT_DIR_NAME=label_points_hist
+LABEL_OUT_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/label_points_hist
 # directory where output of rotation program stored
-ROTATE_OUT_DIR_NAME=rotate
+ROTATE_OUT_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/rotate_ops
 # directory where rotated files are stored
-ROTATE_FINAL_DIR_NAME=rotate_final
+ROTATE_FINAL_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate_points
 # name of the global stock file name
 STOCK_FILE_NAME=2004_2014.csv
 #global points file name, this should be in the global points directory
 GLOBAL_POINTS_FILE_NAME=2004_2014.txt
 
-MANXCAT_JAR=/N/u/skamburu/projects/apps/MDSasChisq/target/mdsaschisq-1.0-ompi1.8.1-jar-with-dependencies.jar
+MANXCAT_JAR=$HOME/.m2/repository/com/google/guava/guava/15.0/guava-15.0.jar:$HOME/.m2/repository/commons-cli/commons-cli/1.2/commons-cli-1.2.jar:$HOME/.m2/repository/habanero-java-lib/habanero-java-lib/0.1.4-SNAPSHOT/habanero-java-lib-0.1.4-SNAPSHOT.jar:$HOME/.m2/repository/ompi/ompijavabinding/1.8.1/ompijavabinding-1.8.1.jar:$HOME/.m2/repository/org/jblas/jblas/1.2.3/jblas-1.2.3.jar/$HOME/.m2/repository/edu/indiana/salsahpc/mdsaschisq/1.0-ompi1.8.1/mdsaschisq-1.0-ompi1.8.1.jar
 
-### don't change the following uness you knwo exactly what you change
+### don't change the following uness you know exactly what you change
 # -------------------------------------------------------------------
 GLOBAL_VECS=$BASE_DIR/$GLOBAL_VEC_DIR_NAME
-GLOBAL=$BASE_DIR/$GLOBA_STOCK_DIR_NAME
+GLOBAL=$BASE_DIR/$GLOBAL_STOCK_DIR_NAME
 ORIGINAL_STOCK_FILE=$GLOBAL/$STOCK_FILE_NAME
 #CAT_FILE=$BASE_DIR/all_companylist.csv
 CAT_FILE=$BASE_DIR/$HIST_DIR_NAME
-GLOBAL_POINTS=$BASE_DIR/$GLOBA_POINTS_DIR_NAME
+GLOBAL_POINTS=$BASE_DIR/$GLOBAL_POINTS_DIR_NAME
 CONT_VECS=$BASE_DIR/$VECS_DIR_NAME
 CONT_POINTS=$BASE_DIR/$POINTS_DIR_NAME
 CONT_COMMON_POINTS=$BASE_DIR/$COMMON_POINTS_DIR_NAME
@@ -49,16 +63,12 @@ HIST_DIR=$BASE_DIR/$HIST_DIR_NAME
 
 mkdir -p $CONT_COMMON_POINTS
 
-# run the program to calculate the global vectors
-# ----------------------------------------------
-#java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVectorGenerator -i $GLOBAL -o $GLOBAL_VECS -d 3000
-
 # generate the common points
 # --------------------------
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/$STOCK_FILE_NAME -gp $GLOBAL_POINTS/$GLOBAL_POINTS_FILE_NAME -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/$STOCK_FILE_NAME -gp $GLOBAL_POINTS/$GLOBAL_POINTS_FILE_NAME -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.out.txt
 # generate histogram
 # --------------------
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $CONT_VECS -s $ORIGINAL_STOCK_FILE -d $HIST_DIR -b 10
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $CONT_VECS -s $ORIGINAL_STOCK_FILE -d $HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/histogram.out.txt
 
 # rotate the points
 # ******************
