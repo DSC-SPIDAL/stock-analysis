@@ -15,10 +15,14 @@ PREPROC_DIR_NAME=preproc
 YEARLY_PREPROC_DIR_NAME=$PREPROC_DIR_NAME/yearly
 GLOBAL_PREPROC_DIR_NAME=$PREPROC_DIR_NAME/global
 
-POSTROC_DIR_NAME=postproc
+POSTPROC_DIR_NAME=postproc/unweighted
 POSTPROC_INTERMEDIATE_DIR_NAME=$POSTPROC_DIR_NAME/intermediate
 YEARLY_POSTPROC_DIR_NAME=$POSTPROC_DIR_NAME/yearly
 GLOBAL_POSTPROC_DIR_NAME=$POSTPROC_DIR_NAME/global
+
+MDS_DIR_NAME=mds/unweighted
+YEARLY_MDS_DIR_NAME=$MDS_DIR_NAME/yearly
+GLOBAL_MDS_DIR_NAME=$MDS_DIR_NAME/global
 
 #### names of directories inside the base dir
 # directory where histograms are created
@@ -32,21 +36,26 @@ VECS_DIR_NAME=$YEARLY_PREPROC_DIR_NAME/vectors
 #directory name of common points
 COMMON_POINTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/common_points
 #directory name of where points are created by damds
-POINTS_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/points
+POINTS_DIR_NAME=$YEARLY_MDS_DIR_NAME
 # directory where global points
-GLOBAL_POINTS_DIR_NAME=$GLOBAL_POSTPROC_DIR_NAME/points
+GLOBAL_POINTS_DIR_NAME=$GLOBAL_MDS_DIR_NAME
+# directory where rotated files are stored
+ROTATE_FINAL_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/points
+ROTATE_FINAL_SUMMARY_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/summary
 # directory where final labeled point output
-LABEL_OUT_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/label_points_hist
+LABEL_OUT_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/points/labeled/byhist
 # directory where output of rotation program stored
 ROTATE_OUT_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/rotate_ops
-# directory where rotated files are stored
-ROTATE_FINAL_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate_points
 # name of the global stock file name
 STOCK_FILE_NAME=2004_2014.csv
 #global points file name, this should be in the global points directory
 GLOBAL_POINTS_FILE_NAME=2004_2014.txt
 
-MANXCAT_JAR=$HOME/.m2/repository/com/google/guava/guava/15.0/guava-15.0.jar:$HOME/.m2/repository/commons-cli/commons-cli/1.2/commons-cli-1.2.jar:$HOME/.m2/repository/habanero-java-lib/habanero-java-lib/0.1.4-SNAPSHOT/habanero-java-lib-0.1.4-SNAPSHOT.jar:$HOME/.m2/repository/ompi/ompijavabinding/1.8.1/ompijavabinding-1.8.1.jar:$HOME/.m2/repository/org/jblas/jblas/1.2.3/jblas-1.2.3.jar/$HOME/.m2/repository/edu/indiana/salsahpc/mdsaschisq/1.0-ompi1.8.1/mdsaschisq-1.0-ompi1.8.1.jar
+mkdir -p $BASE_DIR/$ROTATE_FINAL_DIR_NAME
+mkdir -p $BASE_DIR/$ROTATE_FINAL_SUMMARY_DIR_NAME
+mkdir -p $BASE_DIR/$LABEL_OUT_DIR_NAME
+
+MANXCAT_JAR=$HOME/.m2/repository/com/google/guava/guava/15.0/guava-15.0.jar:$HOME/.m2/repository/commons-cli/commons-cli/1.2/commons-cli-1.2.jar:$HOME/.m2/repository/habanero-java-lib/habanero-java-lib/0.1.4-SNAPSHOT/habanero-java-lib-0.1.4-SNAPSHOT.jar:$HOME/.m2/repository/ompi/ompijavabinding/1.8.1/ompijavabinding-1.8.1.jar:$HOME/.m2/repository/org/jblas/jblas/1.2.3/jblas-1.2.3.jar:/$HOME/.m2/repository/edu/indiana/salsahpc/mdsaschisq/1.0-ompi1.8.1/mdsaschisq-1.0-ompi1.8.1.jar
 
 ### don't change the following uness you know exactly what you change
 # -------------------------------------------------------------------
@@ -82,6 +91,8 @@ FULL_POINTS=$CONT_POINTS
 mkdir -p $ROTATE_OUT
 mkdir -p $ROTATE_CONTROL
 
+FINAL_ROTATE_SUMMARY=$BASE_DIR/$ROTATE_FINAL_SUMMARY_DIR_NAME
+
 for f in $ROTATE_POINTS
 do
   common_filename="${f##*/}"
@@ -97,6 +108,8 @@ do
   no_of_full_lines=`sed -n '$=' $full_file`
   echo $no_of_full_lines
 
+  echo $FINAL_ROTATE_SUMMARY/$common_filename.rotation.summary.txt
+  
   full='full'
   java -DBaseResultDirectoryName=$ROTATE_OUT \
   -DControlDirectoryName=$ROTATE_CONTROL \
@@ -105,7 +118,7 @@ do
   -DfinalRotationFileName=$full_file \
   -DfinalRotationPointCount=$no_of_full_lines \
   -DDataPoints=$no_of_common_lines \
-  -cp $MANXCAT_JAR salsa.mdsaschisq.ManxcatCentral -c mconfig.properties -n 1 -t 1
+  -cp $MANXCAT_JAR salsa.mdsaschisq.ManxcatCentral -c mconfig.properties -n 1 -t 1 2>&1 | tee $FINAL_ROTATE_SUMMARY/$common_filename.rotation.summary.txt
 done
 
 # apply labels to points
