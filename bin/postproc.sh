@@ -35,6 +35,7 @@ GLOBAL_STOCK_DIR_NAME=input
 VECS_DIR_NAME=$YEARLY_PREPROC_DIR_NAME/vectors
 #directory name of common points
 COMMON_POINTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/common_points
+GLOBAL_COMMON_POINTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/global_common_points
 #directory name of where points are created by damds
 POINTS_DIR_NAME=$YEARLY_MDS_DIR_NAME
 # directory where global points
@@ -67,14 +68,18 @@ CAT_FILE=$BASE_DIR/$HIST_DIR_NAME
 GLOBAL_POINTS=$BASE_DIR/$GLOBAL_POINTS_DIR_NAME
 CONT_VECS=$BASE_DIR/$VECS_DIR_NAME
 CONT_POINTS=$BASE_DIR/$POINTS_DIR_NAME
+GLOBAL_CONT_COMMON_POINTS=$BASE_DIR/$GLOBAL_COMMON_POINTS_DIR_NAME
 CONT_COMMON_POINTS=$BASE_DIR/$COMMON_POINTS_DIR_NAME
 HIST_DIR=$BASE_DIR/$HIST_DIR_NAME
 
 mkdir -p $CONT_COMMON_POINTS
+mkdir -p $GLOBAL_CONT_COMMON_POINTS
 
 # generate the common points
 # --------------------------
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/$STOCK_FILE_NAME -gp $GLOBAL_POINTS/$GLOBAL_POINTS_FILE_NAME -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.out.txt
+mv $CONT_COMMON_POINTS/2004_2014.csv $GLOBAL_CONT_COMMON_POINTS
+
 # generate histogram
 # --------------------
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $CONT_VECS -s $ORIGINAL_STOCK_FILE -d $HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/histogram.out.txt
@@ -83,7 +88,7 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram 
 # ******************
 ROTATE_POINTS=$CONT_COMMON_POINTS/*
 ROTATE_POINT_DIR=$CONT_COMMON_POINTS
-ROTATE_BASE_FILE=$CONT_COMMON_POINTS/2004_2014.csv
+ROTATE_BASE_FILE=$GLOBAL_CONT_COMMON_POINTS/2004_2014.csv
 ROTATE_OUT=$BASE_DIR/$ROTATE_OUT_DIR_NAME
 ROTATE_CONTROL=$ROTATE_OUT/rotate_control
 FULL_POINTS=$CONT_POINTS
