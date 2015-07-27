@@ -12,7 +12,6 @@ x='x'
 opts="-XX:+UseG1GC -Xms512m -Xmx512m"
 
 tpn=1
-echo $SLURM_JOB_NUM_NODES 
 
 wd=`pwd`
 

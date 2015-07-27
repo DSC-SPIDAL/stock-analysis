@@ -47,7 +47,7 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  sbatch --job-name $uuid --account $account internal_mds.sh $f $no_of_lines $POINTS_DIR/$filenameWithoutExtension $DAMDS_SUMMARY_DIR/$filenameWithoutExtension
+  sbatch --job-name $uuid --mail-user $email --account $account internal_mds.sh $f $no_of_lines $POINTS_DIR/$filenameWithoutExtension $DAMDS_SUMMARY_DIR/$filenameWithoutExtension
 done
 
 if [ "$noglobal" != true ]
@@ -63,6 +63,6 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  sbatch --job-name $uuid --account $account internal_mds.sh $f $no_of_lines $GLOBAL_POINTS_DIR/$filenameWithoutExtension $GLOBAL_DAMDS_SUMMARY/$filenameWithoutExtension
+  sbatch --job-name $uuid --mail-user $email --account $account internal_mds.sh $f $no_of_lines $GLOBAL_POINTS_DIR/$filenameWithoutExtension $GLOBAL_DAMDS_SUMMARY/$filenameWithoutExtension
 done
 fi
