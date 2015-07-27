@@ -152,3 +152,4 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -d $LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
 -s $HIST_DIR -h
+
