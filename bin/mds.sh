@@ -6,6 +6,11 @@ if [ $# -eq 0 ]
     exit 1
 fi
 
+uuid=$2
+email=$3
+account=$4
+noglobal=$5
+
 # change these to change the directories
 BASE_DIR=$1
 PREPROC_DIR=$BASE_DIR/preproc
@@ -42,9 +47,11 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  sbatch internal_mds.sh $f $no_of_lines $POINTS_DIR/$filenameWithoutExtension $DAMDS_SUMMARY_DIR/$filenameWithoutExtension
+  sbatch --job-name $uuid --account $account internal_mds.sh $f $no_of_lines $POINTS_DIR/$filenameWithoutExtension $DAMDS_SUMMARY_DIR/$filenameWithoutExtension
 done
 
+if [ "$noglobal" != true ]
+then
 MATRIX_FILES=$GLOBAL_MATRIX_DIR/*
 VECTOR_BASE=$GLOBAL_VECTORS_DIR/
 for f in $MATRIX_FILES
@@ -56,6 +63,6 @@ do
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
-  sbatch internal_mds.sh $f $no_of_lines $GLOBAL_POINTS_DIR/$filenameWithoutExtension $GLOBAL_DAMDS_SUMMARY/$filenameWithoutExtension
+  sbatch --job-name $uuid --account $account internal_mds.sh $f $no_of_lines $GLOBAL_POINTS_DIR/$filenameWithoutExtension $GLOBAL_DAMDS_SUMMARY/$filenameWithoutExtension
 done
-
+fi
