@@ -171,14 +171,14 @@ public class PVectorGenerator {
                 // now write the current vectors, also make sure we have the size determined correctly
                 if (currentPoints.size() > 1000 && size != -1 && fullCount > 750) {
                     System.out.println("Processed: " + count);
-                    writeVectors(bufWriter, size);
+                    writeVectors(bufWriter, size, outFileName);
                     fullCount = 0;
                 }
             }
 
             System.out.println("Size: " + size);
             // write the rest of the vectors in the map after finish reading the file
-            writeVectors(bufWriter, size);
+            writeVectors(bufWriter, size, outFileName);
             System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
             currentPoints.clear();
         } catch (IOException e) {
@@ -217,13 +217,13 @@ public class PVectorGenerator {
      * @param size
      * @throws IOException
      */
-    private void writeVectors(BufferedWriter bufWriter, int size) throws IOException {
+    private void writeVectors(BufferedWriter bufWriter, int size, String outFileName) throws IOException {
         for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Integer, VectorPoint> entry = it.next();
             VectorPoint v = entry.getValue();
 
             if (!v.isValid()) {
-                System.out.println("Vector not valid: " + v.getKey());
+                System.out.println("Vector not valid: " + outFileName + ", " + v.getKey());
                 continue;
             }
 
