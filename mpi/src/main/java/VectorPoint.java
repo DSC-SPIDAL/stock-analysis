@@ -227,6 +227,22 @@ public class VectorPoint {
         return sb.toString();
     }
 
+    /**
+     * Check weather this vector is a valid one
+     * @return true if the vector is valid
+     */
+    public boolean isValid() {
+        // for now lets just check weather this has same values, if so this is not a valid vector
+        if (elements <= 0) return false;
+        double first = numbers[0];
+        for (double n : numbers) {
+            if (Math.abs(n - first) > .0001) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         double x[] = {1, 2, 3, 4, 5, 6, 7, 8};
 //        double y[] = {2, 4, 8, 16, 32, 64, 128, 256};

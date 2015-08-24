@@ -221,6 +221,12 @@ public class PVectorGenerator {
         for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Integer, VectorPoint> entry = it.next();
             VectorPoint v = entry.getValue();
+
+            if (!v.isValid()) {
+                System.out.println("Vector not valid: " + v.getKey());
+                continue;
+            }
+
             if (v.noOfElements() == size) {
                 String sv = v.serialize();
                 // if many points are missing, this can return null
