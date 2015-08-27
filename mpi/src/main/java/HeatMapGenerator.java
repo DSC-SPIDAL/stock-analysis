@@ -7,21 +7,8 @@ import java.io.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Properties;
-//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
-//#if USE_UINT16
-//C# TO JAVA CONVERTER NOTE: There is no Java equivalent to C# namespace aliases:
-//using TDistance = System.UInt16;
-//#elif USE_INT16
-//C# TO JAVA CONVERTER NOTE: There is no Java equivalent to C# namespace aliases:
-//using System.UInt16 = System.Int16;
 
-//#else
-//C# TO JAVA CONVERTER NOTE: There is no Java equivalent to C# namespace aliases:
-//using System.Int16 = System.Double;
-//#endif
-
-public class HeatMapGenerator
-{
+public class HeatMapGenerator {
     private static String _aMat;
     private static String _bMat;
     private static int _cols;
@@ -71,10 +58,8 @@ public class HeatMapGenerator
     private static final java.util.Hashtable PnumToCnum = new java.util.Hashtable();
     private static java.util.ArrayList<ISequence> _seqs = new java.util.ArrayList<ISequence>();
 
-    private static void main(String[] args)
-    {
-        if (args.length != 1)
-        {
+    private static void main(String[] args) {
+        if (args.length != 1) {
             System.out.println("Usage: ScatterLargeScale.exe <configfile>");
         }
 
@@ -84,18 +69,15 @@ public class HeatMapGenerator
         tangible.RefObject<String> tempRef_args = new tangible.RefObject<String>(args);
         MPI.Environment tempVar = new MPI.Environment(tempRef_args);
         args = tempRef_args.argValue;
-        try
-        {
+        try {
             ReadConfiguration(args[0]);
             InitializeArrays();
 
-            if (_denomcutsenabled)
-            {
+            if (_denomcutsenabled) {
                 Arrays.sort(_denomcuts);
             }
 
-            if (_useClusters)
-            {
+            if (_useClusters) {
                 PopulatePnumToCnum();
             }
 
@@ -115,60 +97,54 @@ public class HeatMapGenerator
 
             ReadDistanceBlocks(myRowStripMatrixForA, myRowStripMatrixForB, myColumnBlocks, myRowStripMatrixForDenomCut);
 
-            _xminWhole = Communicator.world.Allreduce(_xminWhole, Operation<Double>.Min);
-            _xmaxWhole = Communicator.world.Allreduce(_xmaxWhole, Operation<Double>.Max);
-            _yminWhole = Communicator.world.Allreduce(_yminWhole, Operation<Double>.Min);
-            _ymaxWhole = Communicator.world.Allreduce(_ymaxWhole, Operation<Double>.Max);
+            _xminWhole = Communicator.world.Allreduce(_xminWhole, Operation < Double >.Min);
+            _xmaxWhole = Communicator.world.Allreduce(_xmaxWhole, Operation < Double >.Max);
+            _yminWhole = Communicator.world.Allreduce(_yminWhole, Operation < Double >.Min);
+            _ymaxWhole = Communicator.world.Allreduce(_ymaxWhole, Operation < Double >.Max);
 
-            _totalPairs = Communicator.world.Reduce(_totalPairs, Operation<Long>.Add, 0);
-            _consideredPairs = Communicator.world.Reduce(_consideredPairs, Operation<Long>.Add, 0);
+            _totalPairs = Communicator.world.Reduce(_totalPairs, Operation < Long >.Add, 0);
+            _consideredPairs = Communicator.world.Reduce(_consideredPairs, Operation < Long >.Add, 0);
 
 
-            if (_useClusters)
-            {
-                _xminSelected = Communicator.world.Allreduce(_xminSelected, Operation<Double>.Min);
-                _xmaxSelected = Communicator.world.Allreduce(_xmaxSelected, Operation<Double>.Max);
-                _yminSelected = Communicator.world.Allreduce(_yminSelected, Operation<Double>.Min);
-                _ymaxSelected = Communicator.world.Allreduce(_ymaxSelected, Operation<Double>.Max);
+            if (_useClusters) {
+                _xminSelected = Communicator.world.Allreduce(_xminSelected, Operation < Double >.Min);
+                _xmaxSelected = Communicator.world.Allreduce(_xmaxSelected, Operation < Double >.Max);
+                _yminSelected = Communicator.world.Allreduce(_yminSelected, Operation < Double >.Min);
+                _ymaxSelected = Communicator.world.Allreduce(_ymaxSelected, Operation < Double >.Max);
 
-                _xminSelectedInter = Communicator.world.Allreduce(_xminSelectedInter, Operation<Double>.Min);
-                _xmaxSelectedInter = Communicator.world.Allreduce(_xmaxSelectedInter, Operation<Double>.Max);
-                _yminSelectedInter = Communicator.world.Allreduce(_yminSelectedInter, Operation<Double>.Min);
-                _ymaxSelectedInter = Communicator.world.Allreduce(_ymaxSelectedInter, Operation<Double>.Max);
+                _xminSelectedInter = Communicator.world.Allreduce(_xminSelectedInter, Operation < Double >.Min);
+                _xmaxSelectedInter = Communicator.world.Allreduce(_xmaxSelectedInter, Operation < Double >.Max);
+                _yminSelectedInter = Communicator.world.Allreduce(_yminSelectedInter, Operation < Double >.Min);
+                _ymaxSelectedInter = Communicator.world.Allreduce(_ymaxSelectedInter, Operation < Double >.Max);
 
-                _totalIntraPairs = Communicator.world.Reduce(_totalIntraPairs, Operation<Long>.Add, 0);
-                _totalInterPairs = Communicator.world.Reduce(_totalInterPairs, Operation<Long>.Add, 0);
+                _totalIntraPairs = Communicator.world.Reduce(_totalIntraPairs, Operation < Long >.Add, 0);
+                _totalInterPairs = Communicator.world.Reduce(_totalInterPairs, Operation < Long >.Add, 0);
 
-                _consideredPairsIntra = Communicator.world.Reduce(_consideredPairsIntra, Operation<Long>.Add, 0);
-                _consideredPairsInter = Communicator.world.Reduce(_consideredPairsInter, Operation<Long>.Add, 0);
+                _consideredPairsIntra = Communicator.world.Reduce(_consideredPairsIntra, Operation < Long >.Add, 0);
+                _consideredPairsInter = Communicator.world.Reduce(_consideredPairsInter, Operation < Long >.Add, 0);
             }
 
             // Output min/max
-            if (rank == 0)
-            {
-                System.out.println(new String('*',20));
+            if (rank == 0) {
+                System.out.println(new String('*', 20));
                 System.out.println("Denomcut Enabled: " + _denomcutsenabled);
-                for (int i = 0; i < _denomcuts.length; i++)
-                {
+                for (int i = 0; i < _denomcuts.length; i++) {
                     System.out.printf("\n\tDenomcut: %1$s", _denomcuts[i], "\r\n");
-                    System.out.printf("\txmaxwhole:%1$s xminwhole:%2$s ymaxwhole:%3$s yminwhole:%4$s", _xmaxWhole[i], _xminWhole[i],_ymaxWhole[i], _yminWhole[i], "\r\n");
-                    if (_useClusters)
-                    {
+                    System.out.printf("\txmaxwhole:%1$s xminwhole:%2$s ymaxwhole:%3$s yminwhole:%4$s", _xmaxWhole[i], _xminWhole[i], _ymaxWhole[i], _yminWhole[i], "\r\n");
+                    if (_useClusters) {
                         System.out.printf("\txmaxselected:%1$s xminselected:%2$s ymaxselected:%3$s yminselected:%4$s", _xmaxSelected[i], _xminSelected[i], _ymaxSelected[i], _yminSelected[i], "\r\n");
                         System.out.printf("\txmaxselectedinter:%1$s xminselectedinter:%2$s ymaxselectedinter:%3$s yminselectedinter:%4$s", _xmaxSelectedInter[i], _xminSelectedInter[i], _ymaxSelectedInter[i], _yminSelectedInter[i], "\r\n");
                     }
                 }
             }
 
-            for (int i = 0; i < _denomcuts.length; i++)
-            {
+            for (int i = 0; i < _denomcuts.length; i++) {
                 // global xmax, xmin, ymax, and ymin should be set by now
                 _deltaxWhole[i] = (_xmaxWhole[i] - _xminWhole[i]) / _xres;
                 _deltayWhole[i] = (_ymaxWhole[i] - _yminWhole[i]) / _yres;
                 _deltasWhole[i] = _deltaxWhole[i] * _deltayWhole[i];
 
-                if (_useClusters)
-                {
+                if (_useClusters) {
                     _deltaxSelected[i] = (_xmaxSelected[i] - _xminSelected[i]) / _xres;
                     _deltaySelected[i] = (_ymaxSelected[i] - _yminSelected[i]) / _yres;
                     _deltasSelected[i] = _deltaxSelected[i] * _deltaySelected[i];
@@ -182,18 +158,15 @@ public class HeatMapGenerator
             long[][][] histCellsForWholeSample = new long[_denomcuts.length][][];
             long[][][] histCellsForSelectedClusters = new long[_denomcuts.length][][];
             long[][][] histCellsForSelectedClustersInter = new long[_denomcuts.length][][];
-            for (int i = 0; i < _denomcuts.length; i++)
-            {
+            for (int i = 0; i < _denomcuts.length; i++) {
                 histCellsForWholeSample[i] = new long[_yres][];
                 histCellsForSelectedClusters[i] = new long[_yres][];
                 histCellsForSelectedClustersInter[i] = new long[_yres][];
-                for (int j = 0; j < _yres; j++)
-                {
+                for (int j = 0; j < _yres; j++) {
                     histCellsForWholeSample[i][j] = new long[_xres];
                     histCellsForSelectedClusters[i][j] = new long[_xres];
                     histCellsForSelectedClustersInter[i][j] = new long[_xres];
-                    for (int k = 0; k < _xres; k++)
-                    {
+                    for (int k = 0; k < _xres; k++) {
                         histCellsForWholeSample[i][j][k] = 0;
                         histCellsForSelectedClusters[i][j][k] = 0;
                         histCellsForSelectedClustersInter[i][j][k] = 0;
@@ -202,36 +175,32 @@ public class HeatMapGenerator
             }
             GeneratePartialHistograms(histCellsForWholeSample, histCellsForSelectedClusters, histCellsForSelectedClustersInter, myRowStripMatrixForA, myRowStripMatrixForB, myColumnBlocks, myRowStripMatrixForDenomCut);
 
-            histCellsForWholeSample = Communicator.world.Reduce(histCellsForWholeSample, Sum2DArray,0);
+            histCellsForWholeSample = Communicator.world.Reduce(histCellsForWholeSample, Sum2DArray, 0);
 
-            if (_useClusters)
-            {
-                histCellsForSelectedClusters = Communicator.world.Reduce(histCellsForSelectedClusters, Sum2DArray,0);
-                histCellsForSelectedClustersInter = Communicator.world.Reduce(histCellsForSelectedClustersInter, Sum2DArray,0);
+            if (_useClusters) {
+                histCellsForSelectedClusters = Communicator.world.Reduce(histCellsForSelectedClusters, Sum2DArray, 0);
+                histCellsForSelectedClustersInter = Communicator.world.Reduce(histCellsForSelectedClustersInter, Sum2DArray, 0);
             }
 
 
-            if (rank == 0)
-            {
+            if (rank == 0) {
                 // Rank 0 should have all the cells from each process by now.
-                for (int i = 0; i < _denomcuts.length; i++)
-                {
+                for (int i = 0; i < _denomcuts.length; i++) {
                     double denomcut = _denomcuts[i];
 
-                    double pairFraction = ((double) _consideredPairs[i])/_totalPairs;
+                    double pairFraction = ((double) _consideredPairs[i]) / _totalPairs;
 
                     System.out.println("Rank 0 starting to write density data file for whole sample with denomcut " + denomcut);
                     GenerateDensityDataFile(histCellsForWholeSample[i], _xmaxWhole[i], _xminWhole[i], _ymaxWhole[i], _yminWhole[i], _deltaxWhole[i], _deltayWhole[i], _deltasWhole[i], "whole", denomcut, pairFraction, _totalPairs);
                     System.out.println("Rank 0 done writing density data file for whole sample with denomcut " + denomcut);
 
-                    if (_useClusters)
-                    {
-                        pairFraction = ((double) _consideredPairsIntra[i])/_totalIntraPairs;
+                    if (_useClusters) {
+                        pairFraction = ((double) _consideredPairsIntra[i]) / _totalIntraPairs;
                         System.out.println("Rank 0 starting to write density data file for selected clusters with denomcut " + denomcut);
                         GenerateDensityDataFile(histCellsForSelectedClusters[i], _xmaxSelected[i], _xminSelected[i], _ymaxSelected[i], _yminSelected[i], _deltaxSelected[i], _deltaySelected[i], _deltasSelected[i], "selected", denomcut, pairFraction, _totalIntraPairs);
                         System.out.println("Rank 0 done writing density data file for selected clusters with denomcut " + denomcut);
 
-                        pairFraction = ((double) _consideredPairsInter[i])/_totalInterPairs;
+                        pairFraction = ((double) _consideredPairsInter[i]) / _totalInterPairs;
                         System.out.println("Rank 0 starting to write density data file for selected clusters inter with denomcut " + denomcut);
                         GenerateDensityDataFile(histCellsForSelectedClustersInter[i], _xmaxSelectedInter[i], _xminSelectedInter[i], _ymaxSelectedInter[i], _yminSelectedInter[i], _deltaxSelectedInter[i], _deltaySelectedInter[i], _deltasSelectedInter[i], "selected-inter", denomcut, pairFraction, _totalInterPairs);
                         System.out.println("Rank 0 done writing density data file for selected clusters inter with denomcut " + denomcut);
@@ -242,8 +211,7 @@ public class HeatMapGenerator
             Communicator.world.Barrier();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally
-        {
+        } finally {
             tempVar.dispose();
         }
     }
@@ -738,7 +706,7 @@ public class HeatMapGenerator
             _readPointsA = Boolean.parseBoolean(getProperty(p, "readPointsA", null));
             _readPointsB = Boolean.parseBoolean(getProperty(p, "readPointsB", null));
             _cols = Integer.parseInt(getProperty(p, "cols", null));
-            _cols = Integer.parseInt(getProperty(p, "rows", null));
+            _rows = Integer.parseInt(getProperty(p, "rows", null));
             _outdir = getProperty(p, "outdir", null);
             _xmaxbound = Double.parseDouble(getProperty(p, "xmaxbound", null));
             _ymaxbound = Double.parseDouble(getProperty(p, "ymaxbound", null));
