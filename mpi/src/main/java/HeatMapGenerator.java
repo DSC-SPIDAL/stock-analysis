@@ -208,16 +208,12 @@ public class HeatMapGenerator {
         }
     }
 
-//C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
+    //C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
 //ORIGINAL LINE: private static void InitalizeDenomMask(Block[] myColumnBlocks, PartialMatrix<byte> myRowStripMatrixForDenomCut)
-    private static void InitalizeDenomMask(Block[] myColumnBlocks, PartialMatrix myRowStripMatrixForDenomCut)
-    {
-        for (Block block : myColumnBlocks)
-        {
-            for (int r = block.RowRange.StartIndex; r <= block.RowRange.EndIndex; ++r)
-            {
-                for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c)
-                {
+    private static void InitalizeDenomMask(Block[] myColumnBlocks, PartialMatrix myRowStripMatrixForDenomCut) {
+        for (Block block : myColumnBlocks) {
+            for (int r = block.RowRange.StartIndex; r <= block.RowRange.EndIndex; ++r) {
+                for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c) {
 //C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
 //ORIGINAL LINE: myRowStripMatrixForDenomCut[r, c] = byte.MaxValue;
                     // TODO FIX BYTE -> DOUBLE
@@ -228,8 +224,7 @@ public class HeatMapGenerator {
         }
     }
 
-    private static void InitializeArrays()
-    {
+    private static void InitializeArrays() {
         int length = _denomcuts.length; // if denomcuts not enabled then this will be just 1
         _xmaxWhole = new double[length];
         _xminWhole = new double[length];
@@ -261,8 +256,7 @@ public class HeatMapGenerator {
         _consideredPairsIntra = new long[length];
         _consideredPairsInter = new long[length];
 
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             _xmaxWhole[i] = _xmaxSelected[i] = _xmaxSelectedInter[i] = Double.NEGATIVE_INFINITY;
             _ymaxWhole[i] = _ymaxSelected[i] = _ymaxSelectedInter[i] = Double.NEGATIVE_INFINITY;
 
@@ -723,65 +717,66 @@ public class HeatMapGenerator {
     }
 
     private static void GeneratePartialHistograms(long[][][] histCellsForWholeSample,
-                                              long[][][] histCellsForSelectedClusters,
-                                              long[][][] histCellsForSelectedClustersInter,
-                                              PartialMatrix myRowStripMatrixForA,
-                                              PartialMatrix myRowStripMatrixForB, Block[] myBlocks,
-                                              PartialMatrix myRowStripMatrixForDenomCut) {
-    DistanceReader distanceReaderA = null, distanceReaderB = null;
-    if (_readPointsA) {
-        distanceReaderA = new DistanceReader(_aMat, _cols, _rows, _readPointsA);
-    }
+                                                  long[][][] histCellsForSelectedClusters,
+                                                  long[][][] histCellsForSelectedClustersInter,
+                                                  PartialMatrix myRowStripMatrixForA,
+                                                  PartialMatrix myRowStripMatrixForB, Block[] myBlocks,
+                                                  PartialMatrix myRowStripMatrixForDenomCut) {
+        DistanceReader distanceReaderA = null, distanceReaderB = null;
+        if (_readPointsA) {
+            distanceReaderA = new DistanceReader(_aMat, _cols, _rows, _readPointsA);
+        }
 
-    if (_readPointsB) {
-        distanceReaderB = new DistanceReader(_bMat, _cols, _rows, _readPointsB);
-    }
+        if (_readPointsB) {
+            distanceReaderB = new DistanceReader(_bMat, _cols, _rows, _readPointsB);
+        }
 
-    for (int i = 0; i < myBlocks.length; ++i) {
-        Block block = myBlocks[i];
-        // Non diagonal block
-        for (int r = block.RowRange.StartIndex; r <= block.RowRange.EndIndex; ++r) {
-            long l1 = -1;
-            for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c) {
-                long l2 = -1;
+        for (int i = 0; i < myBlocks.length; ++i) {
+            Block block = myBlocks[i];
+            // Non diagonal block
+            for (int r = block.RowRange.StartIndex; r <= block.RowRange.EndIndex; ++r) {
+                long l1 = -1;
+                for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c) {
+                    long l2 = -1;
 
-                // Each pair in block
-                double x = !_readPointsA ? (_useTDistanceMaxForA ? (myRowStripMatrixForA.getElements()[r][c]) / Double.MAX_VALUE : myRowStripMatrixForA.getElements()[r][c]) : distanceReaderA.ReadDistanceFromPointsFile(r, c);
-                double y = !_readPointsB ? (_useTDistanceMaxForB ? (myRowStripMatrixForB.getElements()[r][c]) / Double.MAX_VALUE : myRowStripMatrixForB.getElements()[r][c]) : distanceReaderB.ReadDistanceFromPointsFile(r, c);
+                    // Each pair in block
+                    double x = !_readPointsA ? (_useTDistanceMaxForA ? (myRowStripMatrixForA.getElements()[r][c]) / Double.MAX_VALUE : myRowStripMatrixForA.getElements()[r][c]) : distanceReaderA.ReadDistanceFromPointsFile(r, c);
+                    double y = !_readPointsB ? (_useTDistanceMaxForB ? (myRowStripMatrixForB.getElements()[r][c]) / Double.MAX_VALUE : myRowStripMatrixForB.getElements()[r][c]) : distanceReaderB.ReadDistanceFromPointsFile(r, c);
 
-                // Ignore x or y values greater than distcutA or discutB respectively when distcut values are specified
-                if ((_distcutA > -1 && x > _distcutA) || (_distcutB > -1 && y > _distcutB)) {
-                    continue;
-                }
+                    // Ignore x or y values greater than distcutA or discutB respectively when distcut values are specified
+                    if ((_distcutA > -1 && x > _distcutA) || (_distcutB > -1 && y > _distcutB)) {
+                        continue;
+                    }
 
-                // Ignore x or y values smaller than mindistA or mindistB respectively when mindist values are specified
-                if ((_mindistA > -1 && x < _mindistA) || (_mindistB > -1 && y < _mindistB)) {
-                    continue;
-                }
+                    // Ignore x or y values smaller than mindistA or mindistB respectively when mindist values are specified
+                    if ((_mindistA > -1 && x < _mindistA) || (_mindistB > -1 && y < _mindistB)) {
+                        continue;
+                    }
 
-                // Ignore if the corresponding two sequence lengths are not within the given lengthcut
-                if (_lengthCut > -1 && (Math.abs(l1 - l2) > _lengthCut * ((l1 + l2) / 2.0))) {
-                    continue;
-                }
+                    // Ignore if the corresponding two sequence lengths are not within the given lengthcut
+                    if (_lengthCut > -1 && (Math.abs(l1 - l2) > _lengthCut * ((l1 + l2) / 2.0))) {
+                        continue;
+                    }
 
-                // Perform transforms (no transform if transform method is -1 for the respective matrix)
-                x = Transform(x, _aTransfm, _aTransfp);
-                y = Transform(y, _bTransfm, _bTransfp);
+                    // Perform transforms (no transform if transform method is -1 for the respective matrix)
+                    x = Transform(x, _aTransfm, _aTransfp);
+                    y = Transform(y, _bTransfm, _bTransfp);
 
-                for (int j = 0; j < _denomcuts.length; j++) {
-                    if (myRowStripMatrixForDenomCut.getElements()[r][c] > j) {
-                        UpdateCells(x, y, _xmaxWhole[j], _xminWhole[j], _ymaxWhole[j], _yminWhole[j], _deltaxWhole[j], _deltayWhole[j], histCellsForWholeSample[j], r, c);
+                    for (int j = 0; j < _denomcuts.length; j++) {
+                        if (myRowStripMatrixForDenomCut.getElements()[r][c] > j) {
+                            UpdateCells(x, y, _xmaxWhole[j], _xminWhole[j], _ymaxWhole[j], _yminWhole[j], _deltaxWhole[j], _deltayWhole[j], histCellsForWholeSample[j], r, c);
 
-                        if (_useClusters) {
-                            int rCnum = ((int) PnumToCnum.get(r));
-                            int cCnum = ((int) PnumToCnum.get(c));
-                            if (SelectedCnums.contains(rCnum) && SelectedCnums.contains(cCnum)) {
-                                if (rCnum == cCnum) {
-                                    // Intra cluster distances
-                                    UpdateCells(x, y, _xmaxSelected[j], _xminSelected[j], _ymaxSelected[j], _yminSelected[j], _deltaxSelected[j], _deltaySelected[j], histCellsForSelectedClusters[j], r, c);
-                                } else {
-                                    // Inter cluster distances
-                                    UpdateCells(x, y, _xmaxSelectedInter[j], _xminSelectedInter[j], _ymaxSelectedInter[j], _yminSelectedInter[j], _deltaxSelectedInter[j], _deltaySelectedInter[j], histCellsForSelectedClustersInter[j], r, c);
+                            if (_useClusters) {
+                                int rCnum = ((int) PnumToCnum.get(r));
+                                int cCnum = ((int) PnumToCnum.get(c));
+                                if (SelectedCnums.contains(rCnum) && SelectedCnums.contains(cCnum)) {
+                                    if (rCnum == cCnum) {
+                                        // Intra cluster distances
+                                        UpdateCells(x, y, _xmaxSelected[j], _xminSelected[j], _ymaxSelected[j], _yminSelected[j], _deltaxSelected[j], _deltaySelected[j], histCellsForSelectedClusters[j], r, c);
+                                    } else {
+                                        // Inter cluster distances
+                                        UpdateCells(x, y, _xmaxSelectedInter[j], _xminSelectedInter[j], _ymaxSelectedInter[j], _yminSelectedInter[j], _deltaxSelectedInter[j], _deltaySelectedInter[j], histCellsForSelectedClustersInter[j], r, c);
+                                    }
                                 }
                             }
                         }
@@ -790,7 +785,6 @@ public class HeatMapGenerator {
             }
         }
     }
-}
 
     private static double Transform(double val, int transfm, double transfp) {
         if (transfm == 10) {
