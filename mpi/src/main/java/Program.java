@@ -4,13 +4,12 @@ import Common.*;
 import MPI.*;
 import Salsa.Core.*;
 import Salsa.Core.Blas.*;
+import ScattersLargeScale.DistanceReader;
 import tangible.RefObject;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Arrays;
+import java.util.Properties;
 //C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
 //#if USE_UINT16
 //C# TO JAVA CONVERTER NOTE: There is no Java equivalent to C# namespace aliases:
@@ -319,29 +318,18 @@ public class Program
         }
     }
 
-    private static void PopulatePnumToCnum()
-    {
-//C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-//		using (StreamReader reader = new StreamReader(File.Open(_clusterfile, FileMode.Open, FileAccess.Read, FileShare.Read)))
-        StreamReader reader = new StreamReader(File.Open(_clusterfile, FileMode.Open, FileAccess.Read, FileShare.Read));
-        try
-        {
-            char[] sep = new char[] {' ', '\t'};
-            while (!reader.EndOfStream)
-            {
-                String line = reader.ReadLine();
-                if (!tangible.DotNetToJavaStringHelper.isNullOrEmpty(line))
-                {
-                    String[] splits = line.split(java.util.regex.Pattern.quote(sep.toString()), -1);
-                    int idx = Integer.parseInt(splits[0]);
-                    int cnum = Integer.parseInt(splits[1]);
-                    PnumToCnum.put(idx, cnum);
-                }
+    private static void PopulatePnumToCnum() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(_clusterfile))) {
+            String line;
+            char[] sep = new char[]{' ', '\t'};
+            while ((line = reader.readLine()) != null) {
+                String[] splits = line.split(java.util.regex.Pattern.quote(Arrays.toString(sep)), -1);
+                int idx = Integer.parseInt(splits[0]);
+                int cnum = Integer.parseInt(splits[1]);
+                PnumToCnum.put(idx, cnum);
             }
-        }
-        finally
-        {
-            reader.dispose();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -720,251 +708,82 @@ public class Program
         return sum;
     }
 
-    private static void ReadConfiguration(String configFile) {
-        System.out.println(configFile);
-        // Tangible multiline preserve/* Reading parameters file */
-        // C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-        // using (StreamReader reader = new StreamReader(configFile))
-        StreamReader reader = new StreamReader(configFile);
-        try
-        {
-            char[] sep = new char[] {'\t'};
-            while (!reader.EndOfStream)
-            {
-                String line = reader.ReadLine();
-                // Skip null/empty and comment lines
-                if (!tangible.DotNetToJavaStringHelper.isNullOrEmpty(line) && !line.startsWith("#"))
-                {
-                    String[] splits = line.trim().split(java.util.regex.Pattern.quote(sep.toString()), -1);
-                    if (splits.length >= 2)
-                    {
-                        String value = splits[1];
-//C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a string member and was converted to Java 'if-else' logic:
-//						switch (splits[0])
-                        String tempVar = splits[0];
-//ORIGINAL LINE: case "Amat":
-                        if (tempVar.equals("Amat"))
-                        {
-                            _aMat = value;
-                        }
-//ORIGINAL LINE: case "Aname":
-                        else if (tempVar.equals("Aname"))
-                        {
-                            _aName = value;
-                        }
-//ORIGINAL LINE: case "Atransfm":
-                        else if (tempVar.equals("Atransfm"))
-                        {
-                            _aTransfm = Integer.parseInt(value);
-                        }
-//ORIGINAL LINE: case "Atransfp":
-                        else if (tempVar.equals("Atransfp"))
-                        {
-                            _aTransfp = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "Bmat":
-                        else if (tempVar.equals("Bmat"))
-                        {
-                            _bMat = value;
-                        }
-//ORIGINAL LINE: case "Bname":
-                        else if (tempVar.equals("Bname"))
-                        {
-                            _bName = value;
-                        }
-//ORIGINAL LINE: case "Btransfm":
-                        else if (tempVar.equals("Btransfm"))
-                        {
-                            _bTransfm = Integer.parseInt(value);
-                        }
-//ORIGINAL LINE: case "Btransfp":
-                        else if (tempVar.equals("Btransfp"))
-                        {
-                            _bTransfp = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "usetdistancemaxforA":
-                        else if (tempVar.equals("usetdistancemaxforA"))
-                        {
-                            _useTDistanceMaxForA = Boolean.parseBoolean(value);
-                        }
-//ORIGINAL LINE: case "usetdistancemaxforB":
-                        else if (tempVar.equals("usetdistancemaxforB"))
-                        {
-                            _useTDistanceMaxForB = Boolean.parseBoolean(value);
-                        }
-//ORIGINAL LINE: case "readPointsA":
-                        else if (tempVar.equals("readPointsA"))
-                        {
-                            _readPointsA = Boolean.parseBoolean(value);
-                        }
-//ORIGINAL LINE: case "readPointsB":
-                        else if (tempVar.equals("readPointsB"))
-                        {
-                            _readPointsB = Boolean.parseBoolean(value);
-                        }
-//ORIGINAL LINE: case "cols":
-                        else if (tempVar.equals("cols"))
-                        {
-                            _cols = Integer.parseInt(value);
-                        }
-//ORIGINAL LINE: case "rows":
-                        else if (tempVar.equals("rows"))
-                        {
-                            _rows = Integer.parseInt(value);
-                        }
-//ORIGINAL LINE: case "outdir":
-                        else if (tempVar.equals("outdir"))
-                        {
-                            _outdir = value;
-                        }
-//ORIGINAL LINE: case "xmaxbound":
-                        else if (tempVar.equals("xmaxbound"))
-                        {
-                            _xmaxbound = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "ymaxbound":
-                        else if (tempVar.equals("ymaxbound"))
-                        {
-                            _ymaxbound = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "xres":
-                        else if (tempVar.equals("xres"))
-                        {
-                            _xres = Integer.parseInt(value);
-                        }
-//ORIGINAL LINE: case "yres":
-                        else if (tempVar.equals("yres"))
-                        {
-                            _yres = Integer.parseInt(value);
-                        }
-//ORIGINAL LINE: case "alpha":
-                        else if (tempVar.equals("alpha"))
-                        {
-                            _alpha = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "pcutf":
-                        else if (tempVar.equals("pcutf"))
-                        {
-                            _pcutf = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "zto1":
-                        else if (tempVar.equals("zto1"))
-                        {
-                            _zto1 = Boolean.parseBoolean(value);
-                        }
-//ORIGINAL LINE: case "distcutA":
-                        else if (tempVar.equals("distcutA"))
-                        {
-                            _distcutA = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "distcutB":
-                        else if (tempVar.equals("distcutB"))
-                        {
-                            _distcutB = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "mindistA":
-                        else if (tempVar.equals("mindistA"))
-                        {
-                            _mindistA = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "mindistB":
-                        else if (tempVar.equals("mindistB"))
-                        {
-                            _mindistB = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "clusterfile":
-                        else if (tempVar.equals("clusterfile"))
-                        {
-                            if (!"none".equals(value) && (new java.io.File(value)).isFile())
-                            {
-                                _clusterfile = value;
-                                _useClusters = true;
-                            }
-                            else
-                            {
-                                _useClusters = false;
-                            }
-                        }
-//ORIGINAL LINE: case "clusters":
-                        else if (tempVar.equals("clusters"))
-                        {
-                            if (!"none".equals(value) && value.contains(","))
-                            {
-                                char[] commasep = new char[] {','};
-                                for (int c : value.trim().split(java.util.regex.Pattern.quote(commasep.toString()), -1).Select(x => Integer.parseInt(x)))
-                                {
-                                    if (!SelectedCnums.contains(c))
-                                    {
-                                        SelectedCnums.add(c);
-                                    }
-                                }
-                            }
-                        }
-//ORIGINAL LINE: case "title":
-                        else if (tempVar.equals("title"))
-                        {
-                            _title = line.substring(5).trim();
-                        }
-//ORIGINAL LINE: case "seqfile":
-                        else if (tempVar.equals("seqfile"))
-                        {
-                            if (!"none".equals(value) && (new java.io.File(value)).isFile())
-                            {
-//C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-//							using (FastAParser parser = new FastAParser(value))
-                                FastAParser parser = new FastAParser(value);
-                                try
-                                {
-                                    Iterable<ISequence> seqenum = parser.Parse();
-                                    for (ISequence sequence : seqenum)
-                                    {
-                                        _seqs.add(sequence);
-                                    }
-                                }
-                                finally
-                                {
-                                    parser.dispose();
-                                }
-                            }
-                        }
-//ORIGINAL LINE: case "lengthcut":
-                        else if (tempVar.equals("lengthcut"))
-                        {
-                            _lengthCut = Double.parseDouble(value);
-                        }
-//ORIGINAL LINE: case "denomcuts":
-                        else if (tempVar.equals("denomcuts"))
-                        {
-                            _denomcuts = value.trim().split("[,]", -1).Select(x => Double.parseDouble(x)).ToArray();
-                            _denomcutsenabled = !(_denomcuts.length == 1 && _denomcuts[0] == -1);
-
-                        }
-//ORIGINAL LINE: case "oldscoremat":
-                        else if (tempVar.equals("oldscoremat"))
-                        {
-                            _oldscoremat = value;
-                        }
-//ORIGINAL LINE: case "newscoremat":
-                        else if (tempVar.equals("newscoremat"))
-                        {
-                            _newscoremat = value;
-                        }
-                        else
-                        {
-                            throw new RuntimeException("Invalide line in configuration file: " + line);
-                        }
-                    }
-                    else
-                    {
-                        throw new RuntimeException("Invalid line in configuration file: " + line);
-                    }
+    private static String getProperty(Properties p, String name, String def) {
+        String val = System.getProperty(name);
+        if (val == null) {
+            if (def != null) {
+                val = p.getProperty(name, def);
+                if (val == null) {
+                    throw new RuntimeException("Property not specified in config file: " + name);
                 }
+            } else {
+                val = p.getProperty(name);
             }
         }
-        finally
-        {
-            reader.dispose();
+        return val;
+    }
+
+    private static void ReadConfiguration(String configFile) {
+        System.out.println(configFile);
+        Properties p = new Properties();
+        try {
+            p.load(new FileInputStream(configFile));
+            _aMat = getProperty(p, "Amat", null);
+            _aName = getProperty(p, "Aname", null);
+            _aTransfm = Integer.parseInt(getProperty(p, "Atransfp", null));
+            _aTransfp = Double.parseDouble(getProperty(p, "Atransfp", null));
+            _bMat = getProperty(p, "Bmat", null);
+            _bName = getProperty(p, "Bname", null);
+            _bTransfm = Integer.parseInt(getProperty(p, "Btransfm", null));
+            _bTransfp = Double.parseDouble(getProperty(p, "Btransfp", null));
+            _useTDistanceMaxForA = Boolean.parseBoolean(getProperty(p, "usetdistancemaxforA", null));
+            _useTDistanceMaxForB = Boolean.parseBoolean(getProperty(p, "usetdistancemaxforB", null));
+            _readPointsA = Boolean.parseBoolean(getProperty(p, "readPointsA", null));
+            _readPointsB = Boolean.parseBoolean(getProperty(p, "readPointsB", null));
+            _cols = Integer.parseInt(getProperty(p, "cols", null));
+            _cols = Integer.parseInt(getProperty(p, "rows", null));
+            _outdir = getProperty(p, "outdir", null);
+            _xmaxbound = Double.parseDouble(getProperty(p, "xmaxbound", null));
+            _ymaxbound = Double.parseDouble(getProperty(p, "ymaxbound", null));
+            _xres = Integer.parseInt(getProperty(p, "xres", null));
+            _yres = Integer.parseInt(getProperty(p, "yres", null));
+            _alpha = Double.parseDouble(getProperty(p, "alpha", null));
+            _pcutf = Double.parseDouble(getProperty(p, "pcutf", null));
+            _zto1 = Boolean.parseBoolean(getProperty(p, "zto1", null));
+            _distcutA = Double.parseDouble(getProperty(p, "distcutA", null));
+            _distcutB = Double.parseDouble(getProperty(p, "distcutB", null));
+            _mindistA = Double.parseDouble(getProperty(p, "mindistA", null));
+            _mindistB = Double.parseDouble(getProperty(p, "mindistB", null));
+            _clusterfile = getProperty(p, "clusterfile", null);
+            if (!"none".equals(_clusterfile) && new File(_clusterfile).isFile()) {
+                _useClusters = true;
+            } else {
+                _useClusters = false;
+            }
+            // We dont use clusters configuration
+            _title = getProperty(p, "title", null);
+            _denomcuts = new double[1];
+            _denomcutsenabled = false;
+            _oldscoremat = getProperty(p, "oldscoremat", null);
+            _newscoremat = getProperty(p, "newscoremat", null);
+        } catch (IOException e) {
+            System.out.println("Failed to read the configuration");
+            e.printStackTrace();
         }
+    }
+
+    //C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
+//ORIGINAL LINE: private static System.Double FromArrayToTdist(byte[] xarr)
+    private static double FromArrayToTdist(byte[] xarr)
+    {
+//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
+//#if USE_UINT16
+        return BitConverter.ToUInt16(xarr, 0);
+//#elif USE_INT16
+        return BitConverter.ToInt16(xarr, 0);
+//#else
+        return BitConverter.ToDouble(xarr, 0);
+//#endif
     }
 
 //C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
@@ -1078,6 +897,8 @@ public class Program
         }
         return val;
     }
+
+
 
 //C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
 //ORIGINAL LINE: private static void ReadDistanceBlocks(PartialMatrix<System.Double> myRowStripMatrixForA, PartialMatrix<System.Double> myRowStripMatrixForB, Block[] myColumnBlocks, PartialMatrix<byte> myRowStripMatrixForDenomCut)
@@ -1277,19 +1098,7 @@ public class Program
 
 
 
-//C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
-//ORIGINAL LINE: private static System.Double FromArrayToTdist(byte[] xarr)
-    private static double FromArrayToTdist(byte[] xarr)
-    {
-//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
-//#if USE_UINT16
-       return BitConverter.ToUInt16(xarr, 0);
-//#elif USE_INT16
-        return BitConverter.ToInt16(xarr, 0);
-//#else
-       return BitConverter.ToDouble(xarr, 0);
-//#endif
-    }
+
 
 
 

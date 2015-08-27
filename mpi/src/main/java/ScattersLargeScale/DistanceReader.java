@@ -2,7 +2,7 @@
 
 import Common.*;
 
-public class DistanceReader implements IDisposable
+public class DistanceReader
 {
 	private MatrixReader _matrixReader;
 	private java.util.List<Point> _pointsTable = new java.util.ArrayList<Point>();
