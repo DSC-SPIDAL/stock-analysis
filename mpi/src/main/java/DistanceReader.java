@@ -1,5 +1,4 @@
 ﻿import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -7,11 +6,9 @@ public class DistanceReader {
     private MatrixReader _matrixReader;
     private java.util.List<Point> _pointsTable = new java.util.ArrayList<Point>();
     private boolean _readPoints;
-    private MatrixType _matrixType = MatrixType.values()[0];
 
-    public DistanceReader(String file, MatrixType matrixType, int cols, boolean readPoints) {
+    public DistanceReader(String file, int cols, int rows, boolean readPoints) {
         _readPoints = readPoints;
-        _matrixType = matrixType;
         if (readPoints) {
             try {
                 readPoints(file);
@@ -19,7 +16,7 @@ public class DistanceReader {
                 e.printStackTrace();
             }
         } else {
-            _matrixReader = new MatrixReader(file, matrixType, cols);
+            _matrixReader = new MatrixReader(file, cols, rows);
         }
     }
 
@@ -34,11 +31,11 @@ public class DistanceReader {
         }
     }
 
-    public final byte[] ReadDistanceFromMatrix(int row, int col) {
+    public final double ReadDistanceFromMatrix(int row, int col) {
         if (_readPoints) {
             throw new RuntimeException("DistanceReader is instantiated to read from points file, but called the matrix file read");
         }
-        return _matrixReader.Read(row, col);
+        return _matrixReader.read(row, col);
     }
 
     public final double ReadDistanceFromPointsFile(int row, int col) {
