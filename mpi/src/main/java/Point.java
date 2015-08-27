@@ -1,3 +1,5 @@
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
+
 import java.text.DecimalFormat;
 
 public class Point {
@@ -13,6 +15,11 @@ public class Point {
         this.y = y;
         this.z = z;
         this.clazz = clazz;
+    }
+
+    public double distance(Point p) {
+        EuclideanDistance distance = new EuclideanDistance();
+        return distance.compute(new double[]{p.x, p.y, p.z}, new double[]{x, y, z});
     }
 
     public int getIndex() {

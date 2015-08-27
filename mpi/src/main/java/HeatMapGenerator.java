@@ -1,13 +1,10 @@
-﻿import Bio.*;
-import Bio.IO.FastA.*;
-import Common.*;
-import MPI.*;
+﻿
+import mpi.*;
 import Salsa.Core.*;
 import Salsa.Core.Blas.*;
-import ScattersLargeScale.DistanceReader;
-import tangible.RefObject;
 
 import java.io.*;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Properties;
 //C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
@@ -23,7 +20,7 @@ import java.util.Properties;
 //using System.Int16 = System.Double;
 //#endif
 
-public class Program
+public class HeatMapGenerator
 {
     private static String _aMat;
     private static String _bMat;
@@ -798,26 +795,12 @@ public class Program
         DistanceReader distanceReaderA = null, distanceReaderB = null;
         if (_readPointsA)
         {
-//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
-//#if USE_UINT16
-            distanceReaderA = new DistanceReader(_aMat, MatrixType.UInt16, _cols, _readPointsA);
-//#elif USE_INT16
             distanceReaderA = new DistanceReader(_aMat, MatrixType.Int16, _cols, _readPointsA);
-//#else
-            distanceReaderA = new DistanceReader(_aMat, MatrixType.Double, _cols, _readPointsA);
-//#endif
         }
 
         if (_readPointsB)
         {
-//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
-//#if USE_UINT16
-            distanceReaderB = new DistanceReader(_aMat, MatrixType.UInt16, _cols, _readPointsB);
-//#elif USE_INT16
             distanceReaderB = new DistanceReader(_bMat, MatrixType.Int16, _cols, _readPointsB);
-//#else
-            distanceReaderB = new DistanceReader(_aMat, MatrixType.Double, _cols, _readPointsB);
-//#endif
         }
 
         for (int i = 0; i < myBlocks.length; ++i)
@@ -902,96 +885,77 @@ public class Program
 
 //C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
 //ORIGINAL LINE: private static void ReadDistanceBlocks(PartialMatrix<System.Double> myRowStripMatrixForA, PartialMatrix<System.Double> myRowStripMatrixForB, Block[] myColumnBlocks, PartialMatrix<byte> myRowStripMatrixForDenomCut)
-    private static void ReadDistanceBlocks(PartialMatrix<Double> myRowStripMatrixForA, PartialMatrix<Double> myRowStripMatrixForB, Block[] myColumnBlocks, PartialMatrix<Byte> myRowStripMatrixForDenomCut)
-    {
-//C# TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
-//#if USE_UINT16
-//C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-//		using (DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.UInt16, _cols, _readPointsA), matReaderB = new DistanceReader(_bMat, MatrixType.UInt16, _cols, _readPointsB))
+    private static void ReadDistanceBlocks(PartialMatrix<Double> myRowStripMatrixForA, PartialMatrix<Double> myRowStripMatrixForB, Block[] myColumnBlocks, PartialMatrix<Byte> myRowStripMatrixForDenomCut) {
+
         DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.UInt16, _cols, _readPointsA);
         DistanceReader matReaderB = new DistanceReader(_bMat, MatrixType.UInt16, _cols, _readPointsB);
-        try
-        {
-//#elif USE_INT16
-//C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-//		using (DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.Int16, _cols, _readPointsA), matReaderB = new DistanceReader(_bMat, MatrixType.Int16, _cols, _readPointsB))
-        DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.Int16, _cols, _readPointsA);
-        DistanceReader matReaderB = new DistanceReader(_bMat, MatrixType.Int16, _cols, _readPointsB);
-        try
-        {
-//#else
-//C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-//		using (DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.Double, _cols, _readPointsA), matReaderB = new DistanceReader(_bMat, MatrixType.Double, _cols, _readPointsB))
-        DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.Double, _cols, _readPointsA);
-        DistanceReader matReaderB = new DistanceReader(_bMat, MatrixType.Double, _cols, _readPointsB);
-        try
-        {
-//#endif
+        try {
+////#elif USE_INT16
+////C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
+////		using (DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.Int16, _cols, _readPointsA), matReaderB = new DistanceReader(_bMat, MatrixType.Int16, _cols, _readPointsB))
+//        DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.Int16, _cols, _readPointsA);
+//        DistanceReader matReaderB = new DistanceReader(_bMat, MatrixType.Int16, _cols, _readPointsB);
+//        try
+//        {
+////#else
+////C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
+////		using (DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.Double, _cols, _readPointsA), matReaderB = new DistanceReader(_bMat, MatrixType.Double, _cols, _readPointsB))
+//        DistanceReader matReaderA = new DistanceReader(_aMat, MatrixType.Double, _cols, _readPointsA);
+//        DistanceReader matReaderB = new DistanceReader(_bMat, MatrixType.Double, _cols, _readPointsB);
+//        try
+//        {
+////#endif
             MatrixReader oldScoreReader = null, newScoreReader = null;
-            if (_denomcutsenabled)
-            {
+            if (_denomcutsenabled) {
                 oldScoreReader = new MatrixReader(_oldscoremat, MatrixType.Int16, _cols);
                 newScoreReader = new MatrixReader(_newscoremat, MatrixType.Int16, _cols);
             }
 
-            for (int i = 0; i < myColumnBlocks.length; ++i)
-            {
+            for (int i = 0; i < myColumnBlocks.length; ++i) {
                 Block block = myColumnBlocks[i];
-                for (int r = block.RowRange.StartIndex; r <= block.RowRange.EndIndex; ++r)
-                {
+                for (int r = block.RowRange.StartIndex; r <= block.RowRange.EndIndex; ++r) {
                     long l1 = _lengthCut > -1 ? _seqs.get(r).size() : -1;
-                    for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c)
-                    {
+                    for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c) {
                         long l2 = _lengthCut > -1 ? _seqs.get(c).size() : -1;
 
                         // Each pair in block
-                        if (!_readPointsA)
-                        {
+                        if (!_readPointsA) {
                             double tA = FromArrayToTdist(matReaderA.ReadDistanceFromMatrix(r, c));
                             myRowStripMatrixForA[r][c] = tA;
                         }
-                        if (!_readPointsB)
-                        {
+                        if (!_readPointsB) {
                             double tB = FromArrayToTdist(matReaderB.ReadDistanceFromMatrix(r, c));
                             myRowStripMatrixForB[r][c] = tB;
                         }
                         ++_totalPairs;
 
-                        if (_useClusters)
-                        {
+                        if (_useClusters) {
                             int rCnum = ((int) PnumToCnum.get(r));
                             int cCnum = ((int) PnumToCnum.get(c));
-                            if (SelectedCnums.contains(rCnum) && SelectedCnums.contains(cCnum))
-                            {
-                                if (rCnum == cCnum)
-                                {
+                            if (SelectedCnums.contains(rCnum) && SelectedCnums.contains(cCnum)) {
+                                if (rCnum == cCnum) {
                                     ++_totalIntraPairs;
-                                }
-                                else
-                                {
+                                } else {
                                     ++_totalInterPairs;
                                 }
                             }
                         }
 
-                        double x = !_readPointsA ? (_useTDistanceMaxForA ? ((double) myRowStripMatrixForA[r][c])/Double.MAX_VALUE : myRowStripMatrixForA[r][c]) : matReaderA.ReadDistanceFromPointsFile(r, c);
-                        double y = !_readPointsB ? (_useTDistanceMaxForB ? ((double) myRowStripMatrixForB[r][c])/Double.MAX_VALUE : myRowStripMatrixForB[r][c]) : matReaderB.ReadDistanceFromPointsFile(r, c);
+                        double x = !_readPointsA ? (_useTDistanceMaxForA ? ((double) myRowStripMatrixForA[r][c]) / Double.MAX_VALUE : myRowStripMatrixForA[r][c]) : matReaderA.ReadDistanceFromPointsFile(r, c);
+                        double y = !_readPointsB ? (_useTDistanceMaxForB ? ((double) myRowStripMatrixForB[r][c]) / Double.MAX_VALUE : myRowStripMatrixForB[r][c]) : matReaderB.ReadDistanceFromPointsFile(r, c);
 
                         // Ignore x or y values greater than distcutA or discutB respectively when distcut values are specified
-                        if ((_distcutA > -1 && x > _distcutA) || (_distcutB > -1 && y > _distcutB))
-                        {
+                        if ((_distcutA > -1 && x > _distcutA) || (_distcutB > -1 && y > _distcutB)) {
                             continue;
                         }
 
                         // Ignore x or y values smaller than mindistA or mindistB respectively when mindist values are specified
-                        if ((_mindistA > -1 && x < _mindistA) || (_mindistB > -1 && y < _mindistB))
-                        {
+                        if ((_mindistA > -1 && x < _mindistA) || (_mindistB > -1 && y < _mindistB)) {
                             continue;
                         }
 
                         // Ignore if the corresponding two sequence lengths are not within the given lengthcut
-                        if (_lengthCut > -1 && (Math.abs(l1 - l2) > _lengthCut*((l1 + l2)/2.0)))
-                        {
+                        if (_lengthCut > -1 && (Math.abs(l1 - l2) > _lengthCut * ((l1 + l2) / 2.0))) {
                             continue;
                         }
 
@@ -1000,29 +964,24 @@ public class Program
                         y = Transform(y, _bTransfm, _bTransfp);
 
                         double newnomoveroldnom = -1;
-                        if (_denomcutsenabled)
-                        {
-                            double oldscoredist = ((double) FromArrayToTdist(oldScoreReader.Read(r, c)))/ Double.MAX_VALUE;
-                            double newscoredist = ((double) FromArrayToTdist(newScoreReader.Read(r, c)))/ Double.MAX_VALUE;
-                            newnomoveroldnom = (1.0 - oldscoredist)/(1.0 - newscoredist);
+                        if (_denomcutsenabled) {
+                            double oldscoredist = ((double) FromArrayToTdist(oldScoreReader.Read(r, c))) / Double.MAX_VALUE;
+                            double newscoredist = ((double) FromArrayToTdist(newScoreReader.Read(r, c))) / Double.MAX_VALUE;
+                            newnomoveroldnom = (1.0 - oldscoredist) / (1.0 - newscoredist);
 
-                            if (newnomoveroldnom < 0)
-                            {
+                            if (newnomoveroldnom < 0) {
                                 throw new RuntimeException("Bad should not happen: negative ratio");
                             }
                         }
 
-                        for (int j = _denomcuts.length - 1; j >= 0; --j)
-                        {
-                            if (_denomcutsenabled && newnomoveroldnom < _denomcuts[j])
-                            {
+                        for (int j = _denomcuts.length - 1; j >= 0; --j) {
+                            if (_denomcutsenabled && newnomoveroldnom < _denomcuts[j]) {
 //C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
 //ORIGINAL LINE: myRowStripMatrixForDenomCut[r, c] = (byte) j;
                                 myRowStripMatrixForDenomCut[r][c] = (byte) j;
                             }
 
-                            if (myRowStripMatrixForDenomCut[r][c] > j)
-                            {
+                            if (myRowStripMatrixForDenomCut[r][c] > j) {
                                 ++_consideredPairs[j];
                                 tangible.RefObject<Double> tempRef_Object = new tangible.RefObject<Double>(_xmaxWhole[j]);
                                 tangible.RefObject<Double> tempRef_Object2 = new tangible.RefObject<Double>(_xminWhole[j]);
@@ -1033,14 +992,11 @@ public class Program
                                 _xminWhole[j] = tempRef_Object2.argValue;
                                 _ymaxWhole[j] = tempRef_Object3.argValue;
                                 _yminWhole[j] = tempRef_Object4.argValue;
-                                if (_useClusters)
-                                {
+                                if (_useClusters) {
                                     int rCnum = ((int) PnumToCnum.get(r));
                                     int cCnum = ((int) PnumToCnum.get(c));
-                                    if (SelectedCnums.contains(rCnum) && SelectedCnums.contains(cCnum))
-                                    {
-                                        if (rCnum == cCnum)
-                                        {
+                                    if (SelectedCnums.contains(rCnum) && SelectedCnums.contains(cCnum)) {
+                                        if (rCnum == cCnum) {
                                             // Intra cluster distances
                                             ++_consideredPairsIntra[j];
                                             tangible.RefObject<Double> tempRef_Object5 = new tangible.RefObject<Double>(_xmaxSelected[j]);
@@ -1052,9 +1008,7 @@ public class Program
                                             _xminSelected[j] = tempRef_Object6.argValue;
                                             _ymaxSelected[j] = tempRef_Object7.argValue;
                                             _yminSelected[j] = tempRef_Object8.argValue;
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             // Inter cluster distances
                                             ++_consideredPairsInter[j];
                                             tangible.RefObject<Double> tempRef_Object9 = new tangible.RefObject<Double>(_xmaxSelectedInter[j]);
@@ -1075,34 +1029,17 @@ public class Program
                 }
             }
 
-            if (_denomcutsenabled)
-            {
-                if (oldScoreReader != null)
-                {
+            if (_denomcutsenabled) {
+                if (oldScoreReader != null) {
                     oldScoreReader.Dispose();
                 }
-                if (newScoreReader != null)
-                {
+                if (newScoreReader != null) {
                     newScoreReader.Dispose();
                 }
             }
-        }
-        finally
-        {
+        } finally {
             matReaderA.dispose();
             matReaderB.dispose();
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }
