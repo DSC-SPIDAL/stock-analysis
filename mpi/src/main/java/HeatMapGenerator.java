@@ -309,7 +309,7 @@ public class HeatMapGenerator {
         double cellmean = ((double) count) / (_xres * _yres);
         double power = cellmax < (_alpha * cellmean) ? 1.0 : (Math.log(_alpha) / Math.log(cellmax / cellmean));
         // Constant value by which the number of points in a 2D square is multiplied.
-        // The resulting value is independent of the total number of points as well as 
+        // The resulting value is independent of the total number of points as well as
         // the x,y resolution. The mult value is a factor changing the z value scale.
         double c = _zto1 ? (1.0 / cellmax) : (1.0 / (count * deltas));
 
@@ -407,7 +407,7 @@ public class HeatMapGenerator {
                 _ymaxbound = ymax;
             }
 
-            // Fill up the remaining region from beyond x=xmax and y=ymax as zero 
+            // Fill up the remaining region from beyond x=xmax and y=ymax as zero
             densityFileWriter.println();
             densityFileWriter.println(xmin + "\t" + ymax + "\t" + 0.0);
             densityFileWriter.println(xmin + "\t" + _ymaxbound + "\t" + 0.0);
@@ -634,7 +634,7 @@ public class HeatMapGenerator {
             ymin.argValue = y;
         }
     }
-
+                               hawasa kala nam hari..
     private static long[][] Sum2DArray(long[][] a, long[][] b) {
         int r = a.length;
         int c = a[0].length;

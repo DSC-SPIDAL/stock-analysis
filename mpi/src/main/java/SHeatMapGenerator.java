@@ -1,4 +1,11 @@
+import edu.indiana.soic.spidal.common.BinaryReader2D;
+import edu.indiana.soic.spidal.common.Range;
+import org.apache.commons.cli.*;
+
 import java.io.*;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class SHeatMapGenerator {
@@ -30,12 +37,100 @@ public class SHeatMapGenerator {
     private static boolean _readPointsA;
     private static boolean _readPointsB;
 
-    private void process() {
-        // first load the first file
+    private double minX;
+    private double minY;
+    private double maxX;
+    private double maxY;
 
+    public static void main(String[] args) {
+        Options options = new Options();
+        options.addOption("c", true, "Config file");
+        CommandLineParser commandLineParser = new BasicParser();
+        try {
+            CommandLine cmd = commandLineParser.parse(options, args);
+            String input = cmd.getOptionValue("c");
+            SHeatMapGenerator vg = new SHeatMapGenerator(input);
+            vg.process();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static String getProperty(Properties p, String name, String def) {
+    public SHeatMapGenerator(String confiFile) {
+        // first read the configurations
+        readConfiguration(confiFile);
+    }
+
+    private void process() {
+        // first load the first file
+        ReadOutPut outA = readFile(_aMat, _rows, _cols, _readPointsA);
+        ReadOutPut outB = readFile(_bMat, _rows, _cols, _readPointsB);
+
+        // get the bin size
+        double deltaX = (outA.max - outA.min) / _xres;
+        double deltaY = (outB.max - outB.min) / _yres;
+        double deltaS = deltaX * deltaY;
+        // now create a cell array with number of bins
+        long [][] cells = new long[_xres][];
+        for (int i = 0; i < _xres; i++) {
+            cells[i] = new long[_yres];
+            for (int j = 0; j < _yres; j++) {
+                cells[i][j] = 0;
+            }
+        }
+        // update the cells according to values
+        for (int i = 0; i < _rows; i++) {
+            for (int j = 0; j < _cols; j++) {
+                double x = outA.values[i][j];
+                double y = outB.values[i][j];
+                x = Transform(x, _aTransfm, _aTransfp);
+                y = Transform(y, _bTransfm, _bTransfp);
+                updateCells(x, y, outA.max, outA.min, outB.max, outB.min, deltaX, deltaY, cells, 1, 2);
+            }
+        }
+        // draw the graphs
+        try {
+            generateDensityDataFile(cells, outA.max, outA.min, outB.max, outB.min, deltaX, deltaY, deltaS, "prefix", 1.0, 1.0, (long)_rows * _cols);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static double Transform(double val, int transfm, double transfp) {
+        if (transfm == 10) {
+            val = Math.min(1.0, val);
+            return Math.pow(val, transfp);
+        }
+        return val;
+    }
+
+    private static void updateCells(double x, double y,
+                                    double xmax, double xmin,
+                                    double ymax, double ymin,
+                                    double deltax, double deltay,
+                                    long[][] cells, int i, int j) {
+        // cell number based on zero index from bottom left corner
+        // if x is equal to xmax then it's placed in the last cell, which is xres-1 in zero based index
+        // same is done for y when y == ymax
+        int cellx = x == xmax ? _xres - 1 : (int) Math.floor((x - xmin) / deltax);
+        int celly = y == ymax ? _yres - 1 : (int) Math.floor((y - ymin) / deltay);
+
+        if (x > xmax || y > ymax || x < xmin || y < ymin) {
+            // now this should never be reached
+            throw new RuntimeException("bad(1)-> x: " + x + " y: " + y + " xmax: " + xmax + " xmin: " +
+                    xmin + " ymax: " + ymax + " ymin: " + ymin + "lengthcut: " + _lengthCut + " row: " + i + " col: " + j);
+        }
+
+        if (cellx >= _xres || celly >= _yres) {
+            // now this should never be reached
+            throw new RuntimeException("bad(2)-> x: " + x + " y:" + y + " xmax: " + xmax + " xmin: " +
+                    xmin + " ymax: " + ymax + " ymin: " + ymin + " cellx: " + cellx + " celly: " + celly);
+        }
+
+        ++cells[celly][cellx];
+    }
+
+    private String getProperty(Properties p, String name, String def) {
         String val = System.getProperty(name);
         if (val == null) {
             if (def != null) {
@@ -50,7 +145,7 @@ public class SHeatMapGenerator {
         return val;
     }
 
-    private static void ReadConfiguration(String configFile) {
+    private void readConfiguration(String configFile) {
         System.out.println(configFile);
         Properties p = new Properties();
         try {
@@ -89,11 +184,75 @@ public class SHeatMapGenerator {
         }
     }
 
-    private double[][] readFile(String file, int rows, int cols, boolean points) {
-
+    private class ReadOutPut {
+        double [][] values;
+        double max;
+        double min;
     }
 
-    private static void GenerateDensityDataFile(long[][] cells, double xmax, double xmin,
+    /**
+     * A file can be a point file or a distance file
+     * @param file
+     * @param rows
+     * @param cols
+     * @param points
+     * @return
+     */
+    private ReadOutPut readFile(String file, int rows, int cols, boolean points) {
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        double[][] finalValues = new double[rows][];
+        if (!points) {
+            short[][] values = BinaryReader2D.readRowRange(file, new Range(0, rows - 1), cols, ByteOrder.BIG_ENDIAN, false, 1.0);
+            for (int i = 0; i < values.length; i++) {
+                finalValues[i] = new double[cols];
+                for (int j = 0; j < values[i].length; j++) {
+                    finalValues[i][j] = ((double) values[i][j]) / Short.MAX_VALUE;
+                    if (finalValues[i][j] > max) {
+                        max = finalValues[i][j];
+                    }
+                    if (finalValues[i][j] < min) {
+                        min = finalValues[i][j];
+                    }
+                }
+            }
+        } else {
+            List<Point> pointList = new ArrayList<Point>();
+            try {
+                FileReader input = new FileReader(file);
+                BufferedReader bufRead = new BufferedReader(input);
+                String inputLine;
+                while ((inputLine = bufRead.readLine()) != null) {
+                    Point p = Utils.readPoint(inputLine);
+                    pointList.add(p);
+                }
+                for (int i = 0; i < rows; i++) {
+                    finalValues[i] = new double[cols];
+                    for (int j = 0; j < cols; j++) {
+                        Point pi = pointList.get(i);
+                        Point pj = pointList.get(j);
+                        finalValues[i][j] = pi.distance(pj);
+                        if (finalValues[i][j] > max) {
+                            max = finalValues[i][j];
+                        }
+                        if (finalValues[i][j] < min) {
+                            min = finalValues[i][j];
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        ReadOutPut readOutPut = new ReadOutPut();
+        readOutPut.max = max;
+        readOutPut.min = min;
+        readOutPut.values = finalValues;
+
+        return readOutPut;
+    }
+
+    private static void generateDensityDataFile(long[][] cells, double xmax, double xmin,
                                                 double ymax, double ymin,
                                                 double deltax, double deltay,
                                                 double deltas, String prefix, double denomcut, double pairFraction, long totalPairs) throws IOException {
