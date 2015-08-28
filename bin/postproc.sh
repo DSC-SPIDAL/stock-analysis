@@ -15,12 +15,12 @@ PREPROC_DIR_NAME=preproc
 YEARLY_PREPROC_DIR_NAME=$PREPROC_DIR_NAME/yearly
 GLOBAL_PREPROC_DIR_NAME=$PREPROC_DIR_NAME/global
 
-POSTPROC_DIR_NAME=postproc/weighted
+POSTPROC_DIR_NAME=postproc/unweighted
 POSTPROC_INTERMEDIATE_DIR_NAME=$POSTPROC_DIR_NAME/intermediate
 YEARLY_POSTPROC_DIR_NAME=$POSTPROC_DIR_NAME/yearly
 GLOBAL_POSTPROC_DIR_NAME=$POSTPROC_DIR_NAME/global
 
-MDS_DIR_NAME=mds/weighted
+MDS_DIR_NAME=mds/unweighted
 YEARLY_MDS_DIR_NAME=$MDS_DIR_NAME/yearly
 GLOBAL_MDS_DIR_NAME=$MDS_DIR_NAME/global
 
@@ -156,7 +156,6 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 # generate heat maps
 # ----------------------
 
-#YEARLY_MDS_DIR_NAME=/N/u/skamburu/data/2004_2014_AUG_24/mds/unweighted/yearly
 YEARLY_DISTANCES_DIR_NAME=$YEARLY_PREPROC_DIR_NAME/distances
 YEARLY_HEATMAP_DIR=$YEARLY_POSTPROC_DIR_NAME/heatmap
 
