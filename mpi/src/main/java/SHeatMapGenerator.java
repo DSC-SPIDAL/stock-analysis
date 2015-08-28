@@ -90,7 +90,7 @@ public class SHeatMapGenerator {
         }
         // draw the graphs
         try {
-            generateDensityDataFile(cells, outA.max, outA.min, outB.max, outB.min, deltaX, deltaY, deltaS, "prefix", 1.0, 1.0, (long)_rows * _cols);
+            generateDensityDataFile(cells, outA.max, outA.min, outB.max, outB.min, deltaX, deltaY, deltaS, _title, 1.0, 1.0, (long)_rows * _cols);
         } catch (IOException e) {
             e.printStackTrace();
         }
