@@ -160,10 +160,10 @@ YEARLY_DISTANCES_DIR_NAME=$YEARLY_PREPROC_DIR_NAME/distances
 YEARLY_HEATMAP_DIR=$YEARLY_POSTPROC_DIR_NAME/heatmap
 
 mkdir -p $YEARLY_HEATMAP_DIR
-
 HEAT_POINTS=$YEARLY_MDS_DIR_NAME/*
 for f in $HEAT_POINTS
 do
+  echo "heatmap dir" $YEARLY_HEATMAP_DIR
   common_filename="${f##*/}"
   common_filename_ext="${common_filename%.*}"
   common_file=$YEARLY_MDS_DIR_NAME/$common_filename
