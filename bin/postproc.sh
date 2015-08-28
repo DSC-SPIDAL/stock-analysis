@@ -166,7 +166,7 @@ do
   echo "heatmap dir" $YEARLY_HEATMAP_DIR
   common_filename="${f##*/}"
   common_filename_ext="${common_filename%.*}"
-  common_file=$YEARLY_MDS_DIR_NAME/$common_filename
+  common_file=$BASE_DIR/$YEARLY_MDS_DIR_NAME/$common_filename
   echo 'common file' $common_file
   no_of_common_lines=`sed -n '$=' $common_file`
   echo $no_of_common_lines
@@ -174,7 +174,7 @@ do
   ext='.csv'
   distance_file=$YEARLY_DISTANCES_DIR_NAME/$common_filename_ext$ext
 
-  echo "distance file" $YEARLY_MDS_DIR_NAME/$common_file
+  echo "distance file" $distance_file
   echo "point file" $common_file
   echo "-Drows=$no_of_common_lines -Dcols=$no_of_common_lines -DAmat=$common_file -DBmat=$distance_file -Dtitle=$common_filename -Doutdir=$YEARLY_HEATMAP_DIR -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties"
 
