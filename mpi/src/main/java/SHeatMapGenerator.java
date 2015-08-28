@@ -152,7 +152,7 @@ public class SHeatMapGenerator {
             p.load(new FileInputStream(configFile));
             _aMat = getProperty(p, "Amat", null);
             _aName = getProperty(p, "Aname", null);
-            _aTransfm = Integer.parseInt(getProperty(p, "Atransfp", null));
+            _aTransfm = Integer.parseInt(getProperty(p, "Atransfm", null));
             _aTransfp = Double.parseDouble(getProperty(p, "Atransfp", null));
             _bMat = getProperty(p, "Bmat", null);
             _bName = getProperty(p, "Bname", null);
