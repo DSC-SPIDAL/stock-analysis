@@ -27,7 +27,8 @@ public class SHeatMapGenerator {
     private static String _clusterfile;
     private static String _title;
     private static double _lengthCut;
-
+    private static boolean _readPointsA;
+    private static boolean _readPointsB;
 
     private void process() {
         // first load the first file
@@ -64,8 +65,8 @@ public class SHeatMapGenerator {
             _bTransfp = Double.parseDouble(getProperty(p, "Btransfp", null));
             _useTDistanceMaxForA = Boolean.parseBoolean(getProperty(p, "usetdistancemaxforA", null));
             _useTDistanceMaxForB = Boolean.parseBoolean(getProperty(p, "usetdistancemaxforB", null));
-//            _readPointsA = Boolean.parseBoolean(getProperty(p, "readPointsA", null));
-//            _readPointsB = Boolean.parseBoolean(getProperty(p, "readPointsB", null));
+            _readPointsA = Boolean.parseBoolean(getProperty(p, "readPointsA", null));
+            _readPointsB = Boolean.parseBoolean(getProperty(p, "readPointsB", null));
             _outdir = getProperty(p, "outdir", null);
             _cols = Integer.parseInt(getProperty(p, "cols", null));
             _rows = Integer.parseInt(getProperty(p, "rows", null));
@@ -86,6 +87,10 @@ public class SHeatMapGenerator {
             System.out.println("Failed to read the configuration");
             e.printStackTrace();
         }
+    }
+
+    private double[][] readFile(String file, int rows, int cols, boolean points) {
+
     }
 
     private static void GenerateDensityDataFile(long[][] cells, double xmax, double xmin,
