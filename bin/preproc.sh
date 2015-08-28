@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#SBATCH -A sekanaya
+#SBATCH -A skamburu
 #SBATCH -N 12
 #SBATCH --tasks-per-node=1
 #SBATCH --time=04:00:00
