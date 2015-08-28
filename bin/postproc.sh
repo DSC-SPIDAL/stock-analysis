@@ -156,11 +156,11 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 # generate heat maps
 # ----------------------
 
-YEARLY_DISTANCES_DIR_NAME=$YEARLY_PREPROC_DIR_NAME/distances
-YEARLY_HEATMAP_DIR=$YEARLY_POSTPROC_DIR_NAME/heatmap
+YEARLY_DISTANCES_DIR_NAME=$BASE_DIR/$YEARLY_PREPROC_DIR_NAME/distances
+YEARLY_HEATMAP_DIR=$BASE_DIR/$YEARLY_POSTPROC_DIR_NAME/heatmap
 
 mkdir -p $YEARLY_HEATMAP_DIR
-HEAT_POINTS=$YEARLY_MDS_DIR_NAME/*
+HEAT_POINTS=$BASE_DIR/$YEARLY_MDS_DIR_NAME/*
 for f in $HEAT_POINTS
 do
   echo "heatmap dir" $YEARLY_HEATMAP_DIR
