@@ -455,7 +455,7 @@ public class SHeatMapGenerator {
         String dcutStringA = (_mindistA > -1 ? (new Double(_mindistA)).toString() : "none") + "," + (_distcutA > -1 ? (new Double(_distcutA)).toString() : "none");
         String dcutStringB = (_mindistB > -1 ? (new Double(_mindistB)).toString() : "none") + "," + (_distcutB > -1 ? (new Double(_distcutB)).toString() : "none");
         //String title = String.format(_title, (_pcutf > -1 ? (new Double(_pcutf)).toString() : "none"), bNameFinal, dcutStringB, aNameFinal, dcutStringA, (prefix.equals("whole") ? "Whole Sample" : (prefix.equals("selected") ? "Selected Clusters Intra Pairs" : "Selected Clusters Inter Pairs")));
-        String title = "test";
+        String title = _title;
         if (false) {
             title += "\\nDenomCut[" + denomcut + "] PairFraction[" + Math.round(pairFraction * Math.pow(10, 6)) / Math.pow(10, 6) + "] TotalPairs[" + totalPairs + "]";
         }
