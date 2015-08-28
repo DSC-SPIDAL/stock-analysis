@@ -208,18 +208,14 @@ public class HeatMapGenerator {
         }
     }
 
-    //C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
-//ORIGINAL LINE: private static void InitalizeDenomMask(Block[] myColumnBlocks, PartialMatrix<byte> myRowStripMatrixForDenomCut)
     private static void InitalizeDenomMask(Block[] myColumnBlocks, PartialMatrix myRowStripMatrixForDenomCut) {
         for (Block block : myColumnBlocks) {
             for (int r = block.RowRange.StartIndex; r <= block.RowRange.EndIndex; ++r) {
                 for (int c = block.ColumnRange.StartIndex; c <= block.ColumnRange.EndIndex; ++c) {
-//C# TO JAVA CONVERTER WARNING: Unsigned integer types have no direct equivalent in Java:
-//ORIGINAL LINE: myRowStripMatrixForDenomCut[r, c] = byte.MaxValue;
+                    //ORIGINAL LINE: myRowStripMatrixForDenomCut[r, c] = byte.MaxValue;
                     // TODO FIX BYTE -> DOUBLE
                     myRowStripMatrixForDenomCut.setValue(r, c, Byte.MAX_VALUE);
                 }
-
             }
         }
     }
