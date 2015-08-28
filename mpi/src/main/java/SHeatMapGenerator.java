@@ -203,11 +203,14 @@ public class SHeatMapGenerator {
         double max = Double.MIN_VALUE;
         double[][] finalValues = new double[rows][];
         if (!points) {
-            short[][] values = BinaryReader2D.readRowRange(file, new Range(0, rows - 1), cols, ByteOrder.BIG_ENDIAN, false, 1.0);
+            short[][] values = BinaryReader2D.readRowRange(file, new Range(0, rows - 1), cols, ByteOrder.BIG_ENDIAN, true, 1.0);
             for (int i = 0; i < values.length; i++) {
                 finalValues[i] = new double[cols];
                 for (int j = 0; j < values[i].length; j++) {
                     finalValues[i][j] = ((double) values[i][j]) / Short.MAX_VALUE;
+                    if (finalValues[i][j] < 0) {
+                        System.out.println("minus distance");
+                    }
                     if (finalValues[i][j] > max) {
                         max = finalValues[i][j];
                     }
@@ -451,7 +454,8 @@ public class SHeatMapGenerator {
 //            gnuplotWriterSmall.WriteLine("unset key");
         String dcutStringA = (_mindistA > -1 ? (new Double(_mindistA)).toString() : "none") + "," + (_distcutA > -1 ? (new Double(_distcutA)).toString() : "none");
         String dcutStringB = (_mindistB > -1 ? (new Double(_mindistB)).toString() : "none") + "," + (_distcutB > -1 ? (new Double(_distcutB)).toString() : "none");
-        String title = String.format(_title, (_pcutf > -1 ? (new Double(_pcutf)).toString() : "none"), bNameFinal, dcutStringB, aNameFinal, dcutStringA, (prefix.equals("whole") ? "Whole Sample" : (prefix.equals("selected") ? "Selected Clusters Intra Pairs" : "Selected Clusters Inter Pairs")));
+        //String title = String.format(_title, (_pcutf > -1 ? (new Double(_pcutf)).toString() : "none"), bNameFinal, dcutStringB, aNameFinal, dcutStringA, (prefix.equals("whole") ? "Whole Sample" : (prefix.equals("selected") ? "Selected Clusters Intra Pairs" : "Selected Clusters Inter Pairs")));
+        String title = "test";
         if (false) {
             title += "\\nDenomCut[" + denomcut + "] PairFraction[" + Math.round(pairFraction * Math.pow(10, 6)) / Math.pow(10, 6) + "] TotalPairs[" + totalPairs + "]";
         }
