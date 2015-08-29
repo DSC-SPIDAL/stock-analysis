@@ -45,6 +45,7 @@ ROTATE_FINAL_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/points
 ROTATE_FINAL_SUMMARY_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/summary
 # directory where final labeled point output
 LABEL_OUT_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/points/labeled/byhist
+SECTOR_LABEL_OUT_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/points/labeled/bysec
 # directory where output of rotation program stored
 ROTATE_OUT_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/rotate_ops
 # name of the global stock file name
@@ -145,13 +146,25 @@ done
 cd $dir
 LABEL_OUT=$BASE_DIR/$LABEL_OUT_DIR_NAME
 mkdir -p $LABEL_OUT
-
+echo "APPLY HIST LABELS"
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
 -v $CONT_VECS \
 -p $FINAL_ROTATE \
 -d $LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
 -s $HIST_DIR -h
+
+echo "APPLY SECTOR LABELS"
+SEC_LABEL_OUT=$BASE_DIR/$SECTOR_LABEL_OUT_DIR_NAME
+mkdir -p $SEC_LABEL_OUT
+SEC_FILE=$BASE_DIR/$GLOBAL_VEC_DIR_NAME/all_companylist.csv
+
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
+-v $CONT_VECS \
+-p $FINAL_ROTATE \
+-d $SEC_LABEL_OUT \
+-o $ORIGINAL_STOCK_FILE \
+-s $SEC_FILE
 
 # generate heat maps
 # ----------------------
