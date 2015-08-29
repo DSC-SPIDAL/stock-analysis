@@ -157,7 +157,7 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 echo "APPLY SECTOR LABELS"
 SEC_LABEL_OUT=$BASE_DIR/$SECTOR_LABEL_OUT_DIR_NAME
 mkdir -p $SEC_LABEL_OUT
-SEC_FILE=$BASE_DIR/$GLOBAL_VEC_DIR_NAME/all_companylist.csv
+SEC_FILE=$BASE_DIR/$GLOBAL_STOCK_DIR_NAME/all_companylist.csv
 
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
 -v $CONT_VECS \
