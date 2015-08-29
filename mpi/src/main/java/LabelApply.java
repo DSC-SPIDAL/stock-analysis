@@ -150,6 +150,7 @@ public class LabelApply {
         Map<String, Integer> sectorsToClazz = new HashMap<String, Integer>();
         for (int i = 0; i < sectorNames.size(); i++) {
             sectorsToClazz.put(sectorNames.get(i), i + 1);
+            System.out.println(sectorNames.get(i) + ": " + i + 1);
         }
         return sectorsToClazz;
     }
