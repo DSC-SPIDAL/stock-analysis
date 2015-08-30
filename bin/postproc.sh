@@ -84,6 +84,10 @@ GLOBAL_HIST_DIR=$BASE_DIR/$GLOBAL_HIST_DIR_NAME
 mkdir -p $CONT_COMMON_POINTS
 mkdir -p $GLOBAL_CONT_COMMON_POINTS
 
+# copyt the global points
+mkdir -p $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR
+cp -r $GLOBAL_POINTS/* $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR
+
 # generate the common points
 # --------------------------
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/$STOCK_FILE_NAME -gp $GLOBAL_POINTS/$GLOBAL_POINTS_FILE_NAME -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.out.txt
@@ -92,7 +96,7 @@ mv $CONT_COMMON_POINTS/2004_2014.csv $GLOBAL_CONT_COMMON_POINTS
 # generate histogram
 # --------------------
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $CONT_VECS -s $ORIGINAL_STOCK_FILE -d $HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/histogram.out.txt
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $GLOBAL_POINTS_DIR_NAME -s $ORIGINAL_STOCK_FILE -d $GLOBAL_HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/global_histogram.out.txt
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR -s $ORIGINAL_STOCK_FILE -d $GLOBAL_HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/global_histogram.out.txt
 # rotate the points
 # ******************
 ROTATE_POINTS=$CONT_COMMON_POINTS/*
@@ -153,9 +157,6 @@ do
 done
 cd $dir
 
-# copyt the global points
-mkdir -p $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR
-cp -r $GLOBAL_POINTS/* $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR
 
 LABEL_OUT=$BASE_DIR/$LABEL_OUT_DIR_NAME
 mkdir -p $LABEL_OUT
