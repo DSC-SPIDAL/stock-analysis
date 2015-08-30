@@ -228,7 +228,7 @@ public class DistanceCalculator {
                     short val = (short) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
                     writer.write(val);
                 }
-                writer.line();
+                //writer.line();
             }
         } while (true);
         if (writer != null) {

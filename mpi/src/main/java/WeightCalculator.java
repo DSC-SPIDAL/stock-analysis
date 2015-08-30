@@ -250,21 +250,31 @@ public class WeightCalculator {
                         if (cor < dmin) {
                             dmin = cor;
                         }
-                        values[j][readStartIndex + i] = cor;
+                        values[j][readStartIndex + i] = Math.max(dmax * .05, Math.pow(cor, .25));
                     }
                 }
                 readStartIndex = readEndIndex + 1;
                 readEndIndex = readStartIndex + INC - 1;
             } while (true);
 
+            double max = Double.MIN_VALUE;
+            for (int i = 0; i < values.length; i++) {
+                double[] row = values[i];
+                for (int j = 0; j < row.length; j++) {
+                    values[i][j] = Math.max(dmax * .05, Math.pow(values[i][j], .25));
+                    if (values[i][j] > max) {
+                        max = values[i][j];
+                    }
+                }
+            }
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 double[] row = values[i];
                 for (double value : row) {
-                    short val = (short) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
+                    short val = (short) ((normalize ? value / max : value) * Short.MAX_VALUE);
                     writer.write(val);
                 }
-                writer.line();
+                //writer.line();
             }
         } while (true);
         if (writer != null) {
