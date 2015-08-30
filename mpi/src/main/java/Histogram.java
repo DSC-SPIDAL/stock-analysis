@@ -59,6 +59,7 @@ public class Histogram {
         files.addAll(list);
         for (File f : files) {
             String outFileName = distFolder + "/" + f.getName();
+            System.out.println("generate histogram: " + outFileName);
             Bin []bins = genHistoGram(f, stockFile, this.bins, permNoToSymbol);
             writeBins(outFileName, bins);
         }
