@@ -190,6 +190,7 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -o $ORIGINAL_STOCK_FILE \
 -s $SEC_FILE
 
+echo "APPLY GLOBAL SECTOR LABELS"
 GLOBAL_SEC_LABEL_OUT=$BASE_DIR/$GLOBAL_SECTOR_LABEL_OUT_DIR_NAME
 mkdir -p $GLOBAL_SEC_LABEL_OUT
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
