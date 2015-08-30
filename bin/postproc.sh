@@ -96,7 +96,7 @@ mv $CONT_COMMON_POINTS/2004_2014.csv $GLOBAL_CONT_COMMON_POINTS
 # generate histogram
 # --------------------
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $CONT_VECS -s $ORIGINAL_STOCK_FILE -d $HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/histogram.out.txt
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR -s $ORIGINAL_STOCK_FILE -d $GLOBAL_HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/global_histogram.out.txt
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $BASE_DIR/$GLOBAL_VEC_DIR_NAME -s $ORIGINAL_STOCK_FILE -d $GLOBAL_HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/global_histogram.out.txt
 # rotate the points
 # ******************
 ROTATE_POINTS=$CONT_COMMON_POINTS/*
