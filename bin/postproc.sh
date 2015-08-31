@@ -166,7 +166,8 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -p $FINAL_ROTATE \
 -d $LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
--s $HIST_DIR -h
+-s $HIST_DIR -h \
+-e fixedclasses.txt
 
 GLOBAL_LABEL_OUT=$BASE_DIR/$GLOBAL_LABEL_OUT_DIR_NAME
 mkdir -p $GLOBAL_LABEL_OUT
@@ -176,7 +177,8 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -p $BASE_DIR/$GLOBAL_POINTS_DIR_NAME \
 -d $GLOBAL_LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
--s $GLOBAL_HIST_DIR -h
+-s $GLOBAL_HIST_DIR -h \
+-e fixedclasses.txt
 
 echo "APPLY SECTOR LABELS"
 SEC_LABEL_OUT=$BASE_DIR/$SECTOR_LABEL_OUT_DIR_NAME
@@ -188,7 +190,8 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -p $FINAL_ROTATE \
 -d $SEC_LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
--s $SEC_FILE
+-s $SEC_FILE \
+-e fixedclasses.txt
 
 echo "APPLY GLOBAL SECTOR LABELS"
 GLOBAL_SEC_LABEL_OUT=$BASE_DIR/$GLOBAL_SECTOR_LABEL_OUT_DIR_NAME
@@ -198,7 +201,8 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -p $BASE_DIR/$GLOBAL_POINTS_DIR_NAME \
 -d $GLOBAL_SEC_LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
--s $SEC_FILE
+-s $SEC_FILE \
+-e fixedclasses.txt
 
 # generate heat maps
 # ----------------------

@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 
 public class LabelApply {
+    private final String fixedClassesFile;
     private String vectorFolder;
     private String pointsFolder;
     private String distFolder;
@@ -15,6 +16,7 @@ public class LabelApply {
     private Map<Integer, String> permNoToSymbol = new HashMap<Integer, String>();
     private Map<String, Integer> sectorToClazz = new HashMap<String, Integer>();
     private Map<String, String> invertedSectors = new HashMap<String, String>();
+    private Map<String, Integer> invertedFixedClases = new HashMap<String, Integer>();
 
     public static void main(String[] args) {
         Options options = new Options();
@@ -24,6 +26,8 @@ public class LabelApply {
         options.addOption("o", true, "Original stock file"); // global 10 year stock file
         options.addOption("s", true, "Sector file"); // If Histogram true then set this as the folder to histogram output
         options.addOption("h", false, "Gen from histogram");
+        options.addOption("e", true, "Extra classes file"); // a file containing fixed classes
+
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -33,21 +37,23 @@ public class LabelApply {
             String originalStocks = cmd.getOptionValue("o");
             String sectorFile = cmd.getOptionValue("s");
             boolean histogram = cmd.hasOption("h");
+            String fixedClasses = cmd.getOptionValue("e");
 
-            LabelApply program = new LabelApply(vectorFile, pointsFolder, distFolder, originalStocks, sectorFile, histogram);
+            LabelApply program = new LabelApply(vectorFile, pointsFolder, distFolder, originalStocks, sectorFile, histogram, fixedClasses);
             program.process();
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public LabelApply(String vectorFolder, String pointsFolder, String distFolder, String originalStockFile, String sectorFile, boolean histogram) {
+    public LabelApply(String vectorFolder, String pointsFolder, String distFolder, String originalStockFile, String sectorFile, boolean histogram, String fixedClasses) {
         this.vectorFolder = vectorFolder;
         this.pointsFolder = pointsFolder;
         this.distFolder = distFolder;
         this.originalStockFile = originalStockFile;
         this.histogram = histogram;
         this.sectorFile = sectorFile;
+        this.fixedClassesFile = fixedClasses;
         init();
     }
 
@@ -67,7 +73,7 @@ public class LabelApply {
             System.out.println("In should be a folder: " + vectorFolder);
             return;
         }
-
+        this.invertedFixedClases = loadFixedClasses(fixedClassesFile);
         if (!histogram) {
             Map<String, List<String>> sectors = loadStockSectors(sectorFile);
             sectorToClazz = convertSectorsToClazz(sectors);
@@ -75,7 +81,6 @@ public class LabelApply {
                 System.out.println(entry.getKey() + " : " + entry.getValue());
             }
         }
-
 
         for (File inFile : inFolder.listFiles()) {
             String fileName = inFile.getName();
@@ -92,6 +97,39 @@ public class LabelApply {
             }
             processFile(fileNameWithOutExt);
         }
+    }
+
+    private Map<String, Integer> loadFixedClasses(String file) {
+        FileReader input;
+        try {
+            Map<Integer, List<String>> fixedClaszzes = new HashMap<Integer, List<String>>();
+            Map<String, Integer> invertedFixedClasses = new HashMap<String, Integer>();
+            File f = new File(file);
+            if (!f.exists()) {
+                System.out.println("Extra classes file doesn't exist: " + fixedClassesFile);
+                return invertedFixedClasses;
+            }
+            input = new FileReader(f);
+            BufferedReader bufRead = new BufferedReader(input);
+            String line;
+            while ((line = bufRead.readLine()) != null) {
+                String parts[] = line.split(",");
+                int clazz = Integer.parseInt(parts[0]);
+                List<String> symbols = new ArrayList<String>();
+                symbols.addAll(Arrays.asList(parts).subList(1, parts.length));
+                fixedClaszzes.put(clazz, symbols);
+            }
+
+            for (Map.Entry<Integer, List<String>> e : fixedClaszzes.entrySet()) {
+                for (String s : e.getValue()) {
+                    invertedFixedClasses.put(s, e.getKey());
+                }
+            }
+            return invertedFixedClasses;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private Map<String, List<String>> loadHistoSectors(String sectorFile) {
@@ -184,14 +222,18 @@ public class LabelApply {
             while ((inputLine = bufRead.readLine()) != null && index < symbols.size())  {
                 Point p = Utils.readPoint(inputLine);
                 String symbol = symbols.get(index);
-                // get the corresponding symbol
-                // get the class for this one
-                String sector = invertedSectors.get(symbol);
                 int clazz = 0;
-                if (sector != null) {
-                    clazz = sectorToClazz.get(sector);
+                if (this.invertedFixedClases.containsKey(symbol)) {
+                    clazz = this.invertedFixedClases.get(symbol);
                 } else {
+                    // get the corresponding symbol
+                    // get the class for this one
+                    String sector = invertedSectors.get(symbol);
+                    if (sector != null) {
+                        clazz = sectorToClazz.get(sector);
+                    } else {
 //                    System.out.println("No sector: " + symbol);
+                    }
                 }
                 p.setClazz(clazz);
                 String s = p.serialize();
