@@ -19,14 +19,17 @@ public class DistanceCalculator {
     private MpiOps mpiOps;
     private int distanceType;
     private boolean sharedInput = false;
+    private String originalStockFile;
+    private Map<Integer, String> permNoToSymbol = new HashMap<Integer, String>();
 
-    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, int distanceType, boolean sharedInput) {
+    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, int distanceType, boolean sharedInput, String originalStockFile) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.normalize = normalize;
         this.mpi = mpi;
         this.distanceType = distanceType;
         this.sharedInput = sharedInput;
+        this.originalStockFile = originalStockFile;
     }
 
     public static void main(String[] args) {
@@ -37,6 +40,8 @@ public class DistanceCalculator {
         options.addOption("m", false, "mpi");
         options.addOption("t", true, "distance type");
         options.addOption("s", false, "shared input directory");
+        options.addOption("o", true, "Original stocks file");
+
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -46,6 +51,7 @@ public class DistanceCalculator {
             boolean mpi = cmd.hasOption("m");
             int distanceType = Integer.parseInt(cmd.getOptionValue("t"));
             boolean sharedInput = cmd.hasOption("s");
+            String originalStockFile = cmd.getOptionValue("o");
             String print = "vector: " + _vectorFile + " ,distance matrix folder: "
                     + _distFile + " ,normalize: "
                     + _normalize + " ,mpi: " + mpi
@@ -55,7 +61,7 @@ public class DistanceCalculator {
             if (mpi) {
                 MPI.Init(args);
             }
-            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType, sharedInput);
+            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType, sharedInput, originalStockFile);
             program.process();
             if (mpi) {
                 MPI.Finalize();
@@ -107,6 +113,10 @@ public class DistanceCalculator {
                 }
             } else {
                 files.addAll(list);
+            }
+
+            if (originalStockFile != null && !originalStockFile.equals("")) {
+                permNoToSymbol = Utils.loadMapping(originalStockFile);
             }
 
             List<Thread> threads = new ArrayList<Thread>();
@@ -207,6 +217,13 @@ public class DistanceCalculator {
                     for (int j = 0; j < vectors.size(); j++) {
                         VectorPoint fv = vectors.get(j);
                         double cor = sv.correlation(fv, distanceType);
+                        if (cor < 0.05) {
+                            String sym1 = permNoToSymbol.get(fv.getKey());
+                            String sym2 = permNoToSymbol.get(sv.getKey());
+                            if (sym1 != null && sym2 != null) {
+                                System.out.println(sym1 + "," + sym2 + " :" + cor);
+                            }
+                        }
                         if (cor > dmax) {
                             dmax = cor;
                         }
