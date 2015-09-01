@@ -217,7 +217,7 @@ public class DistanceCalculator {
                     for (int j = 0; j < vectors.size(); j++) {
                         VectorPoint fv = vectors.get(j);
                         double cor = sv.correlation(fv, distanceType);
-                        if (cor < 0.05) {
+                        if (cor < 0.01) {
                             String sym1 = permNoToSymbol.get(fv.getKey());
                             String sym2 = permNoToSymbol.get(sv.getKey());
                             if (sym1 != null && sym2 != null) {
