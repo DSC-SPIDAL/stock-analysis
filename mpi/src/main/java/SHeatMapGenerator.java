@@ -207,6 +207,7 @@ public class SHeatMapGenerator {
             for (int i = 0; i < values.length; i++) {
                 finalValues[i] = new double[cols];
                 for (int j = 0; j < values[i].length; j++) {
+                    if (i == j) continue;
                     finalValues[i][j] = ((double) values[i][j]) / Short.MAX_VALUE;
                     if (finalValues[i][j] < 0) {
                         System.out.println("minus distance");
@@ -232,6 +233,7 @@ public class SHeatMapGenerator {
                 for (int i = 0; i < rows; i++) {
                     finalValues[i] = new double[cols];
                     for (int j = 0; j < cols; j++) {
+                        if (i == j) continue;
                         Point pi = pointList.get(i);
                         Point pj = pointList.get(j);
                         finalValues[i][j] = pi.distance(pj);
