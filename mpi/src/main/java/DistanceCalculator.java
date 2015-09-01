@@ -170,10 +170,18 @@ public class DistanceCalculator {
         }
 
         String outFileName = distFolder + "/" + fileEntry.getName();
+        String smallValDir = distFolder + "/small";
+        String smallOutFileName = smallValDir + "/" + fileEntry.getName();
+
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
         writer = new WriterWrapper(outFileName, false);
-
+        WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
         int lineCount = countLines(fileEntry);
+
+        File smallDirFile = new File(smallValDir);
+        if (!smallDirFile.exists()) {
+            smallDirFile.mkdir();
+        }
 
         // initialize the double arrays for this block
         double values[][] = new double[INC][];
@@ -221,7 +229,7 @@ public class DistanceCalculator {
                             String sym1 = permNoToSymbol.get(fv.getKey());
                             String sym2 = permNoToSymbol.get(sv.getKey());
                             if (sym1 != null && sym2 != null) {
-                                System.out.println(sym1 + "," + sym2 + " :" + cor);
+                                smallWriter.write(sym1 + "," + sym2 + " :" + cor);
                             }
                         }
                         if (cor > dmax) {
@@ -250,6 +258,9 @@ public class DistanceCalculator {
         } while (true);
         if (writer != null) {
             writer.close();
+        }
+        if (smallWriter != null) {
+            smallWriter.close();;
         }
     }
 

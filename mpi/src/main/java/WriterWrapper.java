@@ -42,6 +42,12 @@ public class WriterWrapper {
         }
     }
 
+    public void write(String line) {
+        if (print) {
+            writer.println(line);
+        }
+    }
+
     public void line() {
         if (print) {
             writer.write("\n");
