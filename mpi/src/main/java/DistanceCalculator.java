@@ -179,10 +179,7 @@ public class DistanceCalculator {
         int lineCount = countLines(fileEntry);
 
         File smallDirFile = new File(smallValDir);
-        if (!smallDirFile.exists()) {
-            System.out.println("Creating directory: " + smallDirFile.getAbsolutePath());
-            smallDirFile.mkdir();
-        }
+        smallDirFile.mkdirs();
 
         // initialize the double arrays for this block
         double values[][] = new double[INC][];
