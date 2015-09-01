@@ -112,7 +112,7 @@ public class SHeatMapGenerator {
         // cell number based on zero index from bottom left corner
         // if x is equal to xmax then it's placed in the last cell, which is xres-1 in zero based index
         // same is done for y when y == ymax
-        if (x == y || (x == 0 && y ==0)) {
+        if (i == j) {
             return;
         }
         int cellx = x == xmax ? _xres - 1 : (int) Math.floor((x - xmin) / deltax);
