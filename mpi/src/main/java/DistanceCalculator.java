@@ -13,8 +13,6 @@ public class DistanceCalculator {
     private String vectorFolder;
     private String distFolder;
     private boolean normalize;
-    private double dmax;
-    private double dmin;
     private boolean mpi = false;
     private MpiOps mpiOps;
     private int distanceType;
@@ -71,7 +69,7 @@ public class DistanceCalculator {
         }
     }
 
-    private static int INC = 3000;
+    private static int INC = 7000;
 
     private void process() {
         System.out.println("Starting Distance calculator...");
@@ -116,7 +114,9 @@ public class DistanceCalculator {
             }
 
             if (originalStockFile != null && !originalStockFile.equals("")) {
-                permNoToSymbol = Utils.loadMapping(originalStockFile);
+                if (new File(originalStockFile).exists()) {
+                    permNoToSymbol = Utils.loadMapping(originalStockFile);
+                }
             }
 
             List<Thread> threads = new ArrayList<Thread>();
@@ -174,23 +174,25 @@ public class DistanceCalculator {
         String smallOutFileName = smallValDir + "/" + fileEntry.getName();
 
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
+        File smallDirFile = new File(smallValDir);
+        smallDirFile.mkdirs();
         writer = new WriterWrapper(outFileName, false);
         WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
         int lineCount = countLines(fileEntry);
-
-        File smallDirFile = new File(smallValDir);
-        smallDirFile.mkdirs();
 
         // initialize the double arrays for this block
         double values[][] = new double[INC][];
         for (int i = 0; i < values.length; i++) {
             values[i] = new double[lineCount];
         }
+        double dmax = Double.MIN_VALUE;
+        double dmin = Double.MAX_VALUE;
 
         int startIndex = 0;
         int endIndex = -1;
 
         List<VectorPoint> vectors;
+        long count = 0;
         do {
             startIndex = endIndex + 1;
             endIndex = startIndex + INC - 1;
@@ -223,12 +225,13 @@ public class DistanceCalculator {
                     for (int j = 0; j < vectors.size(); j++) {
                         VectorPoint fv = vectors.get(j);
                         double cor = sv.correlation(fv, distanceType);
-                        if (cor < 0.03) {
+                        if (cor < 0.3) {
                             String sym1 = permNoToSymbol.get(fv.getKey());
                             String sym2 = permNoToSymbol.get(sv.getKey());
                             if (sym1 != null && sym2 != null) {
                                 smallWriter.write(sym1 + "," + sym2 + " :" + cor);
                             }
+                            count++;
                         }
                         if (cor > dmax) {
                             dmax = cor;
@@ -247,19 +250,22 @@ public class DistanceCalculator {
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 double[] row = values[i];
-                for (double value : row) {
-                    short val = (short) ((normalize ? value / dmax : value) * Short.MAX_VALUE);
+                for (int j = 0; j < row.length; j++) {
+                    double value = row[j];
+                    short val = (short) (value * Short.MAX_VALUE);
                     writer.write(val);
                 }
-                //writer.line();
+                writer.line();
             }
+            System.out.println("count " + count);
         } while (true);
         if (writer != null) {
             writer.close();
         }
         if (smallWriter != null) {
-            smallWriter.close();;
+            smallWriter.close();
         }
+        System.out.println(dmax);
     }
 
     private int countLines(File file) {
