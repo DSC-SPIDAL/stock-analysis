@@ -180,6 +180,7 @@ public class DistanceCalculator {
 
         File smallDirFile = new File(smallValDir);
         if (!smallDirFile.exists()) {
+            System.out.println("Creating directory: " + smallDirFile.getAbsolutePath());
             smallDirFile.mkdir();
         }
 
