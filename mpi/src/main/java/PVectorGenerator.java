@@ -235,6 +235,8 @@ public class PVectorGenerator {
                     bufWriter.newLine();
                     // remove it from map
                     vectorCounter++;
+                } else {
+                    System.out.println("Missing points: " + outFileName + ", " + v.serialize());
                 }
                 it.remove();
             }
