@@ -104,7 +104,7 @@ public class Histogram {
             bin.start = values.get(i * binSize);
             int index = (i + 1) * binSize;
             if (index >= values.size()) index = values.size() - 1;
-            bin.end = values.get((i + 1) * binSize);
+            bin.end = values.get(index);
             bins[i] = bin;
         }
 
