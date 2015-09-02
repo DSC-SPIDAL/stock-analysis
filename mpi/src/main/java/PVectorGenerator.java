@@ -234,9 +234,9 @@ public class PVectorGenerator {
                     bufWriter.write(sv);
                     bufWriter.newLine();
                     // remove it from map
-                    it.remove();
                     vectorCounter++;
                 }
+                it.remove();
             }
         }
     }
