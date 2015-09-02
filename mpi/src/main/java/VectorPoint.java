@@ -5,6 +5,7 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import java.util.Random;
 
@@ -63,7 +64,19 @@ public class VectorPoint {
         double []xs = vc.numbers;
         double []ys = this.numbers;
         if (type == 0) {
-            return correlation(vc);
+            double cor = correlation(vc);
+            if (Double.isNaN(cor)) {
+                String s = serialize();
+                String s2 = vc.serialize();
+                if (isValid() && vc.isValid()) {
+                    System.out.println("Errrrrrrrrrrrrrrrrrrrrrrrrr");
+                    System.out.println("Not a number..............................................");
+                    System.out.println(s);
+                    System.out.println(s2);
+                }
+                System.out.println("NAN");
+            }
+            return cor;
         } else if (type == 1) {
             EuclideanDistance distance = new EuclideanDistance();
             return distance.compute(xs, ys);
@@ -240,6 +253,11 @@ public class VectorPoint {
                 return true;
             }
         }
+        // check the standard deviation
+        StandardDeviation standardDeviation = new StandardDeviation();
+        double std = standardDeviation.evaluate(numbers);
+        if (Math.abs(std - 0.0) > .00001) return false;
+
         return false;
     }
 

@@ -174,10 +174,10 @@ public class DistanceCalculator {
         String smallOutFileName = smallValDir + "/" + fileEntry.getName();
 
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
-        File smallDirFile = new File(smallValDir);
-        smallDirFile.mkdirs();
-        writer = new WriterWrapper(outFileName, true);
-        WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
+        //File smallDirFile = new File(smallValDir);
+        //smallDirFile.mkdirs();
+        writer = new WriterWrapper(outFileName, false);
+        //WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
         int lineCount = countLines(fileEntry);
 
         // initialize the double arrays for this block
@@ -232,7 +232,7 @@ public class DistanceCalculator {
                             String sym1 = permNoToSymbol.get(fv.getKey());
                             String sym2 = permNoToSymbol.get(sv.getKey());
                             if (sym1 != null && sym2 != null) {
-                                smallWriter.write(sym1 + "," + sym2 + " :" + cor);
+                                //smallWriter.write(sym1 + "," + sym2 + " :" + cor);
                             }
                             // count++;
                         }
@@ -250,20 +250,11 @@ public class DistanceCalculator {
                 readEndIndex = readStartIndex + INC - 1;
             } while (true);
 
-        Random random = new Random();
-//        for (int i = 0; i < 6435; i++) {
-//            values[i] = new double[6435];
-//            for (int j = 0; j < 6435; j++) {
-//                values[i][j] = random.nextDouble();
-//            }
-//        }
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 for (int j = 0; j < values[i].length; j++) {
                     double doubleValue = values[i][j];
-                    if (doubleValue < 0 || doubleValue > 1) {
-                        System.out.println("errorrrrrrr");
-                    }
+
                     short shortValue = (short) (doubleValue * Short.MAX_VALUE);
                     if (shortValue < 3277) {
                         count2++;
@@ -290,9 +281,9 @@ public class DistanceCalculator {
         if (writer != null) {
             writer.close();
         }
-        if (smallWriter != null) {
-            smallWriter.close();
-        }
+//        if (smallWriter != null) {
+//            smallWriter.close();
+//        }
         System.out.println(dmax);
     }
 

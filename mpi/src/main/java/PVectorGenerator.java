@@ -223,7 +223,7 @@ public class PVectorGenerator {
             VectorPoint v = entry.getValue();
 
             if (!v.isValid()) {
-                System.out.println("Vector not valid: " + outFileName + ", " + v.getKey());
+                System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
                 continue;
             }
 
