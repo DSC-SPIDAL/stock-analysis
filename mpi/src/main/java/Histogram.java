@@ -102,6 +102,8 @@ public class Histogram {
         for (int i = 0; i < noOfBins; i++) {
             Bin bin = new Bin();
             bin.start = values.get(i * binSize);
+            int index = (i + 1) * binSize;
+            if (index >= values.size()) index = values.size() - 1;
             bin.end = values.get((i + 1) * binSize);
             bins[i] = bin;
         }
