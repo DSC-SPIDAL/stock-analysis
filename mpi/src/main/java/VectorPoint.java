@@ -71,9 +71,10 @@ public class VectorPoint {
 //                if (isValid() && vc.isValid()) {
 //                    System.out.println("Errrrrrrrrrrrrrrrrrrrrrrrrr");
                     System.out.println("Not a number..............................................");
-                    System.out.println(s);
-                    System.out.println(s2);
-//                }
+                if (!isValid()) System.out.println("Not valid");
+                System.out.println(s);
+                if (!vc.isValid()) System.out.println("Not valid");
+                System.out.println(s2);
                 System.out.println("NAN");
             }
             return cor;
