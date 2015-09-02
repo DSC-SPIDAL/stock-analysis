@@ -68,12 +68,12 @@ public class VectorPoint {
             if (Double.isNaN(cor)) {
                 String s = serialize();
                 String s2 = vc.serialize();
-                if (isValid() && vc.isValid()) {
-                    System.out.println("Errrrrrrrrrrrrrrrrrrrrrrrrr");
+//                if (isValid() && vc.isValid()) {
+//                    System.out.println("Errrrrrrrrrrrrrrrrrrrrrrrrr");
                     System.out.println("Not a number..............................................");
                     System.out.println(s);
                     System.out.println(s2);
-                }
+//                }
                 System.out.println("NAN");
             }
             return cor;
