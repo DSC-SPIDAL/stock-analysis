@@ -222,13 +222,13 @@ public class PVectorGenerator {
             Map.Entry<Integer, VectorPoint> entry = it.next();
             VectorPoint v = entry.getValue();
 
-            if (!v.isValid()) {
-                System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
-                continue;
-            }
-
             if (v.noOfElements() == size) {
                 String sv = v.serialize();
+                if (!v.isValid()) {
+                    System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
+                    it.remove();
+                    continue;
+                }
                 // if many points are missing, this can return null
                 if (sv != null) {
                     bufWriter.write(sv);
