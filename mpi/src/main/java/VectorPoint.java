@@ -249,10 +249,19 @@ public class VectorPoint {
         // for now lets just check weather this has same values, if so this is not a valid vector
         if (elements <= 0) return false;
         double first = numbers[0];
-        for (double n : numbers) {
+        int missingCount = 0;
+        for (int i = 0; i < elements; i++) {
+            double n = numbers[i];
+            if (n < 0) {
+                missingCount++;
+            }
             if (Math.abs(n - first) > .0001) {
                 return true;
             }
+        }
+
+        if (missingCount > (elements * .05)) {
+            return false;
         }
         // check the standard deviation
         StandardDeviation standardDeviation = new StandardDeviation();
@@ -288,5 +297,8 @@ public class VectorPoint {
         EuclideanDistance distance = new EuclideanDistance();
         distance.compute(z, k);
         System.out.println(System.currentTimeMillis() - t);
+
+        VectorPoint p = new VectorPoint(1, new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
+        System.out.println(p.isValid());
     }
 }
