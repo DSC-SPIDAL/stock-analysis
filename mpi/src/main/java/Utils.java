@@ -1,5 +1,12 @@
+import edu.indiana.soic.spidal.common.Range;
+
 import java.io.*;
+import java.nio.ByteOrder;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -231,5 +238,36 @@ public class Utils {
             throw new RuntimeException("Failed to open file");
         }
         return maps;
+    }
+
+    public static short[][] readRowRange(String fname, Range rows, int globalColCount, ByteOrder endianness){
+        try (FileChannel fc = (FileChannel) Files
+                .newByteChannel(Paths.get(fname), StandardOpenOption.READ)) {
+            int dataTypeSize = Short.BYTES;
+            long pos = ((long) rows.getStartIndex()) * globalColCount *
+                    dataTypeSize;
+            MappedByteBuffer mappedBytes = fc.map(
+                    FileChannel.MapMode.READ_ONLY, pos,
+                    rows.getLength() * globalColCount * dataTypeSize);
+            mappedBytes.order(endianness);
+
+            int rowCount = rows.getLength();
+            short[][] rowBlock = new short[rowCount][];
+            for (int i = 0; i < rowCount; ++i){
+                short [] rowBlockRow = rowBlock[i] = new short[globalColCount];
+                for (int j = 0; j < globalColCount; ++j){
+                    int procLocalPnum =  i * globalColCount + j;
+                    int bytePosition = procLocalPnum * dataTypeSize;
+                    short tmp = mappedBytes.getShort(bytePosition);
+                    // -1.0 indicates missing values
+                    rowBlockRow[j] = tmp;
+                }
+            }
+            return rowBlock;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

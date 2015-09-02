@@ -22,8 +22,7 @@ public class WeightCalculator {
     private String vectorFolder;
     private String distFolder;
     private boolean normalize;
-    private double dmax;
-    private double dmin;
+
     private boolean mpi = false;
     private boolean simple = true;
     private MpiOps mpiOps;
@@ -67,7 +66,7 @@ public class WeightCalculator {
         }
     }
 
-    private static int INC = 3000;
+    private static int INC = 7000;
 
     private void process() {
         File inFolder = new File(vectorFolder);
@@ -207,6 +206,8 @@ public class WeightCalculator {
             values[i] = new double[lineCount];
         }
 
+        double dmax = Double.MIN_VALUE;
+        double dmin = Double.MAX_VALUE;
         int startIndex = 0;
         int endIndex = -1;
 
@@ -250,7 +251,7 @@ public class WeightCalculator {
                         if (cor < dmin) {
                             dmin = cor;
                         }
-                        values[j][readStartIndex + i] = Math.max(dmax * .05, Math.pow(cor, .25));
+                        values[j][readStartIndex + i] = cor;
                     }
                 }
                 readStartIndex = readEndIndex + 1;

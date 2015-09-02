@@ -193,6 +193,7 @@ public class DistanceCalculator {
 
         List<VectorPoint> vectors;
         long count = 0;
+        long count2 = 0;
         do {
             startIndex = endIndex + 1;
             endIndex = startIndex + INC - 1;
@@ -225,13 +226,13 @@ public class DistanceCalculator {
                     for (int j = 0; j < vectors.size(); j++) {
                         VectorPoint fv = vectors.get(j);
                         double cor = sv.correlation(fv, distanceType);
-                        if (cor < 0.3) {
+                        if (cor < 0.03) {
                             String sym1 = permNoToSymbol.get(fv.getKey());
                             String sym2 = permNoToSymbol.get(sv.getKey());
                             if (sym1 != null && sym2 != null) {
                                 smallWriter.write(sym1 + "," + sym2 + " :" + cor);
                             }
-                            count++;
+                            // count++;
                         }
                         if (cor > dmax) {
                             dmax = cor;
@@ -247,17 +248,27 @@ public class DistanceCalculator {
                 readEndIndex = readStartIndex + INC - 1;
             } while (true);
 
+            Random random = new Random();
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
-                double[] row = values[i];
-                for (int j = 0; j < row.length; j++) {
-                    double value = row[j];
+                for (int j = 0; j < values[i].length; j++) {
+                    double value = values[i][j];
                     short val = (short) (value * Short.MAX_VALUE);
+                    if (val < 3276.7) {
+                        count2++;
+                        if (value > .1) {
+                            System.out.println("value double : " + value);
+                            System.out.println("value short : " + val);
+                        } else {
+                            count++;
+                        }
+                    }
                     writer.write(val);
                 }
                 writer.line();
             }
             System.out.println("count " + count);
+            System.out.println("count2 " + count2);
         } while (true);
         if (writer != null) {
             writer.close();
