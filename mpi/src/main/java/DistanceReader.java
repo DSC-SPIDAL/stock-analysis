@@ -23,7 +23,8 @@ public class DistanceReader {
         System.out.println(d);
 
 //        writeFile();
-        readByDistanceReader();
+//        readByDistanceReader();
+        test2();
 //        test();
 //        readManually();
         //readWrite();
@@ -45,6 +46,47 @@ public class DistanceReader {
         }
         System.out.println(count);
         System.out.println(count2);
+    }
+
+    public static void test2() {
+        long count = 0;
+        long count2 = 0;
+        long count3 = 0;
+        long count4 = 0;
+        Random random = new Random();
+        double values[][] = new double[6435][];
+        for (int i = 0; i < 6435; i++) {
+            values[i] = new double[6435];
+            for (int j = 0; j < 6435; j++) {
+                values[i][j] = random.nextDouble();
+            }
+        }
+
+        for (int i = 0; i < 6435; i++) {
+            for (int j = 0; j < 6435; j++) {
+                double doubleValue = values[i][j];
+                int shortValue = (int) (doubleValue * Short.MAX_VALUE);
+                if (shortValue < 3277) {
+                    count2++;
+                    if (doubleValue > .1) {
+                        System.out.println("value double : " + doubleValue);
+                        System.out.println("value short : " + shortValue);
+                    } else {
+                        count++;
+                    }
+                }
+                if (doubleValue < .1) {
+                    count3++;
+                    if (shortValue > 3277) {
+                        count4++;
+                    }
+                }
+            }
+        }
+        System.out.println("count " + count);
+        System.out.println("count2 " + count2);
+        System.out.println("count3 " + count3);
+        System.out.println("count4 " + count4);
     }
 
 
@@ -105,7 +147,7 @@ public class DistanceReader {
         WriterWrapper writerWrapper = new WriterWrapper(file, true);
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                writerWrapper.write(values[i][j]);
+                writerWrapper.writeShort(values[i][j]);
             }
             writerWrapper.line();
         }

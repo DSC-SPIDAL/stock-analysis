@@ -176,7 +176,7 @@ public class DistanceCalculator {
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
         File smallDirFile = new File(smallValDir);
         smallDirFile.mkdirs();
-        writer = new WriterWrapper(outFileName, false);
+        writer = new WriterWrapper(outFileName, true);
         WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
         int lineCount = countLines(fileEntry);
 
@@ -194,6 +194,8 @@ public class DistanceCalculator {
         List<VectorPoint> vectors;
         long count = 0;
         long count2 = 0;
+        long count3 = 0;
+        long count4 = 0;
         do {
             startIndex = endIndex + 1;
             endIndex = startIndex + INC - 1;
@@ -248,27 +250,42 @@ public class DistanceCalculator {
                 readEndIndex = readStartIndex + INC - 1;
             } while (true);
 
-            Random random = new Random();
+        Random random = new Random();
+//        for (int i = 0; i < 6435; i++) {
+//            values[i] = new double[6435];
+//            for (int j = 0; j < 6435; j++) {
+//                values[i][j] = random.nextDouble();
+//            }
+//        }
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 for (int j = 0; j < values[i].length; j++) {
-                    double value = values[i][j];
-                    short val = (short) (value * Short.MAX_VALUE);
-                    if (val < 3276.7) {
+                    double doubleValue = values[i][j];
+                    if (doubleValue < 0 || doubleValue > 1) {
+                        System.out.println("errorrrrrrr");
+                    }
+                    short shortValue = (short) (doubleValue * Short.MAX_VALUE);
+                    if (shortValue < 3277) {
                         count2++;
-                        if (value > .1) {
-                            System.out.println("value double : " + value);
-                            System.out.println("value short : " + val);
+                        if (doubleValue > .1) {
                         } else {
                             count++;
                         }
                     }
-                    writer.write(val);
+                    if (doubleValue < .1) {
+                        count3++;
+                        if (shortValue > 3277) {
+                            count4++;
+                        }
+                    }
+                    writer.writeShort((short) shortValue);
                 }
                 writer.line();
             }
             System.out.println("count " + count);
             System.out.println("count2 " + count2);
+            System.out.println("count3 " + count3);
+            System.out.println("count4 " + count4);
         } while (true);
         if (writer != null) {
             writer.close();

@@ -273,7 +273,7 @@ public class WeightCalculator {
                 double[] row = values[i];
                 for (double value : row) {
                     short val = (short) ((normalize ? value / max : value) * Short.MAX_VALUE);
-                    writer.write(val);
+                    writer.writeShort(val);
                 }
                 //writer.line();
             }
