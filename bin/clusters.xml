@@ -1,11 +1,20 @@
 <clusters>
     <!-- first 10 clusters with rainbow -->
     <cluster>
+        <key>0</key>
+        <label>0</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="255" g="0" b="0" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
         <key>1</key>
         <label>1</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="255" g="0" b="0" a="255"/>
+        <color r="255" g="78" b="0" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -14,7 +23,7 @@
         <label>2</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="255" g="113" b="0" a="255"/>
+        <color r="255" g="157" b="0" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -23,7 +32,7 @@
         <label>3</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="255" g="227" b="0" a="255"/>
+        <color r="255" g="235" b="0" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -32,7 +41,7 @@
         <label>4</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="170" g="255" b="0" a="255"/>
+        <color r="196" g="255" b="0" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -41,7 +50,7 @@
         <label>5</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="57" g="255" b="0" a="255"/>
+        <color r="118" g="255" b="0" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -50,7 +59,7 @@
         <label>6</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="0" g="255" b="57" a="255"/>
+        <color r="39" g="255" b="0" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -59,7 +68,7 @@
         <label>7</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="0" g="255" b="170" a="255"/>
+        <color r="0" g="255" b="39" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -68,7 +77,7 @@
         <label>8</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="0" g="227" b="255" a="255"/>
+        <color r="0" g="255" b="118" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -77,13 +86,40 @@
         <label>9</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="0" g="113" b="255" a="255"/>
+        <color r="0" g="255" b="196" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
     <cluster>
         <key>10</key>
         <label>10</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="0" g="235" b="255" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>11</key>
+        <label>11</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="0" g="157" b="255" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>12</key>
+        <label>12</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="0" g="78" b="255" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>13</key>
+        <label>13</label>
         <visible>1</visible>
         <default>0</default>
         <color r="0" g="0" b="255" a="255"/>

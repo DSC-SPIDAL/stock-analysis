@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class PvizGenerator {
+    public class PvizGenerator {
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("c", true, "Cluste file");
