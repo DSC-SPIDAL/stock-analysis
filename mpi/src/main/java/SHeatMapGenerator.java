@@ -112,9 +112,6 @@ public class SHeatMapGenerator {
         // cell number based on zero index from bottom left corner
         // if x is equal to xmax then it's placed in the last cell, which is xres-1 in zero based index
         // same is done for y when y == ymax
-        if (i == j) {
-            return;
-        }
         int cellx = x == xmax ? _xres - 1 : (int) Math.floor((x - xmin) / deltax);
         int celly = y == ymax ? _yres - 1 : (int) Math.floor((y - ymin) / deltay);
 
@@ -210,7 +207,6 @@ public class SHeatMapGenerator {
             for (int i = 0; i < values.length; i++) {
                 finalValues[i] = new double[cols];
                 for (int j = 0; j < values[i].length; j++) {
-                    if (i == j) continue;
                     finalValues[i][j] = ((double) values[i][j]) / Short.MAX_VALUE;
                     if (finalValues[i][j] < 0) {
                         System.out.println("minus distance");
@@ -236,7 +232,6 @@ public class SHeatMapGenerator {
                 for (int i = 0; i < rows; i++) {
                     finalValues[i] = new double[cols];
                     for (int j = 0; j < cols; j++) {
-                        if (i == j) continue;
                         Point pi = pointList.get(i);
                         Point pj = pointList.get(j);
                         finalValues[i][j] = pi.distance(pj);
