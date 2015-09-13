@@ -21,6 +21,7 @@ public class WeightCalculator {
     private final boolean sharedInput;
     private String vectorFolder;
     private String distFolder;
+    private String simpleDistFolder; //simple weights, only the market cap of a single stock
     private boolean normalize;
 
     private boolean mpi = false;
