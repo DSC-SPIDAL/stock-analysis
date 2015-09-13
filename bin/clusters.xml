@@ -130,7 +130,7 @@
     <!-- distinct cluster-->
     <cluster>
         <key>20</key>
-        <label>20</label>
+        <label>IBM</label>
         <visible>1</visible>
         <default>0</default>
         <color r="255" g="202" b="132" a="255"/>
@@ -139,7 +139,7 @@
     </cluster>
     <cluster>
         <key>21</key>
-        <label>21</label>
+        <label>MSFT</label>
         <visible>1</visible>
         <default>0</default>
         <color r="158" g="114" b="141" a="255"/>
@@ -148,7 +148,7 @@
     </cluster>
     <cluster>
         <key>22</key>
-        <label>22</label>
+        <label>INTC</label>
         <visible>1</visible>
         <default>0</default>
         <color r="79" g="185" b="18" a="255"/>
@@ -157,7 +157,7 @@
     </cluster>
     <cluster>
         <key>23</key>
-        <label>23</label>
+        <label>WMT</label>
         <visible>1</visible>
         <default>0</default>
         <color r="158" g="193" b="255" a="255"/>
@@ -166,7 +166,7 @@
     </cluster>
     <cluster>
         <key>24</key>
-        <label>24</label>
+        <label>GE</label>
         <visible>1</visible>
         <default>0</default>
         <color r="149" g="158" b="123" a="255"/>
@@ -175,7 +175,7 @@
     </cluster>
     <cluster>
         <key>25</key>
-        <label>25</label>
+        <label>BA</label>
         <visible>1</visible>
         <default>0</default>
         <color r="255" g="123" b="176" a="255"/>
@@ -184,7 +184,7 @@
     </cluster>
     <cluster>
         <key>26</key>
-        <label>26</label>
+        <label>MCD</label>
         <visible>1</visible>
         <default>0</default>
         <color r="158" g="9" b="0" a="255"/>
@@ -193,7 +193,7 @@
     </cluster>
     <cluster>
         <key>27</key>
-        <label>27</label>
+        <label>CVX</label>
         <visible>1</visible>
         <default>0</default>
         <color r="255" g="185" b="185" a="255"/>
@@ -202,7 +202,7 @@
     </cluster>
     <cluster>
         <key>28</key>
-        <label>28</label>
+        <label>GS</label>
         <visible>1</visible>
         <default>0</default>
         <color r="132" g="97" b="202" a="255"/>
@@ -211,7 +211,7 @@
     </cluster>
     <cluster>
         <key>29</key>
-        <label>29</label>
+        <label>UNH</label>
         <visible>1</visible>
         <default>0</default>
         <color r="158" g="0" b="114" a="255"/>
