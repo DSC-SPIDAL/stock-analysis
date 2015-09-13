@@ -39,7 +39,10 @@ export GLOBAL_MDS_DIR_NAME=$MDS_DIR_NAME/global
 export STOCK_FILE_NAME=2004_2014.csv
 # preproc/yearly/distances
 export YEARLY_DISTANCES_DIR_NAME=$YEARLY_PREPROC_DIR_NAME/distances
-
+# preproc/yearly/weights/simple
+export YEARLY_WEIGHT_SIMPLE_NAME=$YEARLY_PREPROC_DIR_NAME/weights/simple
+# preproc/global/weights/simple
+export GLOBAL_WEIGHT_SIMPLE_NAME=$GLOBAL_PREPROC_DIR_NAME/weights/simple
 # output dirs
 # ---------------
 # postproc/$WEIGHTED
