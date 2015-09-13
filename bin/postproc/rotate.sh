@@ -37,7 +37,6 @@ do
   echo $no_of_common_lines
 
   ext='.txt'
-  csv = '.csv'
   full_file=$FULL_POINTS/$common_filename_ext$ext
   echo 'full file' $full_file
   no_of_full_lines=`sed -n '$=' $full_file`

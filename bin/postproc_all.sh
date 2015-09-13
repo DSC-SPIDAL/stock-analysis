@@ -4,9 +4,9 @@
 . ./postproc_env.sh $1
 
 # generate common points
-#ah postproc/common_points.sh
+sh postproc/common_points.sh
 # generate histograms
-#sh postproc/histogram.sh
+sh postproc/histogram.sh
 # rotations
 sh postproc/rotate.sh
 # apply labels
