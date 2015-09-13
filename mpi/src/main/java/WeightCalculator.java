@@ -165,7 +165,7 @@ public class WeightCalculator {
 
         String outFileName = distFolder + "/" + fileEntry.getName();
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
-        writer = new WriterWrapper(outFileName, false);
+        writer = new WriterWrapper(outFileName, true);
 
         int startIndex = 0;
         int endIndex = -1;
