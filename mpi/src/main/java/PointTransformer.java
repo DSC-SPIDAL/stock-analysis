@@ -14,6 +14,7 @@ public class PointTransformer {
     private String pointFolder;
     private String vectorFolder;
     private String destPointFolder;
+    private String weightFolder;
 
     public static void main(String[] args) {
         Options options = new Options();
@@ -22,6 +23,7 @@ public class PointTransformer {
         options.addOption("v", true, "Input Vector folder");
         options.addOption("p", true, "Points folder");
         options.addOption("d", true, "Destination point folder");
+        options.addOption("w", true, "Destination weight folder"); // folder where common weights are stored
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -30,20 +32,22 @@ public class PointTransformer {
             String vectorFile = cmd.getOptionValue("v");
             String pointsFolder = cmd.getOptionValue("p");
             String distFolder = cmd.getOptionValue("d");
+            String weightFolder = cmd.getOptionValue("w");
 
-            PointTransformer pointTransformer = new PointTransformer(globalFile, pointsFolder, vectorFile, distFolder, globalPointFile);
+            PointTransformer pointTransformer = new PointTransformer(globalFile, pointsFolder, vectorFile, distFolder, globalPointFile, weightFolder);
             pointTransformer.process();
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public PointTransformer(String globalVectorFile, String pointFolder, String vectorFolder, String destPointFolder, String globalPointFile) {
+    public PointTransformer(String globalVectorFile, String pointFolder, String vectorFolder, String destPointFolder, String globalPointFile, String weightFolder) {
         this.globalVectorFile = globalVectorFile;
         this.pointFolder = pointFolder;
         this.vectorFolder = vectorFolder;
         this.destPointFolder = destPointFolder;
         this.globalPointFile = globalPointFile;
+        this.weightFolder = weightFolder;
     }
 
     public void process() {
@@ -51,6 +55,12 @@ public class PointTransformer {
         if (!inFolder.isDirectory()) {
             System.out.println("In should be a folder");
             return;
+        }
+
+        // make the common weight folder
+        File commonWeightFolder = new File(weightFolder);
+        if (!commonWeightFolder.exists()) {
+            commonWeightFolder.mkdirs();
         }
 
         // first get the global vector file and its keys
@@ -75,29 +85,40 @@ public class PointTransformer {
 
         // write the global file
         String commonGlobalPointFile = destPointFolder + "/" + globalFile.getName();
+        String commonGlobalWectorFile = weightFolder + "/" + FilenameUtils.removeExtension(globalFile.getName()) + ".csv";
         Map<Integer, Point> globalPoints = loadPoints(new File(globalPointFile), globalKeys);
-        writePoints(commonKeys, globalPoints, commonGlobalPointFile);
+        Map<Integer, Double> globalCaps = loadCaps(globalFile);
+
+        writePoints(commonKeys, globalPoints, commonGlobalPointFile, commonGlobalWectorFile, globalCaps);
 
         for (Map.Entry<String, Map<Integer, Point>> entry : filesToPoint.entrySet()) {
             // now write the common keys back as new files, we need to preserve the order as well
             // get the file
             Map<Integer, Point> pointMap = entry.getValue();
             String file =  entry.getKey();
-            writePoints(commonKeys, pointMap, destPointFolder + "/" + file);
+            String fileNameWithOutExt = FilenameUtils.removeExtension(file);
+            String weightFile = weightFolder + "/" + fileNameWithOutExt + ".csv";
+
+            Map<Integer, Double> caps = loadCaps(new File(vectorFolder + "/" + entry.getKey()));
+            writePoints(commonKeys, pointMap, destPointFolder + "/" + file, weightFile, caps);
         }
     }
 
-    private void writePoints(TreeSet<Integer> commonKeys, Map<Integer, Point> pointMap, String file) {
+    private void writePoints(TreeSet<Integer> commonKeys, Map<Integer, Point> pointMap, String file, String weightFile, Map<Integer, Double> caps) {
         BufferedWriter bufWriter = null;
+        WriterWrapper weightWriter = null;
         try {
             FileOutputStream fos = new FileOutputStream(file);
             bufWriter = new BufferedWriter(new OutputStreamWriter(fos));
+            weightWriter = new WriterWrapper(weightFile, true);
             int i = 0;
             for (Integer key : commonKeys) {
                 Point p = pointMap.get(key);
                 p.setIndex(i++);
                 bufWriter.write(p.serialize());
                 bufWriter.newLine();
+                weightWriter.write(caps.get(key));
+                weightWriter.line();
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to write file", e);
@@ -107,6 +128,9 @@ public class PointTransformer {
                     bufWriter.close();
                 } catch (IOException ignore) {
                 }
+            }
+            if (weightWriter != null) {
+                weightWriter.close();
             }
         }
     }
@@ -132,6 +156,29 @@ public class PointTransformer {
             return points;
         } catch (IOException e) {
             throw new RuntimeException("Faile to read file: " + pointFile.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Load the mapping from permno to point
+     * @param vectorFile the vector file
+     * @return map
+     */
+    private Map<Integer, Double> loadCaps(File vectorFile) {
+        BufferedReader bufRead = null;
+        Map<Integer, Double> points = new HashMap<Integer, Double>();
+        try {
+            bufRead = new BufferedReader(new FileReader(vectorFile));
+            String inputLine;
+            int index = 0;
+            while ((inputLine = bufRead.readLine()) != null) {
+                VectorPoint p = Utils.parseVectorLine(inputLine);
+                points.put(p.getKey(), p.getTotalCap());
+                index++;
+            }
+            return points;
+        } catch (IOException e) {
+            throw new RuntimeException("Faile to read file: " + vectorFile.getAbsolutePath());
         }
     }
 }

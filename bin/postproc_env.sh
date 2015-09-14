@@ -63,6 +63,10 @@ export GLOBAL_HIST_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/histogram/global
 export COMMON_POINTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/common_points
 # postproc/$WEIGHTED/intermediate/global_common_points
 export GLOBAL_COMMON_POINTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/global_common_points
+# postproc/$WEIGHTED/intermediate/common_weights
+export COMMON_WEIGHTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/common_weights
+# postproc/$WEIGHTED/intermediate/global_common_weights
+export GLOBAL_COMMON_WEIGHTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/global_common_weights
 
 #directory name of where points are created by damds
 export POINTS_DIR_NAME=$YEARLY_MDS_DIR_NAME

@@ -117,6 +117,24 @@ public class Utils {
         return formatter.format(date);
     }
 
+    public static VectorPoint parseVectorLine(String line) {
+        String parts[] = line.trim().split(" ");
+        if (parts.length > 0 && !(parts.length == 1 && parts[0].equals(""))) {
+            int key = Integer.parseInt(parts[0]);
+            double cap = Double.parseDouble(parts[1]);
+
+            int vectorLength = parts.length - 2;
+            double[] numbers = new double[vectorLength];
+            for (int i = 2; i < parts.length; i++) {
+                numbers[i - 2] = Double.parseDouble(parts[i]);
+            }
+            VectorPoint p = new VectorPoint(key, numbers);
+            p.addCap(cap);
+            return p;
+        }
+        return null;
+    }
+
     public static List<VectorPoint> readVectors(File file, int startIndex, int endIndex) {
         List<VectorPoint> vecs = new ArrayList<VectorPoint>();
         BufferedReader br = null;
