@@ -15,7 +15,7 @@ tpn=1
 
 wd=`pwd`
 
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java $opts -cp $cp -DNumberDataPoints=$2 -DDistanceMatrixFile=$1 -DPointsFile=$3.txt -DTimingFile=$4timing.txt -DSummaryFile=$4.summary.txt edu.indiana.soic.spidal.damds.Program -c config.properties -n $SLURM_JOB_NUM_NODES -t $tpn | tee $4.summary.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java $opts -cp $cp -DNumberDataPoints=$2 -DDistanceMatrixFile=$1 -DPointsFile=$3.txt -DTimingFile=$4timing.txt -DSummaryFile=$4.summary.txt -DTransformationFunction=trfm.DistanceTransformer edu.indiana.soic.spidal.damds.Program -c config.properties -n $SLURM_JOB_NUM_NODES -t $tpn | tee $4.summary.txt
 echo "Finished $0 on `date`" >> status.txt
 
 

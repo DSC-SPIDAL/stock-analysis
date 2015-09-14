@@ -14,7 +14,7 @@ export MANXCAT_JAR=$HOME/.m2/repository/com/google/guava/guava/15.0/guava-15.0.j
 # the base directory where all the data recides
 export BASE_DIR=$1
 # weather we are doing weighted or unweighted transformations
-export WEIGHTED=unweighted
+export WEIGHTED=weighted
 # input dirs
 # ------------
 # input
