@@ -108,6 +108,12 @@ public class PointTransformer {
         BufferedWriter bufWriter = null;
         WriterWrapper weightWriter = null;
         try {
+            double max = Double.MIN_VALUE;
+            for (Double d : caps.values()) {
+                if (max < d) {
+                    max = d;
+                }
+            }
             FileOutputStream fos = new FileOutputStream(file);
             bufWriter = new BufferedWriter(new OutputStreamWriter(fos));
             weightWriter = new WriterWrapper(weightFile, true);
@@ -117,7 +123,7 @@ public class PointTransformer {
                 p.setIndex(i++);
                 bufWriter.write(p.serialize());
                 bufWriter.newLine();
-                weightWriter.write(caps.get(key));
+                weightWriter.write(caps.get(key) / max);
                 weightWriter.line();
             }
         } catch (IOException e) {
