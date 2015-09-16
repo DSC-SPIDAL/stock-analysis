@@ -2,6 +2,8 @@
 
 # generate the common points
 # --------------------------
+GLOBAL=$BASE_DIR/$GLOBAL_STOCK_DIR_NAME
+ORIGINAL_STOCK_FILE=$GLOBAL/$STOCK_FILE_NAME
 GLOBAL_VECS=$BASE_DIR/$GLOBAL_VEC_DIR_NAME
 GLOBAL_POINTS=$BASE_DIR/$GLOBAL_POINTS_DIR_NAME
 CONT_VECS=$BASE_DIR/$VECS_DIR_NAME
@@ -20,8 +22,8 @@ mkdir -p $GLOBAL_CONT_COMMON_WEIGHTS
 mkdir -p $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR
 cp -r $GLOBAL_POINTS/* $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR
 
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/$STOCK_FILE_NAME -gp $GLOBAL_POINTS/$GLOBAL_POINTS_FILE_NAME -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS -w $CONT_COMMON_WEIGHTS | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.out.txt
-echo "moving common globa points..."
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PointTransformer -g $GLOBAL_VECS/$STOCK_FILE_NAME -gp $GLOBAL_POINTS/$GLOBAL_POINTS_FILE_NAME -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS -w $CONT_COMMON_WEIGHTS -sf $ORIGINAL_STOCK_FILE -s "UNH,GS,CVX,MCD,BA,GE,WMT,INTC,MSFT,IBM" | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.out.txt
+echo "moving common global points..."
 mv $CONT_COMMON_POINTS/2004_2014.csv $GLOBAL_CONT_COMMON_POINTS
-echo "moving common globa weights..."
+echo "moving common global weights..."
 mv $CONT_COMMON_WEIGHTS/2004_2014.csv $GLOBAL_CONT_COMMON_WEIGHTS

@@ -15,15 +15,20 @@ public class PointTransformer {
     private String vectorFolder;
     private String destPointFolder;
     private String weightFolder;
+    private String symbolList;
+    private String stocksFile;
 
     public static void main(String[] args) {
         Options options = new Options();
+        options.addOption("sf", true, "The complese stock file");
         options.addOption("g", true, "Global file");
         options.addOption("gp", true, "Global pooint file");
         options.addOption("v", true, "Input Vector folder");
         options.addOption("p", true, "Points folder");
         options.addOption("d", true, "Destination point folder");
         options.addOption("w", true, "Destination weight folder"); // folder where common weights are stored
+        options.addOption("s", true, "Symbol List");
+
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -33,21 +38,27 @@ public class PointTransformer {
             String pointsFolder = cmd.getOptionValue("p");
             String distFolder = cmd.getOptionValue("d");
             String weightFolder = cmd.getOptionValue("w");
+            String symbolList = cmd.getOptionValue("s");
+            String stockFile = cmd.getOptionValue("sf");
 
-            PointTransformer pointTransformer = new PointTransformer(globalFile, pointsFolder, vectorFile, distFolder, globalPointFile, weightFolder);
+            PointTransformer pointTransformer = new PointTransformer(globalFile, pointsFolder, vectorFile,
+                    distFolder, globalPointFile, weightFolder, symbolList, stockFile);
             pointTransformer.process();
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public PointTransformer(String globalVectorFile, String pointFolder, String vectorFolder, String destPointFolder, String globalPointFile, String weightFolder) {
+    public PointTransformer(String globalVectorFile, String pointFolder, String vectorFolder,
+                            String destPointFolder, String globalPointFile, String weightFolder, String symbolList, String stockFile) {
         this.globalVectorFile = globalVectorFile;
         this.pointFolder = pointFolder;
         this.vectorFolder = vectorFolder;
         this.destPointFolder = destPointFolder;
         this.globalPointFile = globalPointFile;
         this.weightFolder = weightFolder;
+        this.symbolList = symbolList;
+        this.stocksFile = stockFile;
     }
 
     public void process() {
@@ -65,12 +76,19 @@ public class PointTransformer {
 
         // first get the global vector file and its keys
         File globalFile = new File(globalVectorFile);
+        Map<Integer, String> keysToSymbols = loadKeys(stocksFile, symbolList);
         List<Integer> globalKeys = Utils.readVectorKeys(globalFile);
 
+        TreeSet<Integer> commonKeys = new TreeSet<Integer>();
         Map<String, Map<Integer, Point>> filesToPoint = new HashMap<String, Map<Integer, Point>>();
 
+        if (keysToSymbols != null && keysToSymbols.size() > 0)  {
+            commonKeys.addAll(keysToSymbols.keySet());
+        } else {
+            commonKeys.addAll(globalKeys);
+        }
+
         // go through every vector file and get the common keys
-        TreeSet<Integer> commonKeys = new TreeSet<>(globalKeys);
         for (int i = 0; i < inFolder.listFiles().length; i++) {
             File inFile = inFolder.listFiles()[i];
             List<Integer> partKeys = Utils.readVectorKeys(inFile);
@@ -186,5 +204,34 @@ public class PointTransformer {
         } catch (IOException e) {
             throw new RuntimeException("Faile to read file: " + vectorFile.getAbsolutePath());
         }
+    }
+
+    public static Map<Integer, String> loadKeys(String inFile, String symbols) {
+        List<String> symbolsList = new ArrayList<String>();
+        if (symbols != null) {
+            String []splits = symbols.split(",");
+            Collections.addAll(symbolsList, splits);
+        }
+        if (!symbolsList.isEmpty()) {
+            System.out.println("Reading original stock file: " + inFile);
+            BufferedReader bufRead = null;
+            Map<Integer, String> maps = new HashMap<Integer, String>();
+            try {
+                FileReader input = new FileReader(inFile);
+                bufRead = new BufferedReader(input);
+                Record record;
+                while ((record = Utils.parseFile(bufRead)) != null) {
+                    String s = record.getSymbolString();
+                    if (symbolsList.contains(s)) {
+                        maps.put(record.getSymbol(), record.getSymbolString());
+                    }
+                }
+                System.out.println("No of stocks: " + maps.size());
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Failed to open file");
+            }
+            return maps;
+        }
+        return null;
     }
 }
