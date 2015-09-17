@@ -39,7 +39,7 @@ public class FileBreaker {
     }
 
     public void process() {
-        TreeMap<String, List<Date>> dates = genDates(this.startDate, this.endDate, mode);
+        TreeMap<String, List<Date>> dates = Utils.genDates(this.startDate, this.endDate, mode);
         Map<Integer, String> s = new HashMap<Integer, String>();
         if (mpi) {
             try {
@@ -66,57 +66,6 @@ public class FileBreaker {
         }
         printDates();
         processFile(inFile);
-    }
-
-    private TreeMap<String, List<Date>> genDates(Date startDate, Date endDate, int mode) {
-        TreeMap<String, List<Date>> dates = new TreeMap<String, List<Date>>();
-        Date currentDate = startDate;
-        if (mode == 1) {
-            // month data
-            while (currentDate.before(endDate)) {
-                List<Date> d = new ArrayList<Date>();
-                d.add(currentDate);
-                dates.put(Utils.getMonthString(currentDate), d);
-                currentDate = Utils.addMonth(currentDate);
-            }
-        } else if (mode == 2) {
-            while (currentDate.before(endDate)) {
-                String startName = Utils.getMonthString(currentDate);
-                Date tempDate = currentDate;
-                List<Date> d = new ArrayList<Date>();
-                for (int i = 0; i < 12; i++) {
-                    d.add(tempDate);
-                    tempDate = Utils.addMonth(tempDate);
-                }
-                currentDate = tempDate;
-                String endDateName = Utils.getMonthString(tempDate);
-                dates.put(startName + "_" + endDateName, d);
-            }
-        } else if (mode == 3) {
-            List<Date> d = new ArrayList<Date>();
-            while (currentDate.before(endDate)) {
-                d.add(currentDate);
-                currentDate = Utils.addMonth(currentDate);
-            }
-            dates.put(Utils.getMonthString(startDate) + "_" + Utils.getMonthString(endDate), d);
-        } else if (mode == 4) {
-            while (currentDate.before(endDate)) {
-                String startName = Utils.getMonthString(currentDate);
-                Date tempDate = currentDate;
-                List<Date> d = new ArrayList<Date>();
-                for (int i = 0; i < 12; i++) {
-                    d.add(tempDate);
-                    tempDate = Utils.addMonth(tempDate);
-                }
-                currentDate = Utils.addMonth(currentDate);
-                String endDateName = Utils.getMonthString(tempDate);
-                dates.put(startName + "_" + endDateName, d);
-                if (!tempDate.before(endDate)) {
-                    break;
-                }
-            }
-        }
-        return dates;
     }
 
     private void printDates() {

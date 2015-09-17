@@ -96,7 +96,7 @@ public class PointTransformer {
             String fileName = inFile.getName();
             String fileNameWithOutExt = FilenameUtils.removeExtension(fileName);
             String pointFile = pointFolder + "/" + fileNameWithOutExt + ".txt";
-            Map<Integer, Point> points = loadPoints(new File(pointFile), partKeys);
+            Map<Integer, Point> points = Utils.loadPoints(new File(pointFile), partKeys);
             filesToPoint.put(fileName, points);
             commonKeys.retainAll(partKeys);
         }
@@ -104,8 +104,8 @@ public class PointTransformer {
         // write the global file
         String commonGlobalPointFile = destPointFolder + "/" + globalFile.getName();
         String commonGlobalWectorFile = weightFolder + "/" + FilenameUtils.removeExtension(globalFile.getName()) + ".csv";
-        Map<Integer, Point> globalPoints = loadPoints(new File(globalPointFile), globalKeys);
-        Map<Integer, Double> globalCaps = loadCaps(globalFile);
+        Map<Integer, Point> globalPoints = Utils.loadPoints(new File(globalPointFile), globalKeys);
+        Map<Integer, Double> globalCaps = Utils.loadCaps(globalFile);
 
         writePoints(commonKeys, globalPoints, commonGlobalPointFile, commonGlobalWectorFile, globalCaps);
 
@@ -117,7 +117,7 @@ public class PointTransformer {
             String fileNameWithOutExt = FilenameUtils.removeExtension(file);
             String weightFile = weightFolder + "/" + fileNameWithOutExt + ".csv";
 
-            Map<Integer, Double> caps = loadCaps(new File(vectorFolder + "/" + entry.getKey()));
+            Map<Integer, Double> caps = Utils.loadCaps(new File(vectorFolder + "/" + entry.getKey()));
             writePoints(commonKeys, pointMap, destPointFolder + "/" + file, weightFile, caps);
         }
     }
@@ -156,53 +156,6 @@ public class PointTransformer {
             if (weightWriter != null) {
                 weightWriter.close();
             }
-        }
-    }
-
-    /**
-     * Load the mapping from permno to point
-     * @param pointFile the point file
-     * @param keys keys
-     * @return map
-     */
-    private Map<Integer, Point> loadPoints(File pointFile, List<Integer> keys) {
-        BufferedReader bufRead = null;
-        Map<Integer, Point> points = new HashMap<Integer, Point>();
-        try {
-            bufRead = new BufferedReader(new FileReader(pointFile));
-            String inputLine;
-            int index = 0;
-            while ((inputLine = bufRead.readLine()) != null) {
-                Point p = Utils.readPoint(inputLine);
-                points.put(keys.get(index), p);
-                index++;
-            }
-            return points;
-        } catch (IOException e) {
-            throw new RuntimeException("Faile to read file: " + pointFile.getAbsolutePath());
-        }
-    }
-
-    /**
-     * Load the mapping from permno to point
-     * @param vectorFile the vector file
-     * @return map
-     */
-    private Map<Integer, Double> loadCaps(File vectorFile) {
-        BufferedReader bufRead = null;
-        Map<Integer, Double> points = new HashMap<Integer, Double>();
-        try {
-            bufRead = new BufferedReader(new FileReader(vectorFile));
-            String inputLine;
-            int index = 0;
-            while ((inputLine = bufRead.readLine()) != null) {
-                VectorPoint p = Utils.parseVectorLine(inputLine);
-                points.put(p.getKey(), p.getTotalCap());
-                index++;
-            }
-            return points;
-        } catch (IOException e) {
-            throw new RuntimeException("Faile to read file: " + vectorFile.getAbsolutePath());
         }
     }
 

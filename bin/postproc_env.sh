@@ -61,6 +61,7 @@ export HIST_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/histogram
 export GLOBAL_HIST_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/histogram/global
 # postproc/$WEIGHTED/intermediate/common_points
 export COMMON_POINTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/common_points
+export CONT_COMMON_POINTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/cont_common_points
 # postproc/$WEIGHTED/intermediate/global_common_points
 export GLOBAL_COMMON_POINTS_DIR_NAME=$POSTPROC_INTERMEDIATE_DIR_NAME/global_common_points
 # postproc/$WEIGHTED/intermediate/common_weights

@@ -1,4 +1,5 @@
 import edu.indiana.soic.spidal.common.Range;
+import org.apache.commons.cli.Option;
 
 import java.io.*;
 import java.nio.ByteOrder;
@@ -287,5 +288,163 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static List<String> genDateList(Date startDate, Date endDate, int mode) {
+        TreeMap<String, List<Date>> dates = new TreeMap<String, List<Date>>();
+        List<String> dateList = new ArrayList<String>();
+        Date currentDate = startDate;
+        if (mode == 1) {
+            // month data
+            while (currentDate.before(endDate)) {
+                List<Date> d = new ArrayList<Date>();
+                d.add(currentDate);
+                dates.put(getMonthString(currentDate), d);
+                currentDate = addMonth(currentDate);
+            }
+        } else if (mode == 2) {
+            while (currentDate.before(endDate)) {
+                String startName = getMonthString(currentDate);
+                Date tempDate = currentDate;
+                List<Date> d = new ArrayList<Date>();
+                for (int i = 0; i < 12; i++) {
+                    d.add(tempDate);
+                    tempDate = addMonth(tempDate);
+                }
+                currentDate = tempDate;
+                String endDateName = getMonthString(tempDate);
+                dates.put(startName + "_" + endDateName, d);
+            }
+        } else if (mode == 3) {
+            List<Date> d = new ArrayList<Date>();
+            while (currentDate.before(endDate)) {
+                d.add(currentDate);
+                currentDate = addMonth(currentDate);
+            }
+            dates.put(getMonthString(startDate) + "_" + getMonthString(endDate), d);
+        } else if (mode == 4) {
+            while (currentDate.before(endDate)) {
+                String startName = getMonthString(currentDate);
+                Date tempDate = currentDate;
+                List<Date> d = new ArrayList<Date>();
+                for (int i = 0; i < 12; i++) {
+                    d.add(tempDate);
+                    tempDate = addMonth(tempDate);
+                }
+                currentDate = addMonth(currentDate);
+                String endDateName = getMonthString(tempDate);
+                String key = startName + "_" + endDateName;
+                dates.put(key, d);
+                dateList.add(key);
+                if (!tempDate.before(endDate)) {
+                    break;
+                }
+            }
+        }
+        return dateList;
+    }
+
+    public static TreeMap<String, List<Date>> genDates(Date startDate, Date endDate, int mode) {
+        TreeMap<String, List<Date>> dates = new TreeMap<String, List<Date>>();
+        Date currentDate = startDate;
+        if (mode == 1) {
+            // month data
+            while (currentDate.before(endDate)) {
+                List<Date> d = new ArrayList<Date>();
+                d.add(currentDate);
+                dates.put(getMonthString(currentDate), d);
+                currentDate = addMonth(currentDate);
+            }
+        } else if (mode == 2) {
+            while (currentDate.before(endDate)) {
+                String startName = getMonthString(currentDate);
+                Date tempDate = currentDate;
+                List<Date> d = new ArrayList<Date>();
+                for (int i = 0; i < 12; i++) {
+                    d.add(tempDate);
+                    tempDate = addMonth(tempDate);
+                }
+                currentDate = tempDate;
+                String endDateName = getMonthString(tempDate);
+                dates.put(startName + "_" + endDateName, d);
+            }
+        } else if (mode == 3) {
+            List<Date> d = new ArrayList<Date>();
+            while (currentDate.before(endDate)) {
+                d.add(currentDate);
+                currentDate = addMonth(currentDate);
+            }
+            dates.put(getMonthString(startDate) + "_" + getMonthString(endDate), d);
+        } else if (mode == 4) {
+            while (currentDate.before(endDate)) {
+                String startName = getMonthString(currentDate);
+                Date tempDate = currentDate;
+                List<Date> d = new ArrayList<Date>();
+                for (int i = 0; i < 12; i++) {
+                    d.add(tempDate);
+                    tempDate = addMonth(tempDate);
+                }
+                currentDate = addMonth(currentDate);
+                String endDateName = getMonthString(tempDate);
+                dates.put(startName + "_" + endDateName, d);
+                if (!tempDate.before(endDate)) {
+                    break;
+                }
+            }
+        }
+        return dates;
+    }
+
+    public static Option createOption(String opt, boolean hasArg, String description, boolean required) {
+        Option symbolListOption = new Option(opt, hasArg, description);
+        symbolListOption.setRequired(required);
+        return symbolListOption;
+    }
+
+    /**
+     * Load the mapping from permno to point
+     * @param pointFile the point file
+     * @param keys keys
+     * @return map
+     */
+    public static Map<Integer, Point> loadPoints(File pointFile, List<Integer> keys) {
+        BufferedReader bufRead = null;
+        Map<Integer, Point> points = new HashMap<Integer, Point>();
+        try {
+            bufRead = new BufferedReader(new FileReader(pointFile));
+            String inputLine;
+            int index = 0;
+            while ((inputLine = bufRead.readLine()) != null) {
+                Point p = readPoint(inputLine);
+                points.put(keys.get(index), p);
+                index++;
+            }
+            return points;
+        } catch (IOException e) {
+            throw new RuntimeException("Faile to read file: " + pointFile.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Load the mapping from permno to point
+     * @param vectorFile the vector file
+     * @return map
+     */
+    public static Map<Integer, Double> loadCaps(File vectorFile) {
+        BufferedReader bufRead = null;
+        Map<Integer, Double> points = new HashMap<Integer, Double>();
+        try {
+            bufRead = new BufferedReader(new FileReader(vectorFile));
+            String inputLine;
+            int index = 0;
+            while ((inputLine = bufRead.readLine()) != null) {
+                VectorPoint p = parseVectorLine(inputLine);
+                points.put(p.getKey(), p.getTotalCap());
+                index++;
+            }
+            return points;
+        } catch (IOException e) {
+            throw new RuntimeException("Faile to read file: " + vectorFile.getAbsolutePath());
+        }
     }
 }
