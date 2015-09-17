@@ -143,8 +143,8 @@ public class ContinuousCommonGenerator {
         Map<Integer, Point> secondPoints = Utils.loadPoints(new File(secondPointFileName), secondVectorKeys);
         Map<Integer, Double> secondWeights = Utils.loadCaps(new File(secondVectorFileName));
         // go through the common keys and write them out
-        String pointOutFolder = destFolder + firstFileWithoutExt + "_" + secondfFileWithoutExt + "/points";
-        String weightOutFolder = destFolder + firstFileWithoutExt + "_" + secondfFileWithoutExt + "/weights";
+        String pointOutFolder = destFolder + "/" + secondfFileWithoutExt + "/points";
+        String weightOutFolder = destFolder + "/" + secondfFileWithoutExt + "/weights";
 
         new File(pointOutFolder).mkdirs();
         new File(weightOutFolder).mkdirs();
