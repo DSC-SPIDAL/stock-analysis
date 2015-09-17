@@ -17,6 +17,7 @@ FULL_POINTS=$CONT_POINTS
 
 
 FINAL_ROTATE_SUMMARY=$BASE_DIR/$ROTATE_FINAL_SUMMARY_DIR_NAME
+FINAL_ROTATE=$BASE_DIR/$ROTATE_FINAL_DIR_NAME
 
 for f in $ROTATE_POINTS
 do
@@ -48,23 +49,19 @@ do
   -DWeightingOption=1 -DWeightingFileName=$BASE_DIR/$COMMON_WEIGHTS_DIR_NAME/$common_filename -DfinalRotationPointCount=$no_of_full_lines \
   -DDataPoints=$no_of_lines \
   -cp $MANXCAT_JAR salsa.mdsaschisq.ManxcatCentral -c mconfig.properties -n 1 -t 1 2>&1 | tee $FINAL_ROTATE_SUMMARY/$common_filename.rotation.summary.txt
-done
 
-# ------------------------
-# copy the fully rotated files to directory
-#FINAL_ROTATE=$BASE_DIR/$ROTATE_FINAL_DIR_NAME
-#mkdir -p $FINAL_ROTATE
-#cp $ROTATE_OUT/*full.txt $FINAL_ROTATE
-#dir=`pwd`
-#cd $FINAL_ROTATE
-#for i in SIMPLE*
-#do
-#    mv "$i" "`echo $i | sed 's/SIMPLE//'`"
-#done
-#for i in *full.txt
-#do
-#    mv "$i" "`echo $i | sed 's/full\.txt//'`"
-#done
-#cd $dir
+  cp $ROTATE_OUT/*full.txt $FINAL_ROTATE
+  dir=`pwd`
+  cd $FINAL_ROTATE
+  for i in SIMPLE*
+  do
+    mv "$i" "`echo $i | sed 's/SIMPLE//'`"
+  done
+  for i in *full.txt
+  do
+    mv "$i" "`echo $i | sed 's/full\.txt//'`"
+  done
+  cd $dir
+done
 
 
