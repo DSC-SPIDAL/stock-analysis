@@ -10,7 +10,7 @@
 
 # generate common points
 sh postproc/cont_common_points.sh
-
+sh postproc/cont_rotate.sh
 #sh postproc/common_points.sh
 # generate histograms
 #sh postproc/histogram.sh
