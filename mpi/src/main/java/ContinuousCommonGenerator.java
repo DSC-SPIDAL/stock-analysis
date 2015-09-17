@@ -123,7 +123,7 @@ public class ContinuousCommonGenerator {
 
     private void processPair(String firstFileWithoutExt, String secondfFileWithoutExt) {
         String firstFileName = firstFileWithoutExt + ".csv";
-        String secondFileName = secondfFileWithoutExt + "csv";
+        String secondFileName = secondfFileWithoutExt + ".csv";
 
         String firstVectorFileName = this.vectorFolder + "/" + firstFileName;
         String secondVectorFileName = this.vectorFolder + "/" + secondFileName;
