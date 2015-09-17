@@ -48,7 +48,7 @@ do
   -DfinalRotationFileName=$full_file \
   -DWeightingOption=1 -DWeightingFileName=$BASE_DIR/$COMMON_WEIGHTS_DIR_NAME/$common_filename -DfinalRotationPointCount=$no_of_full_lines \
   -DDataPoints=$no_of_lines \
-  -cp $MANXCAT_JAR salsa.mdsaschisq.ManxcatCentral -c mconfig.properties -n 1 -t 1 2>&1 | tee $FINAL_ROTATE_SUMMARY/$common_filename.rotation.summary.txt
+  -cp $MANXCAT_JAR salsa.mdsaschisq.ManxcatCentral -c mconfig.properties -n 1 -t 1 2>&1 | tee $FINAL_ROTATE_SUMMARY/$filename.rotation.summary.txt
 
   cp $ROTATE_OUT/*full.txt $FINAL_ROTATE
   dir=`pwd`
