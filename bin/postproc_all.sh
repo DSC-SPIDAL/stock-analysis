@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#SBATCH -A skamburu
+#SBATCH -N 28
+#SBATCH --tasks-per-node=1
+#SBATCH --time=04:00:00
+
 # configure the environment variable
 . ./postproc_env.sh $1
 
