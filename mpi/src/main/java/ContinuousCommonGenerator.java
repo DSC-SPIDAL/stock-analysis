@@ -38,11 +38,18 @@ public class ContinuousCommonGenerator {
             String startDate = cmd.getOptionValue("sd");
             String endDate = cmd.getOptionValue("ed");
             boolean mpi = cmd.hasOption("m");
-
+            if (mpi) {
+                MPI.Init(args);
+            }
             ContinuousCommonGenerator pointTransformer = new ContinuousCommonGenerator(pointsFolder, vectorFolder,
                     distFolder, symbolList, stockFile, startDate, endDate, mpi);
             pointTransformer.process();
+            if (mpi) {
+                MPI.Finalize();
+            }
         } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (MPIException e) {
             e.printStackTrace();
         }
     }
@@ -58,6 +65,7 @@ public class ContinuousCommonGenerator {
         this.startDate = Utils.parseDateString(startDate);
         this.endDate = Utils.parseDateString(endDate);
         this.mpi = mpi;
+
     }
 
     private Queue<FilePair> filePairsPerProcess = new LinkedList<FilePair>();
@@ -110,13 +118,6 @@ public class ContinuousCommonGenerator {
         // process the files assigned
         for (FilePair f : filePairsPerProcess) {
             processPair(f.first, f.second);
-        }
-
-        if (mpi && mpiOps != null) {
-            try {
-                MPI.Finalize();
-            } catch (MPIException ignore) {
-            }
         }
     }
 
