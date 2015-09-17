@@ -75,17 +75,20 @@ public class ContinuousCommonGenerator {
     public void process() {
         List<String> dates = Utils.genDateList(this.startDate, this.endDate, 4);
         MpiOps mpiOps = null;
+        StringBuilder sb = new StringBuilder();
         if (mpi) {
             try {
                 mpiOps = new MpiOps();
                 int rank = mpiOps.getRank();
                 int size = mpiOps.getSize();
+                sb.append("Rank: ").append(rank).append(" ");
                 int j = 0;
                 for (int i = 1; i < dates.size(); i++) {
                     String firstFile = dates.get(i - 1);
                     String secondFile = dates.get(i);
                     if (j == rank) {
                         this.filePairsPerProcess.add(new FilePair(firstFile, secondFile));
+                        sb.append(firstFile).append(", ").append(secondFile).append("::");
                     }
                     j++;
                     if (j == size) {
@@ -99,10 +102,11 @@ public class ContinuousCommonGenerator {
             for (int i = 1; i < dates.size(); i++) {
                 String firstFile = dates.get(i - 1);
                 String secondFile = dates.get(i);
+                sb.append(firstFile).append(", ").append(secondFile).append("::");
                 filePairsPerProcess.add(new FilePair(firstFile, secondFile));
             }
         }
-
+        System.out.println("Assigned pairs: " + sb.toString());
         // process the files assigned
         for (FilePair f : filePairsPerProcess) {
             processPair(f.first, f.second);
