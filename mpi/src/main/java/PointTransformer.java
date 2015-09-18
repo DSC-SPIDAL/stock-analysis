@@ -161,7 +161,7 @@ public class PointTransformer {
 
     public static Map<Integer, String> loadKeys(String inFile, String symbols) {
         List<String> symbolsList = new ArrayList<String>();
-        if (symbols != null) {
+        if (symbols != null && !symbols.trim().equals("")) {
             String []splits = symbols.split(",");
             Collections.addAll(symbolsList, splits);
         }
