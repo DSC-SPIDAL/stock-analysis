@@ -21,6 +21,10 @@ public class VectorPoint {
     /** the totalCap of a stock for this period */
     double totalCap = 0.0;
 
+    boolean constantVector = false;
+
+    public static final double CONST_DISTANCE = .5;
+
     public VectorPoint(int key, int size) {
         this.key = key;
         this.numbers = new double[size];
@@ -28,6 +32,10 @@ public class VectorPoint {
             numbers[i] = -1;
         }
         elements = 0;
+    }
+
+    public void setConstantVector(boolean constantVector) {
+        this.constantVector = constantVector;
     }
 
     public int getKey() {
@@ -63,34 +71,38 @@ public class VectorPoint {
     public double correlation(VectorPoint vc, int type) {
         double []xs = vc.numbers;
         double []ys = this.numbers;
-        if (type == 0) {
-            double cor = correlation(vc);
-            if (Double.isNaN(cor)) {
-                String s = serialize();
-                String s2 = vc.serialize();
+        if (!constantVector) {
+            if (type == 0) {
+                double cor = correlation(vc);
+                if (Double.isNaN(cor)) {
+                    String s = serialize();
+                    String s2 = vc.serialize();
 //                if (isValid() && vc.isValid()) {
 //                    System.out.println("Errrrrrrrrrrrrrrrrrrrrrrrrr");
                     System.out.println("Not a number..............................................");
-                if (!isValid()) System.out.println("Not valid");
-                System.out.println(s);
-                if (!vc.isValid()) System.out.println("Not valid");
-                System.out.println(s2);
-                System.out.println("NAN");
+                    if (!isValid()) System.out.println("Not valid");
+                    System.out.println(s);
+                    if (!vc.isValid()) System.out.println("Not valid");
+                    System.out.println(s2);
+                    System.out.println("NAN");
+                }
+                return cor;
+            } else if (type == 1) {
+                EuclideanDistance distance = new EuclideanDistance();
+                return distance.compute(xs, ys);
+            } else if (type == 2) {
+                return modCorrelation(xs, ys);
+            } else if (type == 3) {
+                double[] x = StatUtils.normalize(xs);
+                double y[] = StatUtils.normalize(ys);
+                EuclideanDistance distance = new EuclideanDistance();
+                return distance.compute(x, y);
+            } else if (type == 4) {
+                double c = correlation(vc);
+                return c * c;
             }
-            return cor;
-        } else if (type == 1) {
-            EuclideanDistance distance = new EuclideanDistance();
-            return distance.compute(xs, ys);
-        } else if (type == 2) {
-            return modCorrelation(xs, ys);
-        } else if (type == 3) {
-            double []x = StatUtils.normalize(xs);
-            double y[] = StatUtils.normalize(ys);
-            EuclideanDistance distance = new EuclideanDistance();
-            return distance.compute(x, y);
-        } else if (type == 4) {
-            double c = correlation(vc);
-            return c * c;
+        } else {
+            return CONST_DISTANCE;
         }
         return 0;
     }
@@ -152,52 +164,6 @@ public class VectorPoint {
         return (1 -cov / (sigmax * sigmay)) /2;
     }
 
-//    public double correlation(VectorPoint vc) {
-//        double []xs = vc.numbers;
-//        double []ys = this.numbers;
-//        double sumxs = 0;
-//        double sumys = 0;
-//        double sumxsys = 0;
-//        double sumxs2 = 0;
-//        double sumys2 = 0;
-//        double r;
-//        double nr=0;
-//        double dr_1=0;
-//        double dr_2=0;
-//        double dr_3=0;
-//        double dr=0;
-//
-//        double n= xs.length;
-//        double xs1[] = new double[xs.length];
-//        double ys1[] = new double[xs.length];
-//        for(int i = 0; i < n; ++i)
-//        {
-//            xs1[i]= xs[i] * xs[i];
-//            ys1[i]= ys[i] * ys[i];
-//        }
-//
-//        for(int i=0;i<n;i++)
-//        {
-//            sumxs+=xs1[i];
-//            sumys+=ys1[i];
-//            sumxsys+= xs1[i] * ys1[i];
-//            sumxs2+= sumxs * sumxs;
-//            sumys2+= sumys * sumys;
-//        }
-//
-//        nr =(n * sumxsys)-(sumxs * sumys);
-//        dr_1=(n*sumxs2)- sumxs2;
-//        dr_2=(n*sumys2)-sumys2;
-//        dr_3=dr_1*dr_2;
-//        dr=Math.sqrt(dr_3);
-//        r=(nr/dr);
-//        String s = String.format("%.2f",r);
-//        r = Double.parseDouble(s);
-//        System.out.println("Total Numbers:"+n+"\nCorrelation Coefficient:"+r);
-//
-//        return  r;
-//    }
-
     public double correlation(VectorPoint vc) {
         double []xs = vc.numbers;
         double []ys = this.numbers;
@@ -246,6 +212,7 @@ public class VectorPoint {
      * @return true if the vector is valid
      */
     public boolean isValid() {
+        if (constantVector) return true;
         // for now lets just check weather this has same values, if so this is not a valid vector
         if (elements <= 0) return false;
         double first = numbers[0];

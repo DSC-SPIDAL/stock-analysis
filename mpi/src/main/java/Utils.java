@@ -144,6 +144,7 @@ public class Utils {
             String line;
             int count = 0;
             int readCount = 0;
+            double totalCap = 0;
             while ((line = br.readLine()) != null) {
                 if (count >= startIndex) {
                     readCount++;
@@ -159,7 +160,14 @@ public class Utils {
                             numbers[i - 2] = Double.parseDouble(parts[i]);
                         }
                         VectorPoint p = new VectorPoint(key, numbers);
-                        p.addCap(cap);
+                        totalCap += cap;
+                        // special vector
+                        if (key == 0) {
+                            p.setConstantVector(true);
+                            p.addCap(totalCap / 10);
+                        } else {
+                            p.addCap(cap);
+                        }
                         vecs.add(p);
                     }
 

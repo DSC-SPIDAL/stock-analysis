@@ -172,9 +172,11 @@ public class VectorGenerator {
      * @throws IOException
      */
     private void writeVectors(BufferedWriter bufWriter, int size) throws IOException {
+        double totalCap = 0;
         for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Integer, VectorPoint> entry = it.next();
             VectorPoint v = entry.getValue();
+            totalCap += v.getTotalCap();
             if (v.noOfElements() == size) {
                 String sv = v.serialize();
                 // if many points are missing, this can return null
@@ -187,6 +189,10 @@ public class VectorGenerator {
                 }
             }
         }
+        // write the constant vector
+        VectorPoint v = new VectorPoint(0, 0);
+        v.addCap(totalCap / 10);
+        bufWriter.write(v.serialize());
     }
 
     private boolean check(Date data1, Date date2, DateCheckType check) {
