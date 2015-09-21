@@ -140,6 +140,7 @@ public class PVectorGenerator {
             int count = 0;
             int fullCount = 0;
             double totalCap = 0;
+            int capCount  = 0;
             while ((record = Utils.parseFile(bufRead)) != null) {
                 count++;
                 int key = record.getSymbol();
@@ -173,6 +174,7 @@ public class PVectorGenerator {
                 if (currentPoints.size() > 1000 && size != -1 && fullCount > 750) {
                     System.out.println("Processed: " + count);
                     totalCap += writeVectors(bufWriter, size, outFileName);
+                    capCount++;
                     fullCount = 0;
                 }
             }
@@ -180,10 +182,11 @@ public class PVectorGenerator {
             System.out.println("Size: " + size);
             // write the rest of the vectors in the map after finish reading the file
             totalCap += writeVectors(bufWriter, size, outFileName);
+            capCount++;
 
             // write the constant vector at the end
             VectorPoint v = new VectorPoint(0, new double[]{0});
-            v.addCap(totalCap / 10);
+            v.addCap(totalCap / (10 * capCount));
             bufWriter.write(v.serialize());
 
             System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
