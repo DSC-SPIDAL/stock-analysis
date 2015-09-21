@@ -182,7 +182,7 @@ public class PVectorGenerator {
             totalCap += writeVectors(bufWriter, size, outFileName);
 
             // write the constant vector at the end
-            VectorPoint v = new VectorPoint(0, 0);
+            VectorPoint v = new VectorPoint(0, new double[]{0});
             v.addCap(totalCap / 10);
             bufWriter.write(v.serialize());
 
