@@ -260,6 +260,7 @@ public class Utils {
             while ((record = Utils.parseFile(bufRead)) != null) {
                 maps.put(record.getSymbol(), record.getSymbolString());
             }
+            maps.put(0, "SPECIAL");
             System.out.println("No of stocks: " + maps.size());
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Failed to open file");
