@@ -185,9 +185,9 @@ public class PVectorGenerator {
             capCount++;
 
             // write the constant vector at the end
-            VectorPoint v = new VectorPoint(0, new double[]{0});
-            v.addCap(totalCap / (10 * capCount));
-            bufWriter.write(v.serialize());
+            //VectorPoint v = new VectorPoint(0, new double[]{0});
+            //v.addCap(totalCap / (10 * capCount));
+            //bufWriter.write(v.serialize());
 
             System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
             currentPoints.clear();
