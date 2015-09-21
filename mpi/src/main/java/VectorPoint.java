@@ -46,6 +46,10 @@ public class VectorPoint {
         return numbers;
     }
 
+    public boolean isConstantVector() {
+        return constantVector;
+    }
+
     public int getElements() {
         return elements;
     }
@@ -71,7 +75,7 @@ public class VectorPoint {
     public double correlation(VectorPoint vc, int type) {
         double []xs = vc.numbers;
         double []ys = this.numbers;
-        if (!constantVector) {
+        if (!constantVector && !vc.isConstantVector()) {
             if (type == 0) {
                 double cor = correlation(vc);
                 if (Double.isNaN(cor)) {
