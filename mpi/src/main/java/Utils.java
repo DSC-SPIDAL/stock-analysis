@@ -159,6 +159,9 @@ public class Utils {
                             numbers[i - 2] = Double.parseDouble(parts[i]);
                         }
                         VectorPoint p = new VectorPoint(key, numbers);
+                        if (key == 0) {
+                            p.setConstantVector(true);
+                        }
                         p.addCap(cap);
                         vecs.add(p);
                     }
