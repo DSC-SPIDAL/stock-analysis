@@ -19,7 +19,6 @@ public class DistanceCalculator {
     private boolean sharedInput = false;
     private String originalStockFile;
     private Map<Integer, String> permNoToSymbol = new HashMap<Integer, String>();
-    public static final double CONST_DISTANCE = 0.5;
 
     public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, int distanceType, boolean sharedInput, String originalStockFile) {
         this.vectorFolder = vectorFolder;
@@ -180,13 +179,12 @@ public class DistanceCalculator {
         writer = new WriterWrapper(outFileName, false);
         //WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
         // +1 to accomodate constant sctock
-        int lineCount = countLines(fileEntry) + 1;
+        int lineCount = countLines(fileEntry);
 
         // initialize the double arrays for this block
         double values[][] = new double[INC][];
         for (int i = 0; i < values.length; i++) {
             values[i] = new double[lineCount];
-            values[i][lineCount - 1] = .5;
         }
         double dmax = Double.MIN_VALUE;
         double dmin = Double.MAX_VALUE;
@@ -208,7 +206,6 @@ public class DistanceCalculator {
 
             vectors = Utils.readVectors(fileEntry, startIndex, endIndex);
             if (vectors.size() == 0) {
-                writeConstantVector(writer, lineCount);
                 break;
             }
 
@@ -289,13 +286,6 @@ public class DistanceCalculator {
 //            smallWriter.close();
 //        }
         System.out.println(dmax);
-    }
-
-    private void writeConstantVector(WriterWrapper writer, int length) {
-        for (int i = 0; i < length; i++) {
-            short shortValue = (short) (CONST_DISTANCE * Short.MAX_VALUE);
-            writer.writeShort(shortValue);
-        }
     }
 
     private int countLines(File file) {
