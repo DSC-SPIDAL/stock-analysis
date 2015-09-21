@@ -226,6 +226,7 @@ public class PVectorGenerator {
      */
     private double writeVectors(BufferedWriter bufWriter, int size, String outFileName) throws IOException {
         double capSum = 0;
+        int count = 0;
         for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Integer, VectorPoint> entry = it.next();
             VectorPoint v = entry.getValue();
@@ -240,6 +241,7 @@ public class PVectorGenerator {
                 // if many points are missing, this can return null
                 if (sv != null) {
                     capSum += v.getTotalCap();
+                    count++;
                     bufWriter.write(sv);
                     bufWriter.newLine();
                     // remove it from map
@@ -250,7 +252,7 @@ public class PVectorGenerator {
                 it.remove();
             }
         }
-        return capSum;
+        return capSum / count;
     }
 
     private boolean check(Date data1, Date date2, DateCheckType check) {
