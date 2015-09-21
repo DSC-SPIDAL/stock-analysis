@@ -139,6 +139,7 @@ public class PVectorGenerator {
             Record record;
             int count = 0;
             int fullCount = 0;
+            double totalCap = 0;
             while ((record = Utils.parseFile(bufRead)) != null) {
                 count++;
                 int key = record.getSymbol();
@@ -171,14 +172,20 @@ public class PVectorGenerator {
                 // now write the current vectors, also make sure we have the size determined correctly
                 if (currentPoints.size() > 1000 && size != -1 && fullCount > 750) {
                     System.out.println("Processed: " + count);
-                    writeVectors(bufWriter, size, outFileName);
+                    totalCap += writeVectors(bufWriter, size, outFileName);
                     fullCount = 0;
                 }
             }
 
             System.out.println("Size: " + size);
             // write the rest of the vectors in the map after finish reading the file
-            writeVectors(bufWriter, size, outFileName);
+            totalCap += writeVectors(bufWriter, size, outFileName);
+
+            // write the constant vector at the end
+            VectorPoint v = new VectorPoint(0, 0);
+            v.addCap(totalCap / 10);
+            bufWriter.write(v.serialize());
+
             System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
             currentPoints.clear();
         } catch (IOException e) {
@@ -217,7 +224,8 @@ public class PVectorGenerator {
      * @param size
      * @throws IOException
      */
-    private void writeVectors(BufferedWriter bufWriter, int size, String outFileName) throws IOException {
+    private double writeVectors(BufferedWriter bufWriter, int size, String outFileName) throws IOException {
+        double capSum = 0;
         for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Integer, VectorPoint> entry = it.next();
             VectorPoint v = entry.getValue();
@@ -231,6 +239,7 @@ public class PVectorGenerator {
                 }
                 // if many points are missing, this can return null
                 if (sv != null) {
+                    capSum += v.getTotalCap();
                     bufWriter.write(sv);
                     bufWriter.newLine();
                     // remove it from map
@@ -241,6 +250,7 @@ public class PVectorGenerator {
                 it.remove();
             }
         }
+        return capSum;
     }
 
     private boolean check(Date data1, Date date2, DateCheckType check) {
