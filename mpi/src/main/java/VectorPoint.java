@@ -104,11 +104,39 @@ public class VectorPoint {
             } else if (type == 4) {
                 double c = correlation(vc);
                 return c * c;
+            } else if (type == 5) {
+                double c = correlation(vc);
+                double l1 = vectorLength(1, this);
+                double l2 = vectorLength(1, vc);
+                return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
+            } else if (type == 6) {
+                double c = correlation(vc);
+                double l1 = vectorLength(2, this);
+                double l2 = vectorLength(2, vc);
+                return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
             }
         } else {
             return CONST_DISTANCE;
         }
         return 0;
+    }
+
+    public static double vectorLength(int type, VectorPoint vp) {
+        double change = vp.change();
+        if (type == 1) {
+            return Math.pow(Math.abs(Math.log(change)), 2);
+        } else if (type == 2) {
+            return change > 1 ? change - 1 : (1 / change) - 1;
+        }
+        return 0;
+    }
+
+    public double change() {
+        if (elements >= 2) {
+            return (numbers[elements - 1] - numbers[0]) / elements;
+        } else {
+            return 0;
+        }
     }
 
     public double modCorrelation(double []xs, double []ys) {
