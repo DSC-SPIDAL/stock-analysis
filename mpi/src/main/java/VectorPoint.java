@@ -6,6 +6,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.util.Random;
 
@@ -114,6 +115,11 @@ public class VectorPoint {
                 double l1 = vectorLength(2, this);
                 double l2 = vectorLength(2, vc);
                 return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
+            } else if (type == 7) {
+                double c = correlation(vc);
+                double l1 = vectorLength(3, this);
+                double l2 = vectorLength(3, vc);
+                return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
             }
         } else {
             return CONST_DISTANCE;
@@ -127,6 +133,12 @@ public class VectorPoint {
             return Math.pow(Math.abs(Math.log(change)), 2);
         } else if (type == 2) {
             return change > 1 ? change - 1 : (1 / change) - 1;
+        } else if (type == 3) {
+            SimpleRegression regression = new SimpleRegression();
+            for (int i = 0; i < vp.elements; i++) {
+                regression.addData(i, vp.numbers[i]);
+            }
+            return regression.getSlope();
         }
         return 0;
     }
