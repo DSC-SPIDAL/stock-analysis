@@ -186,7 +186,7 @@ public class PVectorGenerator {
 
 //            write the constant vector at the end
             VectorPoint v = new VectorPoint(0, new double[]{0});
-            v.addCap(totalCap / (10 * capCount));
+            v.addCap(totalCap / (10));
             bufWriter.write(v.serialize());
 
             System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
@@ -255,7 +255,7 @@ public class PVectorGenerator {
                 it.remove();
             }
         }
-        return capSum / count;
+        return capSum;
     }
 
     private boolean check(Date data1, Date date2, DateCheckType check) {
