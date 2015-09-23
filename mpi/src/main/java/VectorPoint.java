@@ -145,7 +145,11 @@ public class VectorPoint {
 
     public double change() {
         if (elements >= 2) {
-            return (numbers[elements - 1] - numbers[0]) / elements;
+            if (numbers[0] > 0) {
+                return (numbers[elements - 1] / numbers[0]);
+            } else {
+                return .5;
+            }
         } else {
             return 0;
         }
