@@ -106,17 +106,17 @@ public class VectorPoint {
                 double c = correlation(vc);
                 return c * c;
             } else if (type == 5) {
-                double c = correlation(vc);
+                double c = corr(vc);
                 double l1 = vectorLength(1, this);
                 double l2 = vectorLength(1, vc);
                 return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
             } else if (type == 6) {
-                double c = correlation(vc);
+                double c = corr(vc);
                 double l1 = vectorLength(2, this);
                 double l2 = vectorLength(2, vc);
                 return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
             } else if (type == 7) {
-                double c = correlation(vc);
+                double c = corr(vc);
                 double l1 = vectorLength(3, this);
                 double l2 = vectorLength(3, vc);
                 return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
@@ -219,6 +219,14 @@ public class VectorPoint {
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         double cor = pearsonsCorrelation.correlation(xs, ys);
         return (1 - (1 + cor) / 2);
+    }
+
+    public double corr(VectorPoint vc) {
+        double []xs = vc.numbers;
+        double []ys = this.numbers;
+
+        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+        return pearsonsCorrelation.correlation(xs, ys);
     }
 
     public void add(double number) {
