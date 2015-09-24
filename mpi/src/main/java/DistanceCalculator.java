@@ -176,7 +176,7 @@ public class DistanceCalculator {
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
         //File smallDirFile = new File(smallValDir);
         //smallDirFile.mkdirs();
-        writer = new WriterWrapper(outFileName, false);
+        writer = new WriterWrapper(outFileName, true);
         //WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
         // +1 to accomodate constant sctock
         int lineCount = countLines(fileEntry);
@@ -262,6 +262,9 @@ public class DistanceCalculator {
                 for (int j = 0; j < values[i].length; j++) {
                     double doubleValue = values[i][j] / dmax;
                     if (doubleValue < 0) {
+                        System.out.println("*********************************ERROR, invalid distance*************************************");
+                        throw new RuntimeException("Invalid distance");
+                    } else if (doubleValue > 1) {
                         System.out.println("*********************************ERROR, invalid distance*************************************");
                         throw new RuntimeException("Invalid distance");
                     }
