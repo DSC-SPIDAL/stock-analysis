@@ -39,7 +39,7 @@ public class PointRotation {
                 bufWriter.write(s);
                 bufWriter.newLine();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to read/write file", e);
         } finally {
             if (bufWriter != null) {
