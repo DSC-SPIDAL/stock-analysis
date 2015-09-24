@@ -242,7 +242,7 @@ public class LabelApply {
                 index++;
             }
             System.out.println("Read lines: " + index);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to read/write file", e);
         } finally {
             if (bufWriter != null) {
