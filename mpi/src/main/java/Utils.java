@@ -214,16 +214,20 @@ public class Utils {
         return keys;
     }
 
-    public static Point readPoint(String line) {
-        String []splits = line.split("\t");
+    public static Point readPoint(String line) throws Exception {
+        try {
+            String[] splits = line.split("\t");
 
-        int i = Integer.parseInt(splits[0]);
-        double x = Double.parseDouble(splits[1]);
-        double y = Double.parseDouble(splits[2]);
-        double z = Double.parseDouble(splits[3]);
-        int clazz = Integer.parseInt(splits[4]);
+            int i = Integer.parseInt(splits[0]);
+            double x = Double.parseDouble(splits[1]);
+            double y = Double.parseDouble(splits[2]);
+            double z = Double.parseDouble(splits[3]);
+            int clazz = Integer.parseInt(splits[4]);
 
-        return new Point(i, x, y, z, clazz);
+            return new Point(i, x, y, z, clazz);
+        } catch (NumberFormatException e) {
+            throw new Exception(e);
+        }
     }
 
     public static SectorRecord readSectorRecord(String line) {
@@ -424,8 +428,8 @@ public class Utils {
                 index++;
             }
             return points;
-        } catch (IOException e) {
-            throw new RuntimeException("Faile to read file: " + pointFile.getAbsolutePath());
+        } catch (Exception e) {
+            throw new RuntimeException("Faile to read file: " + pointFile.getAbsolutePath(), e);
         }
     }
 
