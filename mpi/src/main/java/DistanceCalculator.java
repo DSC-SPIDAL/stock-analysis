@@ -254,22 +254,8 @@ public class DistanceCalculator {
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 for (int j = 0; j < values[i].length; j++) {
-                    double doubleValue = values[i][j];
-
+                    double doubleValue = values[i][j] / dmax;
                     short shortValue = (short) (doubleValue * Short.MAX_VALUE);
-                    if (shortValue < 3277) {
-                        count2++;
-                        if (doubleValue > .1) {
-                        } else {
-                            count++;
-                        }
-                    }
-                    if (doubleValue < .1) {
-                        count3++;
-                        if (shortValue > 3277) {
-                            count4++;
-                        }
-                    }
                     writer.writeShort((short) shortValue);
                 }
                 writer.line();
