@@ -237,7 +237,7 @@ public class PVectorGenerator {
             if (v.noOfElements() == size) {
                 String sv = v.serialize();
                 if (!v.isValid()) {
-                    System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
+                    // System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
                     it.remove();
                     continue;
                 }
@@ -250,7 +250,7 @@ public class PVectorGenerator {
                     // remove it from map
                     vectorCounter++;
                 } else {
-                    System.out.println("Missing points: " + outFileName + ", " + v.serialize());
+                    // System.out.println("Missing points: " + outFileName + ", " + v.serialize());
                 }
                 it.remove();
             }
