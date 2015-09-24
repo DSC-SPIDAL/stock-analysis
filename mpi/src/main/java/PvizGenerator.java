@@ -141,7 +141,7 @@ import java.util.Map;
             Marshaller ma = ctx.createMarshaller();
             ma.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             ma.marshal(plotviz, fileOutputStream);
-        } catch (JAXBException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (fileOutputStream != null) {
