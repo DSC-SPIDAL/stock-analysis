@@ -183,9 +183,18 @@ public class DistanceCalculator {
 
         // initialize the double arrays for this block
         double values[][] = new double[INC][];
+        double cachedValues[][] = new double[INC][];
         for (int i = 0; i < values.length; i++) {
             values[i] = new double[lineCount];
+            cachedValues[i] = new double[lineCount];
         }
+
+        for (int i = 0; i < cachedValues.length; i++) {
+            for (int j = 0; j < cachedValues[i].length; j++) {
+                cachedValues[i][j] = -1;
+            }
+        }
+
         double dmax = Double.MIN_VALUE;
         double dmin = Double.MAX_VALUE;
 
@@ -193,10 +202,7 @@ public class DistanceCalculator {
         int endIndex = -1;
 
         List<VectorPoint> vectors;
-        long count = 0;
-        long count2 = 0;
-        long count3 = 0;
-        long count4 = 0;
+
         do {
             startIndex = endIndex + 1;
             endIndex = startIndex + INC - 1;
@@ -228,15 +234,14 @@ public class DistanceCalculator {
                     VectorPoint sv = secondVectors.get(i);
                     for (int j = 0; j < vectors.size(); j++) {
                         VectorPoint fv = vectors.get(j);
-                        double cor = sv.correlation(fv, distanceType);
-                        if (cor < 0.03) {
-                            String sym1 = permNoToSymbol.get(fv.getKey());
-                            String sym2 = permNoToSymbol.get(sv.getKey());
-                            if (sym1 != null && sym2 != null) {
-                                //smallWriter.write(sym1 + "," + sym2 + " :" + cor);
-                            }
-                            // count++;
+                        double cor = 0;
+                        // assume i,j is eqaul to j,i
+                        if (cachedValues[readStartIndex + i][j] == -1) {
+                            cor = sv.correlation(fv, distanceType);
+                        } else {
+                            cor = cachedValues[readStartIndex + i][j];
                         }
+
                         if (cor > dmax) {
                             dmax = cor;
                         }
@@ -245,6 +250,7 @@ public class DistanceCalculator {
                             dmin = cor;
                         }
                         values[j][readStartIndex + i] = cor;
+                        cachedValues[j][readStartIndex + i] = cor;
                     }
                 }
                 readStartIndex = readEndIndex + 1;
@@ -255,15 +261,15 @@ public class DistanceCalculator {
             for (int i = 0; i < vectors.size(); i++) {
                 for (int j = 0; j < values[i].length; j++) {
                     double doubleValue = values[i][j] / dmax;
+                    if (doubleValue < 0) {
+                        System.out.println("*********************************ERROR, invalid distance*************************************");
+                        throw new RuntimeException("Invalid distance");
+                    }
                     short shortValue = (short) (doubleValue * Short.MAX_VALUE);
                     writer.writeShort((short) shortValue);
                 }
                 writer.line();
             }
-            System.out.println("count " + count);
-            System.out.println("count2 " + count2);
-            System.out.println("count3 " + count3);
-            System.out.println("count4 " + count4);
         } while (true);
         if (writer != null) {
             writer.close();
