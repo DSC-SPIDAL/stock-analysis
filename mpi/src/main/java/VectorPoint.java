@@ -1,8 +1,4 @@
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
-import org.apache.commons.math3.random.CorrelatedRandomVectorGenerator;
-import org.apache.commons.math3.random.GaussianRandomGenerator;
-import org.apache.commons.math3.random.JDKRandomGenerator;
-import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
@@ -146,13 +142,13 @@ public class VectorPoint {
     public double change() {
         if (elements >= 2) {
             if (numbers[0] > 0) {
-                return (numbers[elements - 1] / numbers[0]);
-            } else {
-                return .5;
+                double v = numbers[elements - 1] / numbers[0];
+                if (v > 10) v = 10;
+                if (v < .1) v = .1;
+                return v;
             }
-        } else {
-            return 0;
         }
+        return 1;
     }
 
     public double modCorrelation(double []xs, double []ys) {
