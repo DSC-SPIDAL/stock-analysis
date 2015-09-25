@@ -176,7 +176,7 @@ public class DistanceCalculator {
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
         //File smallDirFile = new File(smallValDir);
         //smallDirFile.mkdirs();
-        writer = new WriterWrapper(outFileName, true);
+        writer = new WriterWrapper(outFileName, false);
         //WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
         // +1 to accomodate constant sctock
         int lineCount = countLines(fileEntry);
@@ -194,7 +194,7 @@ public class DistanceCalculator {
                 cachedValues[i][j] = -1;
             }
         }
-
+        int []histogram = new int[10];
         double dmax = Double.MIN_VALUE;
         double dmin = Double.MAX_VALUE;
 
@@ -256,11 +256,17 @@ public class DistanceCalculator {
                 readStartIndex = readEndIndex + 1;
                 readEndIndex = readStartIndex + INC - 1;
             } while (true);
-
+            System.out.println("MAX distance is: " + dmax);
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 for (int j = 0; j < values[i].length; j++) {
                     double doubleValue = values[i][j] / dmax;
+                    for (int k = 0; k < 10; k++) {
+                        if (doubleValue < (k + 1) * .1) {
+                            histogram[k]++;
+                            break;
+                        }
+                    }
                     if (doubleValue < 0) {
                         System.out.println("*********************************ERROR, invalid distance*************************************");
                         throw new RuntimeException("Invalid distance");
@@ -277,6 +283,10 @@ public class DistanceCalculator {
         if (writer != null) {
             writer.close();
         }
+        for (int i = 0; i < 10; i++) {
+            System.out.print(histogram[i] + " ");
+        }
+
 //        if (smallWriter != null) {
 //            smallWriter.close();
 //        }

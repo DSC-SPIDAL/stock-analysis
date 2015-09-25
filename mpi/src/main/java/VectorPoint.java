@@ -116,6 +116,11 @@ public class VectorPoint {
                 double l1 = vectorLength(3, this);
                 double l2 = vectorLength(3, vc);
                 return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
+            } else if (type == 8) {
+                double c = corr(vc);
+                double l1 = 1;
+                double l2 = 1;
+                return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
             }
         } else {
             return CONST_DISTANCE;
