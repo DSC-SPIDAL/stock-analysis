@@ -194,7 +194,7 @@ public class DistanceCalculator {
                 cachedValues[i][j] = -1;
             }
         }
-        int []histogram = new int[10];
+        int []histogram = new int[100];
         double dmax = Double.MIN_VALUE;
         double dmin = Double.MAX_VALUE;
 
@@ -261,8 +261,8 @@ public class DistanceCalculator {
             for (int i = 0; i < vectors.size(); i++) {
                 for (int j = 0; j < values[i].length; j++) {
                     double doubleValue = values[i][j] / dmax;
-                    for (int k = 0; k < 10; k++) {
-                        if (doubleValue < (k + 1) * .1) {
+                    for (int k = 0; k < 100; k++) {
+                        if (doubleValue < (k + 1) * .01) {
                             histogram[k]++;
                             break;
                         }
@@ -283,9 +283,18 @@ public class DistanceCalculator {
         if (writer != null) {
             writer.close();
         }
-        for (int i = 0; i < 10; i++) {
-            System.out.print(histogram[i] + " ");
+        System.out.println("MAX: " + VectorPoint.maxChange + " MIN: " + VectorPoint.minChange);
+        System.out.println("Distance histo");
+        for (int i = 0; i < 100; i++) {
+            System.out.print(histogram[i] + ", ");
         }
+        System.out.println();
+
+        System.out.println("Ratio histo");
+        for (int i = 0; i < 100; i++) {
+            System.out.print(VectorPoint.chanegHisto[i] + ", ");
+        }
+        System.out.println();
 
 //        if (smallWriter != null) {
 //            smallWriter.close();

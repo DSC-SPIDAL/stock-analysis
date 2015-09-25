@@ -18,6 +18,10 @@ public class VectorPoint {
     /** the totalCap of a stock for this period */
     double totalCap = 0.0;
 
+    static double maxChange = Double.MIN_VALUE;
+    static double minChange = Double.MAX_VALUE;
+    static double []chanegHisto = new double[100];
+
     boolean constantVector = false;
 
     public static final double CONST_DISTANCE = .5;
@@ -148,8 +152,20 @@ public class VectorPoint {
         if (elements >= 2) {
             if (numbers[0] > 0) {
                 double v = numbers[elements - 1] / numbers[0];
+                if (v > maxChange) {
+                    maxChange = v;
+                }
+                if (v < minChange) {
+                    minChange = v;
+                }
                 if (v > 10) v = 10;
                 if (v < .1) v = .1;
+                for (int i = 0; i < 100; i++) {
+                    if (v < (i + 1) * .1) {
+                        chanegHisto[i]++;
+                        break;
+                    }
+                }
                 return v;
             }
         }
