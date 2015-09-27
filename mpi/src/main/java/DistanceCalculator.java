@@ -269,20 +269,20 @@ public class DistanceCalculator {
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 for (int j = 0; j < values[i].length; j++) {
-                    double doubleValue = values[i][j];
+                    double doubleValue = values[i][j]/dmax;
                     for (int k = 0; k < 100; k++) {
                         if (doubleValue < (k + 1) * dmax / 100) {
                             histogram[k]++;
                             break;
                         }
                     }
-//                    if (doubleValue < 0) {
-//                        System.out.println("*********************************ERROR, invalid distance*************************************");
-//                        throw new RuntimeException("Invalid distance");
-//                    } else if (doubleValue > 1) {
-//                        System.out.println("*********************************ERROR, invalid distance*************************************");
-//                        throw new RuntimeException("Invalid distance");
-//                    }
+                    if (doubleValue < 0) {
+                        System.out.println("*********************************ERROR, invalid distance*************************************");
+                        throw new RuntimeException("Invalid distance");
+                    } else if (doubleValue > 1) {
+                        System.out.println("*********************************ERROR, invalid distance*************************************");
+                        throw new RuntimeException("Invalid distance");
+                    }
                     short shortValue = (short) (doubleValue * Short.MAX_VALUE);
                     writer.writeShort((short) shortValue);
                 }
