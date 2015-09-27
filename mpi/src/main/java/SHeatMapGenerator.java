@@ -205,6 +205,7 @@ public class SHeatMapGenerator {
     private ReadOutPut readFile(String file, int rows, int cols, boolean points, double scale) {
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
+        System.out.println("SCALE: " + scale);
         double[][] finalValues = new double[rows][];
         if (!points) {
             short[][] values = BinaryReader2D.readRowRange(file, new Range(0, rows - 1), cols, ByteOrder.BIG_ENDIAN, true, 1.0);
