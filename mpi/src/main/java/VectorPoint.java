@@ -20,7 +20,6 @@ public class VectorPoint {
 
     static double maxChange = Double.MIN_VALUE;
     static double minChange = Double.MAX_VALUE;
-    static double []chanegHisto = new double[100];
 
     boolean constantVector = false;
 
@@ -109,7 +108,13 @@ public class VectorPoint {
                 double c = corr(vc);
                 double l1 = vectorLength(1, this);
                 double l2 = vectorLength(1, vc);
-                return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
+                double sqrt = Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
+                if (sqrt == 0) {
+                    //System.out.println("Sqrt = = 0");
+                } else if (sqrt > 100000) {
+                    System.out.println("Sqrt = " + sqrt);
+                }
+                return sqrt;
             } else if (type == 6) {
                 double c = corr(vc);
                 double l1 = vectorLength(2, this);
@@ -135,9 +140,15 @@ public class VectorPoint {
     public static double vectorLength(int type, VectorPoint vp) {
         double change = vp.change();
         if (type == 1) {
-            return Math.pow(Math.abs(Math.log(change)), 2);
+            double pow = 10 * Math.abs(Math.log(change));
+//            if (pow == 0) {
+//                System.out.println("0 for: " + change);
+//            } else if (pow > 10000) {
+//                System.out.println("Infinity");
+//            }
+            return pow;
         } else if (type == 2) {
-            return change > 1 ? change - 1 : (1 / change) - 1;
+            return 10 * (change > 1 ? (change - 1) : (1 / change) - 1);
         } else if (type == 3) {
             SimpleRegression regression = new SimpleRegression();
             for (int i = 0; i < vp.elements; i++) {
@@ -158,14 +169,13 @@ public class VectorPoint {
                 if (v < minChange) {
                     minChange = v;
                 }
-                if (v > 10) v = 10;
+                if (v > 3) v = 3;
                 if (v < .1) v = .1;
-                for (int i = 0; i < 100; i++) {
-                    if (v < (i + 1) * .1) {
-                        chanegHisto[i]++;
-                        break;
-                    }
-                }
+
+//                double v1 = .02 * Math.abs(Math.exp(v));
+//                if (v1 <= 0) {
+//                    System.out.println("0");
+//                }
                 return v;
             }
         }

@@ -195,6 +195,8 @@ public class DistanceCalculator {
             }
         }
         int []histogram = new int[100];
+        double []chanegHisto = new double[100];
+
         double dmax = Double.MIN_VALUE;
         double dmin = Double.MAX_VALUE;
 
@@ -232,6 +234,13 @@ public class DistanceCalculator {
                 System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex + " read size: " + secondVectors.size());
                 for (int i = 0; i < secondVectors.size(); i++) {
                     VectorPoint sv = secondVectors.get(i);
+                    double v = VectorPoint.vectorLength(2, sv);
+                    for (int z = 0; z < 100; z++) {
+                        if (v < (z + 1) * .1) {
+                            chanegHisto[z]++;
+                            break;
+                        }
+                    }
                     for (int j = 0; j < vectors.size(); j++) {
                         VectorPoint fv = vectors.get(j);
                         double cor = 0;
@@ -260,20 +269,20 @@ public class DistanceCalculator {
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 for (int j = 0; j < values[i].length; j++) {
-                    double doubleValue = values[i][j] / dmax;
+                    double doubleValue = values[i][j];
                     for (int k = 0; k < 100; k++) {
-                        if (doubleValue < (k + 1) * .01) {
+                        if (doubleValue < (k + 1) * dmax / 100) {
                             histogram[k]++;
                             break;
                         }
                     }
-                    if (doubleValue < 0) {
-                        System.out.println("*********************************ERROR, invalid distance*************************************");
-                        throw new RuntimeException("Invalid distance");
-                    } else if (doubleValue > 1) {
-                        System.out.println("*********************************ERROR, invalid distance*************************************");
-                        throw new RuntimeException("Invalid distance");
-                    }
+//                    if (doubleValue < 0) {
+//                        System.out.println("*********************************ERROR, invalid distance*************************************");
+//                        throw new RuntimeException("Invalid distance");
+//                    } else if (doubleValue > 1) {
+//                        System.out.println("*********************************ERROR, invalid distance*************************************");
+//                        throw new RuntimeException("Invalid distance");
+//                    }
                     short shortValue = (short) (doubleValue * Short.MAX_VALUE);
                     writer.writeShort((short) shortValue);
                 }
@@ -292,7 +301,7 @@ public class DistanceCalculator {
 
         System.out.println("Ratio histo");
         for (int i = 0; i < 100; i++) {
-            System.out.print(VectorPoint.chanegHisto[i] + ", ");
+            System.out.print(chanegHisto[i] + ", ");
         }
         System.out.println();
 
