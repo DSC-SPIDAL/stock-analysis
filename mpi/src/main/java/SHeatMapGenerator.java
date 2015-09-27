@@ -36,6 +36,8 @@ public class SHeatMapGenerator {
     private static double _lengthCut;
     private static boolean _readPointsA;
     private static boolean _readPointsB;
+    private static double _scaleA = 1.0;
+    private static double _scaleB = 1.0;
 
     private double minX;
     private double minY;
@@ -63,8 +65,8 @@ public class SHeatMapGenerator {
 
     private void process() {
         // first load the first file
-        ReadOutPut outA = readFile(_aMat, _rows, _cols, _readPointsA);
-        ReadOutPut outB = readFile(_bMat, _rows, _cols, _readPointsB);
+        ReadOutPut outA = readFile(_aMat, _rows, _cols, _readPointsA, _scaleA);
+        ReadOutPut outB = readFile(_bMat, _rows, _cols, _readPointsB, _scaleB);
 
         // get the bin size
         double deltaX = (outA.max - outA.min) / _xres;
@@ -176,6 +178,8 @@ public class SHeatMapGenerator {
             _distcutB = Double.parseDouble(getProperty(p, "distcutB", null));
             _mindistA = Double.parseDouble(getProperty(p, "mindistA", null));
             _mindistB = Double.parseDouble(getProperty(p, "mindistB", null));
+            _scaleA = Double.parseDouble(getProperty(p, "scaleA", "1.0"));
+            _scaleB = Double.parseDouble(getProperty(p, "scaleB", "1.0"));
             // We dont use clusters configuration
             _title = getProperty(p, "title", null);
         } catch (IOException e) {
@@ -198,7 +202,7 @@ public class SHeatMapGenerator {
      * @param points
      * @return
      */
-    private ReadOutPut readFile(String file, int rows, int cols, boolean points) {
+    private ReadOutPut readFile(String file, int rows, int cols, boolean points, double scale) {
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
         double[][] finalValues = new double[rows][];
@@ -217,6 +221,7 @@ public class SHeatMapGenerator {
                     if (finalValues[i][j] < min) {
                         min = finalValues[i][j];
                     }
+                    finalValues[i][j] *= scale;
                 }
             }
         } else {
@@ -241,6 +246,7 @@ public class SHeatMapGenerator {
                         if (finalValues[i][j] < min) {
                             min = finalValues[i][j];
                         }
+                        finalValues[i][j] *= scale;
                     }
                 }
             } catch (Exception e) {
