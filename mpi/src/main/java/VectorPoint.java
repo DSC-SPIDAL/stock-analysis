@@ -242,6 +242,8 @@ public class VectorPoint {
     }
 
     public double correlation(VectorPoint vc) {
+        if (vc.isConstantVector() || constantVector) return 0;
+
         double []xs = vc.numbers;
         double []ys = this.numbers;
 
@@ -251,7 +253,7 @@ public class VectorPoint {
     }
 
     public double corr(VectorPoint vc) {
-        if (constantVector) return 0;
+        if (vc.isConstantVector() || constantVector) return 0;
 
         double []xs = vc.numbers;
         double []ys = this.numbers;
