@@ -15,5 +15,5 @@ GLOBAL_HIST_DIR=$BASE_DIR/$GLOBAL_HIST_DIR_NAME
 
 # generate histogram
 # --------------------
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $CONT_VECS -s $ORIGINAL_STOCK_FILE -d $HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/histogram.out.txt
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $CONT_VECS -s $ORIGINAL_STOCK_FILE -d $HIST_DIR -b 10 -g | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/histogram.out.txt
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar Histogram -v $BASE_DIR/$GLOBAL_VEC_DIR_NAME -s $ORIGINAL_STOCK_FILE -d $GLOBAL_HIST_DIR -b 10 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/global_histogram.out.txt

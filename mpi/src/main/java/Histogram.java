@@ -10,13 +10,17 @@ public class Histogram {
     private String distFolder;
     private String stockFile;
     private static int INC = 3000;
-    private int bins = 6;
+    private int bins = 10;
+    private boolean global = false;
+    // we will use this many files to generate the global bins
+    static public int GLOBAL_FILE_COUNT = 10;
 
-    public Histogram(String vectorFolder, String distFolder, int bins, String stockFile) {
+    public Histogram(String vectorFolder, String distFolder, int bins, String stockFile, boolean global) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.bins = bins;
         this.stockFile = stockFile;
+        this.global = global;
     }
 
     public static void main(String[] args) {
@@ -25,6 +29,7 @@ public class Histogram {
         options.addOption("d", true, "Destination folder"); // Destination folder
         options.addOption("b", true, "Number of bins");
         options.addOption("s", true, "Stock file"); // Original global file
+        options.addOption(Utils.createOption("g", false, "Use global bins", false));
 
         CommandLineParser commandLineParser = new BasicParser();
         try {
@@ -33,8 +38,9 @@ public class Histogram {
             String _distFile = cmd.getOptionValue("d");
             int bins = Integer.parseInt(cmd.getOptionValue("b"));
             String stockFile = cmd.getOptionValue("s");
+            boolean globalBins = cmd.hasOption("g");
 
-            Histogram histogram = new Histogram(_vectorFile, _distFile, bins, stockFile);
+            Histogram histogram = new Histogram(_vectorFile, _distFile, bins, stockFile, globalBins);
             histogram.process();
         } catch (ParseException e) {
             System.out.println(options.toString());
@@ -57,11 +63,22 @@ public class Histogram {
         Collections.addAll(list, inFolder.listFiles());
         Collections.sort(list);
         files.addAll(list);
-        for (File f : files) {
-            String outFileName = distFolder + "/" + f.getName();
-            System.out.println("generate histogram: " + outFileName);
-            Bin []bins = genHistoGram(f, stockFile, this.bins, permNoToSymbol);
-            writeBins(outFileName, bins);
+
+        if (!this.global) {
+            for (File f : files) {
+                String outFileName = distFolder + "/" + f.getName();
+                System.out.println("generate histogram: " + outFileName);
+                Bin[] bins = genHistoGram(f, this.bins, permNoToSymbol);
+                writeBins(outFileName, bins);
+            }
+        } else {
+            Bin []globalBins = genGlobalBins(list);
+            for (File f : files) {
+                String outFileName = distFolder + "/" + f.getName();
+                System.out.println("generate histogram: " + outFileName);
+                Bin[] bins = genHistoUsingGlobalBins(f, this.bins, permNoToSymbol, globalBins);
+                writeBins(outFileName, bins);
+            }
         }
         System.out.println("Histogram calculator finished...");
     }
@@ -89,9 +106,67 @@ public class Histogram {
         }
     }
 
+    public Bin[] genHistoUsingGlobalBins(File inFile, int noOfBins, Map<Integer, String> permNoToSymbol, Bin []globalBins) {
+        Map<Integer, Double> vecs = proceeVectorFile(inFile);
+        List<Double> values = new ArrayList<Double>(vecs.values());
+        Collections.sort(values);
 
+        Bin []bins = new Bin[noOfBins];
+        for (int i = 0; i < noOfBins; i++) {
+            Bin bin = new Bin();
+            bin.start = globalBins[i].start;
+            bin.end = globalBins[i].end;
+        }
 
-    public Bin[] genHistoGram(File inFile, String originalStockFile, int noOfBins, Map<Integer, String> permNoToSymbol) {
+        for (Map.Entry<Integer, Double> e : vecs.entrySet()) {
+            int perm = e.getKey();
+            double val = e.getValue();
+            Bin b = getBinIndex(val, bins);
+            b.permNos.add(perm);
+            b.symbols.add(permNoToSymbol.get(perm));
+        }
+        return bins;
+    }
+
+    public Bin[] genGlobalBins(List<File> allFiles) {
+        System.out.println("Generating global bins: " + this.bins);
+        // we will use a pre defined number of files to generate the global bins
+        int size = allFiles.size();
+        int ratio = size / GLOBAL_FILE_COUNT;
+        double max = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
+
+        for (int i = 0; i < size; i++) {
+            File f = allFiles.get(i + ratio);
+            Map<Integer, Double> vecs = proceeVectorFile(f);
+            List<Double> values = new ArrayList<Double>(vecs.values());
+            Collections.sort(values);
+
+            if (values.size() <= 1) continue;
+
+            double fileMax = values.get(values.size() - 1);
+            double fileMin = values.get(0);
+
+            if (fileMax > max) {
+                max = fileMax;
+            }
+            if (fileMin < min) {
+                min = fileMin;
+            }
+        }
+
+        double delta = (max - min) / this.bins;
+        Bin []bins = new Bin[this.bins];
+        for (int i = 0; i < bins.length; i++) {
+            Bin b = new Bin();
+            b.start = i * delta;
+            b.end = i * (delta + 1);
+        }
+        System.out.println("Global bins MAX: " + max + " MIN: " + min);
+        return bins;
+    }
+
+    public Bin[] genHistoGram(File inFile, int noOfBins, Map<Integer, String> permNoToSymbol) {
         Map<Integer, Double> vecs = proceeVectorFile(inFile);
         List<Double> values = new ArrayList<Double>(vecs.values());
         Collections.sort(values);
@@ -121,12 +196,18 @@ public class Histogram {
     private Bin getBinIndex(double val, Bin []bins) {
         for (int i = 0; i < bins.length - 1; i++) {
             Bin b = bins[i];
+            // add all that is below the 0'th bin to 0
+            if (val < b.start) {
+                return b;
+            }
+
             if (b.start >= val) {
                 return b;
             } else if (b.end > val) {
                 return b;
             }
         }
+        // add all that is over the last bin value to last
         return bins[bins.length - 1];
     }
 
