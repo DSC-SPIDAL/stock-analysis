@@ -22,7 +22,7 @@ do
   echo "point file" $common_file
   echo "-Drows=$no_of_common_lines -Dcols=$no_of_common_lines -DAmat=$common_file -DBmat=$distance_file -DscaleB=4.0 -Dtitle=$common_filename -Doutdir=$YEARLY_HEATMAP_DIR -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties"
 
-  java -Drows=$no_of_common_lines -Dcols=$no_of_common_lines -DAmat=$common_file -DBmat=$distance_file -DscaleB=4.0 -Dymaxbound=.25 -Dtitle=$common_filename_ext -Doutdir=$YEARLY_HEATMAP_DIR -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+  java -Drows=$no_of_common_lines -Dcols=$no_of_common_lines -DAmat=$common_file -DBmat=$distance_file -DscaleB=4.0 -DscaleA=4.0 -Dtitle=$common_filename_ext -Doutdir=$YEARLY_HEATMAP_DIR -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
 
   cat $YEARLY_HEATMAP_DIR/plot.bat >> $YEARLY_HEATMAP_DIR/plot_master.sh
 done
@@ -49,7 +49,7 @@ do
   echo "point file" $common_file
   echo "-Drows=$no_of_common_lines -Dcols=$no_of_common_lines -DAmat=$common_file -DBmat=$distance_file -DscaleB=4.0 -Dtitle=$common_filename -Doutdir=$YEARLY_HEATMAP_DIR -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties"
 
-  java -Drows=$no_of_common_lines -Dcols=$no_of_common_lines -DAmat=$common_file -DBmat=$distance_file -DscaleB=4.0 -Dymaxbound=.25 -Dtitle=$common_filename_ext -Doutdir=$GLOBAL_HEATMAP_DIR -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+  java -Drows=$no_of_common_lines -Dcols=$no_of_common_lines -DAmat=$common_file -DBmat=$distance_file -DscaleB=4.0 -DscaleA=4.0 -Dtitle=$common_filename_ext -Doutdir=$GLOBAL_HEATMAP_DIR -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
 
   cat $GLOBAL_HEATMAP_DIR/plot.bat >> $GLOBAL_HEATMAP_DIR/plot_master.sh
 done
