@@ -111,6 +111,9 @@ public class SHeatMapGenerator {
                                     double ymax, double ymin,
                                     double deltax, double deltay,
                                     long[][] cells, int i, int j) {
+        if (x > xmax) return;
+        if (y > ymax) return;
+
         // cell number based on zero index from bottom left corner
         // if x is equal to xmax then it's placed in the last cell, which is xres-1 in zero based index
         // same is done for y when y == ymax
