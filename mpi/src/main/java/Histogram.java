@@ -136,7 +136,7 @@ public class Histogram {
         double max = Double.MIN_VALUE;
         double min = Double.MAX_VALUE;
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size - ratio; i++) {
             File f = allFiles.get(i + ratio);
             Map<Integer, Double> vecs = proceeVectorFile(f);
             List<Double> values = new ArrayList<Double>(vecs.values());
