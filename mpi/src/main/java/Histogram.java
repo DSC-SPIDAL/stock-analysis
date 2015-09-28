@@ -116,6 +116,7 @@ public class Histogram {
             Bin bin = new Bin();
             bin.start = globalBins[i].start;
             bin.end = globalBins[i].end;
+            bins[i] = bin;
         }
 
         for (Map.Entry<Integer, Double> e : vecs.entrySet()) {
@@ -195,16 +196,14 @@ public class Histogram {
     }
 
     private Bin getBinIndex(double val, Bin []bins) {
-        for (int i = 0; i < bins.length - 1; i++) {
+        for (int i = 0; i < bins.length; i++) {
             Bin b = bins[i];
             // add all that is below the 0'th bin to 0
             if (val < b.start) {
                 return b;
             }
 
-            if (b.start >= val) {
-                return b;
-            } else if (b.end > val) {
+            if (b.start <= val && b.end >= val) {
                 return b;
             }
         }
