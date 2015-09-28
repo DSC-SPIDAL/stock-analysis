@@ -75,7 +75,7 @@ public class VectorPoint {
     public double correlation(VectorPoint vc, int type) {
         double []xs = vc.numbers;
         double []ys = this.numbers;
-        if (!constantVector && !vc.isConstantVector()) {
+        if (!constantVector && !vc.isConstantVector() || type >= 5) {
             if (type == 0) {
                 double cor = correlation(vc);
                 if (Double.isNaN(cor)) {
@@ -138,6 +138,8 @@ public class VectorPoint {
     }
 
     public static double vectorLength(int type, VectorPoint vp) {
+        if (vp.isConstantVector()) return 0;
+
         double change = vp.change();
         if (type == 1) {
             double pow = 10 * Math.abs(Math.log(change));
@@ -249,6 +251,8 @@ public class VectorPoint {
     }
 
     public double corr(VectorPoint vc) {
+        if (constantVector) return 0;
+
         double []xs = vc.numbers;
         double []ys = this.numbers;
 
