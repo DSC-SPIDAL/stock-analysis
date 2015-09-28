@@ -161,6 +161,7 @@ public class Histogram {
             Bin b = new Bin();
             b.start = i * delta;
             b.end = i * (delta + 1);
+            bins[i] = b;
         }
         System.out.println("Global bins MAX: " + max + " MIN: " + min);
         return bins;
