@@ -1,4 +1,6 @@
 import org.apache.commons.cli.*;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import java.io.*;
 import java.util.*;
@@ -140,13 +142,25 @@ public class Histogram {
         for (int i = 0; i < size - ratio; i++) {
             File f = allFiles.get(i + ratio);
             Map<Integer, Double> vecs = proceeVectorFile(f);
+            StandardDeviation percentile = new StandardDeviation();
             List<Double> values = new ArrayList<Double>(vecs.values());
+            double array[] = new double[values.size()];
+            double sum = 0;
+            for (int k = 0; k < array.length; k++) {
+                array[k] = values.get(k);
+                sum += array[k];
+                if (Double.isNaN(array[k])) {
+                    System.out.println("NAN");
+                }
+            }
+            double mean = sum / array.length;
+            double p = percentile.evaluate(array);
             Collections.sort(values);
 
             if (values.size() <= 1) continue;
 
-            double fileMax = values.get(values.size() - 1);
-            double fileMin = values.get(0);
+            double fileMax = mean +  p;
+            double fileMin = mean -  p;
 
             if (fileMax > max) {
                 max = fileMax;
@@ -160,8 +174,8 @@ public class Histogram {
         Bin []bins = new Bin[this.bins];
         for (int i = 0; i < bins.length; i++) {
             Bin b = new Bin();
-            b.start = i * delta;
-            b.end = (i + 1)* (delta);
+            b.start = min + i * delta;
+            b.end = min + (i + 1)* (delta);
             bins[i] = b;
         }
         System.out.println("Global bins MAX: " + max + " MIN: " + min);
@@ -241,13 +255,10 @@ public class Histogram {
 
     private double vectorDelta(double []n) {
         double sum = 0.0;
-        double min = Double.MAX_VALUE;
-        Double max = Double.MIN_VALUE;
         for (double aN : n) {
             sum += aN;
-            min = aN < min ? aN : min;
-            max = aN > max ? aN : max;
         }
+        if (sum == 0) return .1;
 //        double delta = max - min;
         double delta = n[0] - n[n.length - 1];
         return delta * n.length / sum;
