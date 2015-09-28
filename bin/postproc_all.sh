@@ -20,5 +20,6 @@ sh postproc/cont_rotate.sh
 #sh postproc/labelapply.sh
 # generate heat maps
 #sh postproc/heatmap.sh
+sh postproc/heatmap_scale.sh
 # convert poitns to pviz
 #sh postproc/pviz.sh
