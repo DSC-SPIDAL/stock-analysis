@@ -130,6 +130,8 @@ public class ContinuousCommonGenerator {
         String firstPointFileName = this.pointFolder + "/" + firstFileWithoutExt + ".txt";
         String secondPointFileName = this.pointFolder + "/" + secondfFileWithoutExt + ".txt";
 
+        System.out.println("Processing pair: " + firstVectorFileName + " " + secondVectorFileName + " " + firstPointFileName + " " + secondPointFileName);
+
         // first lets read the vector keys
         List<Integer> firstVectorKeys = Utils.readVectorKeys(new File(firstVectorFileName));
         List<Integer> secondVectorKeys = Utils.readVectorKeys(new File(secondVectorFileName));
