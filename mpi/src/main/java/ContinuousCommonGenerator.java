@@ -139,7 +139,7 @@ public class ContinuousCommonGenerator {
         // now lets get the common keys for both of them
         TreeSet<Integer> commonKeys = new TreeSet<Integer>(firstVectorKeys);
         commonKeys.retainAll(new TreeSet<Integer>(secondVectorKeys));
-
+        System.out.println("Fits keys: " + firstVectorKeys.size() + " Second keys:"  + secondVectorKeys.size() + " Common keys: " + commonKeys.size());
         // now read the two point files
         Map<Integer, Point> firstPoints = Utils.loadPoints(new File(firstPointFileName), firstVectorKeys);
         Map<Integer, Point> secondPoints = Utils.loadPoints(new File(secondPointFileName), secondVectorKeys);
