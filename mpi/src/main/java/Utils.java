@@ -435,7 +435,7 @@ public class Utils {
                 index++;
             }
             if (index != keys.size()) {
-                throw new RuntimeException("Keys are not read fully: " + index +  " != " + keys.size());
+                throw new RuntimeException("Keys are not read fully: " + index +  " != " + keys.size() + " " + pointFile.getAbsolutePath());
             }
             return points;
         } catch (Exception e) {
