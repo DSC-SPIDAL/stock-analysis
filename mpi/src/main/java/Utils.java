@@ -1,6 +1,10 @@
 import edu.indiana.soic.spidal.common.Range;
 import org.apache.commons.cli.Option;
+import pviz.Plotviz;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.io.*;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -453,6 +457,24 @@ public class Utils {
             return points;
         } catch (IOException e) {
             throw new RuntimeException("Faile to read file: " + vectorFile.getAbsolutePath());
+        }
+    }
+
+    public static void savePlotViz(String outFileName, Plotviz plotviz) throws FileNotFoundException, JAXBException {
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(outFileName);
+            JAXBContext ctx = JAXBContext.newInstance(Plotviz.class);
+            Marshaller ma = ctx.createMarshaller();
+            ma.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            ma.marshal(plotviz, fileOutputStream);
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException ignore) {
+                }
+            }
         }
     }
 }

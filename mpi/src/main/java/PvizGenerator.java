@@ -4,14 +4,16 @@ import pviz.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-    public class PvizGenerator {
+public class PvizGenerator {
+
+    public static final int CONST_CLUSTER_KEY = 30;
+
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("c", true, "Cluste file");
@@ -101,7 +103,6 @@ import java.util.Map;
      */
     private void processFile(File inFile, Clusters clusters, Map<Integer, String> permNoToSymbol) {
         int size = -1;
-        FileOutputStream fileOutputStream = null;
 
         String fileName = inFile.getName();
         String fileNameWithOutExt = FilenameUtils.removeExtension(fileName);
@@ -136,20 +137,9 @@ import java.util.Map;
             plotviz.setPoints(pVizPoints);
 
             // now write the xml
-            fileOutputStream = new FileOutputStream(outFileName);
-            JAXBContext ctx = JAXBContext.newInstance(Plotviz.class);
-            Marshaller ma = ctx.createMarshaller();
-            ma.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            ma.marshal(plotviz, fileOutputStream);
+            Utils.savePlotViz(outFileName, plotviz);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (IOException ignore) {
-                }
-            }
         }
     }
 

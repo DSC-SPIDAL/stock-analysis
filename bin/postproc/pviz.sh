@@ -17,3 +17,7 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PvizGenera
 # yearly sectors
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PvizGenerator -c clusters.xml -p $SEC_LABEL_OUT -d $SEC_LABEL_OUT/pviz -o $ORIGINAL_STOCK_FILE -v $CONT_VECS
 java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PvizGenerator -c clusters.xml -p $GLOBAL_SEC_LABEL_OUT -d $GLOBAL_SEC_LABEL_OUT/pviz -o $ORIGINAL_STOCK_FILE -v $BASE_DIR/$GLOBAL_VEC_DIR_NAME
+
+# translate points
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar TranslatePoints -p $LABEL_OUT/pviz -d $LABEL_OUT/pviz_translated
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar TranslatePoints -p $GLOBAL_LABEL_OUT/pviz -d $GLOBAL_LABEL_OUT/pviz_translated
