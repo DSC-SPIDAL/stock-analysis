@@ -15,11 +15,11 @@ sh postproc/common_points.sh
 # generate histograms
 sh postproc/histogram.sh
 # rotations
-#sh postproc/rotate.sh
+sh postproc/rotate.sh
 # apply labels
-#sh postproc/labelapply.sh
+sh postproc/labelapply.sh
 # generate heat maps
-#sh postproc/heatmap.sh
-#sh postproc/heatmap_scale.sh
+sh postproc/heatmap.sh
+sh postproc/heatmap_scale.sh
 # convert poitns to pviz
-#sh postproc/pviz.sh
+sh postproc/pviz.sh
