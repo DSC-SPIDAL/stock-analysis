@@ -65,7 +65,11 @@ public class TranslatePoints {
                 throw new RuntimeException("Failed to load file: " + inFile.getAbsolutePath());
             }
             Point point = findConstPoint(plotviz);
-            specialPoints.add(point);
+            if (point != null) {
+                specialPoints.add(point);
+            } else {
+                System.out.println("Failed to get const point from file: " + inFile.getAbsolutePath());
+            }
         }
 
         double avgX = 0, avgY = 0, avgZ = 0;
