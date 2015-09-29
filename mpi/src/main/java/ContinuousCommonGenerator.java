@@ -168,6 +168,9 @@ public class ContinuousCommonGenerator {
             int i = 0;
             for (Integer key : commonKeys) {
                 Point p = pointMap.get(key);
+                if (p == null) {
+                    System.out.println("Key cannot be found: " + key);
+                }
                 p.setIndex(i++);
                 bufWriter.write(p.serialize());
                 bufWriter.newLine();
