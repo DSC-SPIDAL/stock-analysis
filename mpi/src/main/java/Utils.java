@@ -106,10 +106,25 @@ public class Utils {
         return cal.getTime();
     }
 
+    public static Date addDays(Date data, int days) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(data);
+        cal.add(Calendar.DATE, days);
+        return cal.getTime();
+    }
+
     public static String getMonthString(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal.get(Calendar.YEAR) + "_" + (cal.get(Calendar.MONTH) + 1);
+    }
+
+    public static String getDateString(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        String month = String.format("%02d", (cal.get(Calendar.MONTH) + 1));
+        String day = String.format("%02d", (cal.get(Calendar.DATE)));
+        return cal.get(Calendar.YEAR) + month + day;
     }
 
     public static String getYearString(Date date) {
@@ -352,6 +367,21 @@ public class Utils {
                     break;
                 }
             }
+        } else if (mode == 5) {
+            Date lastDate;
+            do {
+                lastDate = addYear(currentDate);
+                String start = getDateString(currentDate);
+                String end = getDateString(lastDate);
+                List<Date> list = new ArrayList<Date>();
+                list.add(currentDate);
+                list.add(lastDate);
+
+                currentDate = addDays(currentDate, 7);
+                String key = start + "_" + end;
+                dates.put(key, list);
+                dateList.add(key);
+            } while (lastDate.before(endDate));
         }
         return dateList;
     }
@@ -403,6 +433,19 @@ public class Utils {
                     break;
                 }
             }
+        } else if (mode == 5) {
+            Date lastDate;
+            do {
+                lastDate = addYear(currentDate);
+                String start = getDateString(currentDate);
+                String end = getDateString(lastDate);
+                List<Date> list = new ArrayList<Date>();
+                list.add(currentDate);
+                list.add(lastDate);
+
+                currentDate = addDays(currentDate, 7);
+                dates.put(start + "_" + end, list);
+            } while (lastDate.before(endDate));
         }
         return dates;
     }
@@ -481,6 +524,22 @@ public class Utils {
                 } catch (IOException ignore) {
                 }
             }
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            TreeMap<String, List<Date>> dates = genDates(formatter.parse("20040101"), formatter.parse("20140101"), 5);
+//            for (Map.Entry<String, List<Date>> e : dates.entrySet()) {
+//                System.out.println(e.getKey());
+//            }
+
+            List<String> datesList = genDateList(formatter.parse("20040101"), formatter.parse("20140101"), 5);
+            for (String s : datesList) {
+                System.out.println(s);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 }

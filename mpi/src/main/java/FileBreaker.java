@@ -27,6 +27,7 @@ public class FileBreaker {
         MONTH,
         YEAR,
         CONT_YEAR,
+        DAY
     }
 
     public FileBreaker(String inFile, String outFile, String startDate, int days, String endDate, boolean mpi) {
@@ -83,8 +84,16 @@ public class FileBreaker {
     private Set<String> getDatesForThisRecord(Record r) {
         Set<String> files = new HashSet<String>();
         for (Map.Entry<String, List<Date>> entry : dates.entrySet()) {
-            for (Date d : entry.getValue()) {
-                if (check(d, r.getDate(), DateCheckType.MONTH)) {
+            if (mode >= 4) {
+                for (Date d : entry.getValue()) {
+                    if (check(d, r.getDate(), DateCheckType.MONTH)) {
+                        files.add(entry.getKey());
+                    }
+                }
+            } else if (mode >= 5) {
+                Date start = entry.getValue().get(0);
+                Date end = entry.getValue().get(1);
+                if (check(start, end, r.getDate(), DateCheckType.DAY)) {
                     files.add(entry.getKey());
                 }
             }
@@ -184,6 +193,10 @@ public class FileBreaker {
             }
         }
         return false;
+    }
+
+    private boolean check(Date start, Date end, Date compare, DateCheckType check) {
+        return (compare.equals(start) || compare.after(start)) && compare.before(end);
     }
 
     public static void main(String[] args) {
