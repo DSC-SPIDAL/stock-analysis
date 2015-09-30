@@ -27,5 +27,5 @@ mkdir -p $GLOBAL_CONT_COMMON_WEIGHTS
 mkdir -p $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR
 cp -r $GLOBAL_POINTS/* $BASE_DIR/$GLOBAL_FINAL_POINTS_DIR
 
-$BUILD/bin/mpirun --report-bindings java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar ContinuousCommonGenerator -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS -sf $ORIGINAL_STOCK_FILE -s "UNH,GS,CVX,MCD,BA,GE,WMT,INTC,MSFT,IBM" -sd 20040101 -ed 20150101 -m | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.out.txt
+$BUILD/bin/mpirun --report-bindings java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar ContinuousCommonGenerator -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS -sf $ORIGINAL_STOCK_FILE -s "UNH,GS,CVX,MCD,BA,GE,WMT,INTC,MSFT,IBM" -sd 20040101 -ed 20150101 -m -md 5 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.out.txt
 

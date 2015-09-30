@@ -15,6 +15,7 @@ public class ContinuousCommonGenerator {
     private Date startDate;
     private Date endDate;
     private boolean mpi;
+    private int mode = 4;
 
     public static void main(String[] args) {
         Options options = new Options();
@@ -26,6 +27,7 @@ public class ContinuousCommonGenerator {
         options.addOption(Utils.createOption("s", true, "Symbol List", false));
         options.addOption(Utils.createOption("sd", true, "Start date", true));
         options.addOption(Utils.createOption("ed", true, "End date", true));
+        options.addOption(Utils.createOption("md", true, "End date", false));
 
         CommandLineParser commandLineParser = new BasicParser();
         try {
@@ -37,12 +39,16 @@ public class ContinuousCommonGenerator {
             String stockFile = cmd.getOptionValue("sf");
             String startDate = cmd.getOptionValue("sd");
             String endDate = cmd.getOptionValue("ed");
+            String mode = cmd.getOptionValue("md");
             boolean mpi = cmd.hasOption("m");
             if (mpi) {
                 MPI.Init(args);
             }
             ContinuousCommonGenerator pointTransformer = new ContinuousCommonGenerator(pointsFolder, vectorFolder,
                     distFolder, symbolList, stockFile, startDate, endDate, mpi);
+            if (mode != null) {
+                pointTransformer.setMode(Integer.parseInt(mode));
+            }
             pointTransformer.process();
             if (mpi) {
                 MPI.Finalize();
@@ -68,6 +74,10 @@ public class ContinuousCommonGenerator {
 
     }
 
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
     private Queue<FilePair> filePairsPerProcess = new LinkedList<FilePair>();
 
     private class FilePair {
@@ -81,7 +91,7 @@ public class ContinuousCommonGenerator {
     }
 
     public void process() {
-        List<String> dates = Utils.genDateList(this.startDate, this.endDate, 4);
+        List<String> dates = Utils.genDateList(this.startDate, this.endDate, mode);
         MpiOps mpiOps = null;
         StringBuilder sb = new StringBuilder();
         if (mpi) {

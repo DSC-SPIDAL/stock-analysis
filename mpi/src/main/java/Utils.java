@@ -529,12 +529,12 @@ public class Utils {
 
     public static void main(String[] args) {
         try {
-            TreeMap<String, List<Date>> dates = genDates(formatter.parse("20040101"), formatter.parse("20140101"), 5);
+            TreeMap<String, List<Date>> dates = genDates(formatter.parse("20040101"), formatter.parse("20060101"), 5);
 //            for (Map.Entry<String, List<Date>> e : dates.entrySet()) {
 //                System.out.println(e.getKey());
 //            }
 
-            List<String> datesList = genDateList(formatter.parse("20040101"), formatter.parse("20140101"), 5);
+            List<String> datesList = genDateList(formatter.parse("20040101"), formatter.parse("20060101"), 5);
             for (String s : datesList) {
                 System.out.println(s);
             }
