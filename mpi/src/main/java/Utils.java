@@ -429,7 +429,13 @@ public class Utils {
             while ((inputLine = bufRead.readLine()) != null) {
                 Point p = readPoint(inputLine);
                 points.put(keys.get(index), p);
+                if (keys.get(index) == 0) {
+                    System.out.println("Read key 0");
+                }
                 index++;
+            }
+            if (index != keys.size()) {
+                throw new RuntimeException("Keys are not read fully: " + index +  " != " + keys.size() + " " + pointFile.getAbsolutePath());
             }
             return points;
         } catch (Exception e) {

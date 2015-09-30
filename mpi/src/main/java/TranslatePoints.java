@@ -65,7 +65,11 @@ public class TranslatePoints {
                 throw new RuntimeException("Failed to load file: " + inFile.getAbsolutePath());
             }
             Point point = findConstPoint(plotviz);
-            specialPoints.add(point);
+            if (point != null) {
+                specialPoints.add(point);
+            } else {
+                System.out.println("Failed to get const point from file: " + inFile.getAbsolutePath());
+            }
         }
 
         double avgX = 0, avgY = 0, avgZ = 0;
@@ -98,22 +102,23 @@ public class TranslatePoints {
         }
 
         Point fileConst = findConstPoint(plotviz);
+        if (fileConst != null) {
+            avgX = fileConst.x - averagePoint.x;
+            avgY = fileConst.y - averagePoint.y;
+            avgZ = fileConst.z - averagePoint.z;
 
-        avgX = fileConst.x - averagePoint.x;
-        avgY = fileConst.y - averagePoint.y;
-        avgZ = fileConst.z - averagePoint.z;
+            for (PVizPoint p : plotviz.getPoints()) {
+                Location location = p.getLocation();
+                location.setX(location.getX() - avgX);
+                location.setY(location.getY() - avgY);
+                location.setZ(location.getZ() - avgZ);
+            }
 
-        for (PVizPoint p : plotviz.getPoints()) {
-            Location location = p.getLocation();
-            location.setX(location.getX() - avgX);
-            location.setY(location.getY() - avgY);
-            location.setZ(location.getZ() - avgZ);
-        }
-
-        try {
-            Utils.savePlotViz(outFile, plotviz);
-        } catch (FileNotFoundException | JAXBException e) {
-            e.printStackTrace();
+            try {
+                Utils.savePlotViz(outFile, plotviz);
+            } catch (FileNotFoundException | JAXBException e) {
+                e.printStackTrace();
+            }
         }
     }
 

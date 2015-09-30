@@ -130,14 +130,16 @@ public class ContinuousCommonGenerator {
         String firstPointFileName = this.pointFolder + "/" + firstFileWithoutExt + ".txt";
         String secondPointFileName = this.pointFolder + "/" + secondfFileWithoutExt + ".txt";
 
+        System.out.println("Processing pair: " + firstVectorFileName + " " + secondVectorFileName + " " + firstPointFileName + " " + secondPointFileName);
+
         // first lets read the vector keys
         List<Integer> firstVectorKeys = Utils.readVectorKeys(new File(firstVectorFileName));
         List<Integer> secondVectorKeys = Utils.readVectorKeys(new File(secondVectorFileName));
 
         // now lets get the common keys for both of them
         TreeSet<Integer> commonKeys = new TreeSet<Integer>(firstVectorKeys);
-        commonKeys.retainAll(secondVectorKeys);
-
+        commonKeys.retainAll(new TreeSet<Integer>(secondVectorKeys));
+        System.out.println("Fits keys: " + firstVectorKeys.size() + " Second keys:"  + secondVectorKeys.size() + " Common keys: " + commonKeys.size());
         // now read the two point files
         Map<Integer, Point> firstPoints = Utils.loadPoints(new File(firstPointFileName), firstVectorKeys);
         Map<Integer, Point> secondPoints = Utils.loadPoints(new File(secondPointFileName), secondVectorKeys);
@@ -166,6 +168,9 @@ public class ContinuousCommonGenerator {
             int i = 0;
             for (Integer key : commonKeys) {
                 Point p = pointMap.get(key);
+                if (p == null) {
+                    System.out.println("Key cannot be found: " + key);
+                }
                 p.setIndex(i++);
                 bufWriter.write(p.serialize());
                 bufWriter.newLine();

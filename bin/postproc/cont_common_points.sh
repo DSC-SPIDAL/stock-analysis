@@ -1,5 +1,10 @@
 #!/bin/sh
 
+#SBATCH -A skamburu
+#SBATCH -N 28
+#SBATCH --tasks-per-node=1
+#SBATCH --time=04:00:00
+
 # generate the continous common points
 # --------------------------
 GLOBAL=$BASE_DIR/$GLOBAL_STOCK_DIR_NAME
