@@ -53,7 +53,7 @@ mkdir -p $VECTOR_DIR
 
 # break the files
 echo "breaking files"
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE FileBreaker -i $INPUT_DIR/$STOCK_FILE_NAME -o $BREAKS_DIR -s 20040101 -e 20150101 -d 4 -m | tee $PREPROC_DIR/parts.output.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE FileBreaker -i $INPUT_DIR/$STOCK_FILE_NAME -o $BREAKS_DIR -s 20040101 -e 20060101 -d 4 -m | tee $PREPROC_DIR/parts.output.txt
 
 # generate vector files
 echo "generate vector files"
