@@ -84,7 +84,7 @@ public class FileBreaker {
     private Set<String> getDatesForThisRecord(Record r) {
         Set<String> files = new HashSet<String>();
         for (Map.Entry<String, List<Date>> entry : dates.entrySet()) {
-            if (mode >= 4) {
+            if (mode <= 4) {
                 for (Date d : entry.getValue()) {
                     if (check(d, r.getDate(), DateCheckType.MONTH)) {
                         files.add(entry.getKey());
