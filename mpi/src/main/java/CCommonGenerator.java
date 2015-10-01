@@ -134,10 +134,15 @@ public class CCommonGenerator {
                 bufWriter.write(d);
                 bufWriter.newLine();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (bufWriter != null) {
+                try {
+                    bufWriter.close();
+                } catch (IOException ignore) {
+                }
+            }
         }
     }
 

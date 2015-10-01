@@ -2,6 +2,7 @@
 
 SUMMARY=$1
 
+rm $SUMMARY/../chisq_list.txt
 for f in $SUMMARY/*
 do
     common_filename="${f##*/}"
