@@ -4,7 +4,7 @@
 . ./postproc_env.sh $1
 
 # generate common points
-sbatch postproc/cont_common_points.sh
+sh postproc/c_rotations.sh
 #sh postproc/cont_rotate.sh
 #sh postproc/common_points.sh
 ## generate histograms
