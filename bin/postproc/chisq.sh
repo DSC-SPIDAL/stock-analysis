@@ -9,3 +9,4 @@ do
     v=`tac $f | grep -m 1 "Best Chisq" | awk '/^\Chisq/ {gsub(//,""); print $2}'`
     echo $common_filename_ext","$v >> $SUMMARY/../chisq_list.txt
 done
+
