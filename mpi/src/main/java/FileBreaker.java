@@ -119,7 +119,7 @@ public class FileBreaker {
                 throw new RuntimeException("Failed to create writer", e);
             }
         }
-
+        int splitCount = 0;
 
         BufferedReader bufRead = null;
         try {
@@ -129,6 +129,9 @@ public class FileBreaker {
             Record record;
             int count = 0;
             while ((record = Utils.parseFile(bufRead)) != null) {
+                if (record.getFactorToAdjPrice() > 0) {
+                    splitCount++;
+                }
                 totalCount++;
                 Set<String> files = getDatesForThisRecord(record);
                 for (String f : files) {
@@ -163,6 +166,8 @@ public class FileBreaker {
                 }
                 e.getValue().clear();
             }
+
+            System.out.println("Split count for file: " + inFile + " = " + splitCount);
         } catch (IOException e) {
             throw new RuntimeException("Failed to open the file", e);
         } finally {
@@ -196,6 +201,9 @@ public class FileBreaker {
     }
 
     private boolean check(Date start, Date end, Date compare, DateCheckType check) {
+        if (compare == null) {
+            System.out.println("Comapre null*****************");
+        }
         return (compare.equals(start) || compare.after(start)) && compare.before(end);
     }
 

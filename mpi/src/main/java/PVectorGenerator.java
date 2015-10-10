@@ -141,9 +141,13 @@ public class PVectorGenerator {
             int fullCount = 0;
             double totalCap = 0;
             int capCount  = 0;
+            int splitCount = 0;
             while ((record = Utils.parseFile(bufRead)) != null) {
                 count++;
                 int key = record.getSymbol();
+                if (record.getFactorToAdjPrice() > 0) {
+                    splitCount++;
+                }
                 // check weather we already have the vector seen
                 VectorPoint point = currentPoints.get(key);
                 if (point == null) {
@@ -151,7 +155,7 @@ public class PVectorGenerator {
                     currentPoints.put(key, point);
                 }
                 if (!point.isFull()) {
-                    point.add(record.getPrice());
+                    point.add(record.getPrice(), record.getFactorToAdjPrice());
                     point.addCap(record.getVolume() * record.getPrice());
                 } else {
                     System.out.println("Point full cannot add more....");
@@ -180,6 +184,7 @@ public class PVectorGenerator {
             }
 
             System.out.println("Size: " + size);
+            System.out.println("Split count: " + inFile.getName() + " = " + splitCount);
             // write the rest of the vectors in the map after finish reading the file
             totalCap += writeVectors(bufWriter, size, outFileName);
             capCount++;

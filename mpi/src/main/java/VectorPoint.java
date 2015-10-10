@@ -14,9 +14,12 @@ import java.util.Random;
 public class VectorPoint {
     int key;
     double []numbers;
+    double []factorToAjdPrices;
     int elements;
     /** the totalCap of a stock for this period */
     double totalCap = 0.0;
+
+    double factor = 1.0;
 
     static double maxChange = Double.MIN_VALUE;
     static double minChange = Double.MAX_VALUE;
@@ -30,6 +33,10 @@ public class VectorPoint {
         this.numbers = new double[size];
         for (int i = 0; i < numbers.length; i++) {
             numbers[i] = -1;
+        }
+        this.factorToAjdPrices = new double[size];
+        for (int i = 0; i < numbers.length; i++) {
+            factorToAjdPrices[i] = -1;
         }
         elements = 0;
     }
@@ -211,35 +218,6 @@ public class VectorPoint {
         return sum / n;
     }
 
-    public double correlation(double []xs, double []ys) {
-        double sx = 0.0;
-        double sy = 0.0;
-        double sxx = 0.0;
-        double syy = 0.0;
-        double sxy = 0.0;
-
-        int n = xs.length;
-
-        for(int i = 0; i < n; ++i) {
-            double x = xs[i];
-            double y = ys[i];
-
-            sx += x;
-            sy += y;
-            sxx += x * x;
-            syy += y * y;
-            sxy += x * y;
-        }
-
-        // covariation
-        double cov = sxy / n - sx * sy / n / n;
-        // standard error of x
-        double sigmax = Math.sqrt(sxx / n -  sx * sx / n / n);
-        // standard error of y
-        double sigmay = Math.sqrt(syy / n -  sy * sy / n / n);
-        // correlation is just a normalized covariation
-        return (1 -cov / (sigmax * sigmay)) /2;
-    }
 
     public double correlation(VectorPoint vc) {
         if (vc.isConstantVector() || constantVector) return 0;
@@ -260,6 +238,16 @@ public class VectorPoint {
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         return pearsonsCorrelation.correlation(xs, ys);
+    }
+
+    public void add(double number, double factorToAdjPrice) {
+        factorToAjdPrices[elements] = factorToAdjPrice;
+        if (factorToAdjPrice > 0) {
+            factor = factor * (factorToAdjPrice + 1);
+//            System.out.println("Factor to adjust: " + factorToAdjPrice + " new factor: " + factor);
+        }
+        numbers[elements] = factor * number;
+        elements++;
     }
 
     public void add(double number) {
@@ -334,8 +322,8 @@ public class VectorPoint {
         double y[] = {8, 7, 6, 5, 3, 2, 1, 0};
 
         VectorPoint vc = new VectorPoint(1, 10);
-        double correlation = vc.correlation(x, y);
-        System.out.println((1 - correlation) / 2);
+        //double correlation = vc.correlation(x, y);
+        //System.out.println((1 - correlation) / 2);
         double x1 = vc.modCorrelation(x, y);
         System.out.println(x1);
 
