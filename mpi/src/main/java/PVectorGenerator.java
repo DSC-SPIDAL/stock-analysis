@@ -155,7 +155,7 @@ public class PVectorGenerator {
                     currentPoints.put(key, point);
                 }
                 if (!point.isFull()) {
-                    point.add(record.getPrice(), record.getFactorToAdjPrice());
+                    point.add(record.getPrice(), record.getFactorToAdjPrice(), record.getFactorToAdjVolume());
                     point.addCap(record.getVolume() * record.getPrice());
                 } else {
                     System.out.println("Point full cannot add more....");

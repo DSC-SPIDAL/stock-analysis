@@ -7,13 +7,14 @@ public class Record {
     private String dateString;
     private String symbolString;
     private int volume;
-    private double factorToAdjPrice;
+    private double factorToAdjPrice = 0;
+    private double factorToAdjVolume = 0;
 
-    public Record(double price, int symbol, Date date, String dateString, String symbolString, int volume, double factorToAdjPrice) {
-        setValues(price, symbol, date, dateString, symbolString, volume, factorToAdjPrice);
+    public Record(double price, int symbol, Date date, String dateString, String symbolString, int volume, double factorToAdjPrice, double factorToAdjVolume) {
+        setValues(price, symbol, date, dateString, symbolString, volume, factorToAdjPrice, factorToAdjVolume);
     }
 
-    private void setValues(double price, int symbol, Date date, String dateString, String symbolString, int volume, double factorToAdjPrice) {
+    private void setValues(double price, int symbol, Date date, String dateString, String symbolString, int volume, double factorToAdjPrice, double factorToAdjVolume) {
         this.price = price;
         this.symbol = symbol;
         this.date = date;
@@ -22,6 +23,9 @@ public class Record {
         this.symbolString = symbolString;
         if (factorToAdjPrice > 0) {
             this.factorToAdjPrice = factorToAdjPrice;
+        }
+        if (factorToAdjVolume > 0) {
+            this.factorToAdjVolume = factorToAdjVolume;
         }
     }
 
@@ -60,14 +64,24 @@ public class Record {
         return dateString;
     }
 
+    public double getFactorToAdjVolume() {
+        return factorToAdjVolume;
+    }
+
     public String serialize() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.symbol).append(",");
         sb.append(Utils.formatter.format(this.date)).append(",");
         sb.append(symbolString).append(",");
-        sb.append(",");
+        if (factorToAdjVolume > 0) {
+            sb.append(factorToAdjVolume).append(",");
+            System.out.println("Writing factor to volume ============================= " + symbolString + " " + factorToAdjPrice);
+        } else {
+            sb.append(",");
+        }
+
         if (factorToAdjPrice > 0) {
-            System.out.println("Writing factor to adjust============================= " + symbolString + " " + factorToAdjPrice);
+            System.out.println("Writing factor to price ============================= " + symbolString + " " + factorToAdjPrice);
             sb.append(factorToAdjPrice).append(",");
         } else {
             sb.append(",");

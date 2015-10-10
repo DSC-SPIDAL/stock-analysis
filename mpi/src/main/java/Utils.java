@@ -45,9 +45,11 @@ public class Utils {
                         double factorToAdjPrice = 0;
                         if (!"".equals(array[4].trim())) {
                             factorToAdjPrice = Double.parseDouble(array[4]);
-//                            if (factorToAdjPrice > 0) {
-//                                System.out.println("Factor to ajust: " + stringSymbol + " = " + factorToAdjPrice);
-//                            }
+                        }
+
+                        double factorToAdjVolume = 0;
+                        if (!"".equals(array[3].trim())) {
+                            factorToAdjVolume = Double.parseDouble(array[3]);
                         }
 
                         int volume = 0;
@@ -55,9 +57,9 @@ public class Utils {
                             volume = Integer.parseInt(array[6]);
                         }
 
-                        return new Record(price, permNo, date, array[1], stringSymbol, volume, factorToAdjPrice);
+                        return new Record(price, permNo, date, array[1], stringSymbol, volume, factorToAdjPrice, factorToAdjVolume);
                     } else {
-                        return new Record(-1, permNo, date, array[1], stringSymbol, 0, 0);
+                        return new Record(-1, permNo, date, array[1], stringSymbol, 0, 0, 0);
                     }
                 }
             }

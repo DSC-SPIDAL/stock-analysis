@@ -14,7 +14,8 @@ import java.util.Random;
 public class VectorPoint {
     int key;
     double []numbers;
-    double []factorToAjdPrices;
+    //double []factorToAjdPrices;
+    //double []factorToAjdVolume;
     int elements;
     /** the totalCap of a stock for this period */
     double totalCap = 0.0;
@@ -33,10 +34,6 @@ public class VectorPoint {
         this.numbers = new double[size];
         for (int i = 0; i < numbers.length; i++) {
             numbers[i] = -1;
-        }
-        this.factorToAjdPrices = new double[size];
-        for (int i = 0; i < numbers.length; i++) {
-            factorToAjdPrices[i] = -1;
         }
         elements = 0;
     }
@@ -240,11 +237,14 @@ public class VectorPoint {
         return pearsonsCorrelation.correlation(xs, ys);
     }
 
-    public void add(double number, double factorToAdjPrice) {
-        factorToAjdPrices[elements] = factorToAdjPrice;
+    public void add(double number, double factorToAdjPrice, double factoToAdjVolume) {
         if (factorToAdjPrice > 0) {
-            factor = factor * (factorToAdjPrice + 1);
-//            System.out.println("Factor to adjust: " + factorToAdjPrice + " new factor: " + factor);
+            if (Math.abs(factorToAdjPrice - factoToAdjVolume) < .0001) {
+                factor = factor * (factorToAdjPrice + 1);
+                System.out.println("New factor: " + key + " = " + factor);
+            } else {
+                System.out.println("Pirce != Volume not adjusting: " + key + " = " + factor);
+            }
         }
         numbers[elements] = factor * number;
         elements++;
