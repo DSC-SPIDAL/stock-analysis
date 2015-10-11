@@ -46,25 +46,24 @@ public class PVectorGenerator {
         int size = 0;
         int filesPerProcess = 0;
         try {
+            BlockingQueue<File> files = new LinkedBlockingQueue<File>();
             if (mpi) {
                 mpiOps = new MpiOps();
                 rank = mpiOps.getRank();
                 size = mpiOps.getSize();
-                filesPerProcess = inFolder.listFiles().length / size;
-            }
-            BlockingQueue<File> files = new LinkedBlockingQueue<File>();
-
-            for (int i = 0; i < inFolder.listFiles().length; i++) {
-                File fileEntry = inFolder.listFiles()[i];
-                try {
-                    if (mpi) {
-                        files.put(fileEntry);
-                    } else {
+                int i = 0;
+                for (int j = 0; i < inFolder.listFiles().length; j++) {
+                    File fileEntry = inFolder.listFiles()[j];
+                    if (i == rank) {
                         files.put(fileEntry);
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    i++;
+                    if (i == size) {
+                        i = 0;
+                    }
                 }
+            } else {
+                Collections.addAll(files, inFolder.listFiles());
             }
 
             List<Thread> threads = new ArrayList<Thread>();
@@ -85,6 +84,8 @@ public class PVectorGenerator {
             System.out.println("Vector generator finished...");
         } catch (MPIException e) {
             throw new RuntimeException("Failed to communicate");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
