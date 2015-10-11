@@ -107,6 +107,7 @@ public class FileBreaker {
     private void processFile(String inFile) {
         Map<String, List<Record>> records = new HashMap<String, List<Record>>();
         Map<String, BufferedWriter> writers = new HashMap<String, BufferedWriter>();
+        CleanMetric metric = new CleanMetric();
         for (String s : dates.keySet()) {
             String outFile = outDir + "/" + s + ".csv";
             FileOutputStream fos;
@@ -128,7 +129,7 @@ public class FileBreaker {
             bufRead = new BufferedReader(input);
             Record record;
             int count = 0;
-            while ((record = Utils.parseFile(bufRead)) != null) {
+            while ((record = Utils.parseFile(bufRead, metric)) != null) {
                 if (record.getFactorToAdjPrice() > 0) {
                     splitCount++;
                 }
@@ -168,6 +169,7 @@ public class FileBreaker {
             }
 
             System.out.println("Split count for file: " + inFile + " = " + splitCount);
+            System.out.println("Clean metric for file: " + metric);
         } catch (IOException e) {
             throw new RuntimeException("Failed to open the file", e);
         } finally {

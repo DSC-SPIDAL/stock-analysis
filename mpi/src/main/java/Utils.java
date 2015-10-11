@@ -16,12 +16,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.function.DoubleUnaryOperator;
 
 public class Utils {
     public static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
     public static Record parseFile(BufferedReader reader) throws FileNotFoundException {
+        return parseFile(reader, null);
+    }
+
+    public static Record parseFile(BufferedReader reader, CleanMetric metric) throws FileNotFoundException {
         String myLine = null;
         try {
             while ((myLine = reader.readLine()) != null) {
@@ -39,6 +42,9 @@ public class Utils {
                             price = Double.parseDouble(array[5]);
                             if (price < 0) {
                                 price *= -1;
+                                if (metric != null) {
+                                    metric.negativeCount++;
+                                }
                             }
                         }
 

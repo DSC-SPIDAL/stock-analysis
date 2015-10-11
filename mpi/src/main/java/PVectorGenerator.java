@@ -134,6 +134,13 @@ public class PVectorGenerator {
         int size = -1;
         vectorCounter = 0;
         String outFileName = outFolder + "/" + inFile.getName();
+
+        CleanMetric metric = this.metrics.get(outFileName);
+        if (metric == null) {
+            metric = new CleanMetric();
+            this.metrics.put(outFileName, metric);
+        }
+
         try {
             FileReader input = new FileReader(inFile);
             FileOutputStream fos = new FileOutputStream(new File(outFileName));
@@ -159,7 +166,7 @@ public class PVectorGenerator {
                     currentPoints.put(key, point);
                 }
                 if (!point.isFull()) {
-                    point.add(record.getPrice(), record.getFactorToAdjPrice(), record.getFactorToAdjVolume());
+                    point.add(record.getPrice(), record.getFactorToAdjPrice(), record.getFactorToAdjVolume(), metric);
                     point.addCap(record.getVolume() * record.getPrice());
                 } else {
                     System.out.println("Point full cannot add more....");
@@ -181,7 +188,7 @@ public class PVectorGenerator {
                 // now write the current vectors, also make sure we have the size determined correctly
                 if (currentPoints.size() > 1000 && size != -1 && fullCount > 750) {
                     System.out.println("Processed: " + count);
-                    totalCap += writeVectors(bufWriter, size, outFileName);
+                    totalCap += writeVectors(bufWriter, size, metric);
                     capCount++;
                     fullCount = 0;
                 }
@@ -190,7 +197,7 @@ public class PVectorGenerator {
             System.out.println("Size: " + size);
             System.out.println("Split count: " + inFile.getName() + " = " + splitCount);
             // write the rest of the vectors in the map after finish reading the file
-            totalCap += writeVectors(bufWriter, size, outFileName);
+            totalCap += writeVectors(bufWriter, size, metric);
             capCount++;
 
 //            write the constant vector at the end
@@ -199,6 +206,7 @@ public class PVectorGenerator {
             bufWriter.write(v.serialize());
 
             System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
+            System.out.println("Metrics for file: " + outFileName + " " + metric.serialize());
             currentPoints.clear();
         } catch (IOException e) {
             throw new RuntimeException("Failed to open the file");
@@ -236,19 +244,17 @@ public class PVectorGenerator {
      * @param size
      * @throws IOException
      */
-    private double writeVectors(BufferedWriter bufWriter, int size, String outFileName) throws IOException {
+    private double writeVectors(BufferedWriter bufWriter, int size, CleanMetric metric) throws IOException {
         double capSum = 0;
         int count = 0;
-        int invalidVectors = 0;
         for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Integer, VectorPoint> entry = it.next();
             VectorPoint v = entry.getValue();
 
             if (v.noOfElements() == size) {
                 String sv = v.serialize();
-                if (!v.isValid()) {
+                if (!v.isValid(metric)) {
                     // System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
-                    invalidVectors++;
                     it.remove();
                     continue;
                 }
@@ -266,9 +272,6 @@ public class PVectorGenerator {
                 it.remove();
             }
         }
-
-
-
         return capSum;
     }
 

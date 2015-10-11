@@ -88,9 +88,9 @@ public class VectorPoint {
 //                if (isValid() && vc.isValid()) {
 //                    System.out.println("Errrrrrrrrrrrrrrrrrrrrrrrrr");
                     System.out.println("Not a number..............................................");
-                    if (!isValid()) System.out.println("Not valid");
+                    if (!isValid(new CleanMetric())) System.out.println("Not valid");
                     System.out.println(s);
-                    if (!vc.isValid()) System.out.println("Not valid");
+                    if (!vc.isValid(new CleanMetric())) System.out.println("Not valid");
                     System.out.println(s2);
                     System.out.println("NAN");
                 }
@@ -237,13 +237,15 @@ public class VectorPoint {
         return pearsonsCorrelation.correlation(xs, ys);
     }
 
-    public void add(double number, double factorToAdjPrice, double factoToAdjVolume) {
+    public void add(double number, double factorToAdjPrice, double factoToAdjVolume, CleanMetric metric) {
         if (factorToAdjPrice > 0) {
             if (Math.abs(factorToAdjPrice - factoToAdjVolume) < .0001) {
                 factor = factor * (factorToAdjPrice + 1);
                 System.out.println("New factor: " + key + " = " + factor);
+                metric.properSplitData++;
             } else {
                 System.out.println("Pirce != Volume not adjusting: " + key + " = " + factor);
+                metric.nonProperSplitData++;
             }
         }
         numbers[elements] = factor * number;
@@ -288,7 +290,7 @@ public class VectorPoint {
      * Check weather this vector is a valid one
      * @return true if the vector is valid
      */
-    public boolean isValid() {
+    public boolean isValid(CleanMetric metric) {
         if (constantVector) return true;
         // for now lets just check weather this has same values, if so this is not a valid vector
         if (elements <= 0) return false;
@@ -305,12 +307,16 @@ public class VectorPoint {
         }
 
         if (missingCount > (elements * .05)) {
+            metric.missingValues++;
             return false;
         }
         // check the standard deviation
         StandardDeviation standardDeviation = new StandardDeviation();
         double std = standardDeviation.evaluate(numbers);
-        if (Math.abs(std - 0.0) > .00001) return false;
+        if (Math.abs(std - 0.0) > .00001) {
+            metric.constantStock++;
+            return false;
+        }
 
         return false;
     }
@@ -343,6 +349,6 @@ public class VectorPoint {
         System.out.println(System.currentTimeMillis() - t);
 
         VectorPoint p = new VectorPoint(1, new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
-        System.out.println(p.isValid());
+        System.out.println(p.isValid(new CleanMetric()));
     }
 }
