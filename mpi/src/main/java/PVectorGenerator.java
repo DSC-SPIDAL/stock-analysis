@@ -52,7 +52,7 @@ public class PVectorGenerator {
                 rank = mpiOps.getRank();
                 size = mpiOps.getSize();
                 int i = 0;
-                for (int j = 0; i < inFolder.listFiles().length; j++) {
+                for (int j = 0; j < inFolder.listFiles().length; j++) {
                     File fileEntry = inFolder.listFiles()[j];
                     if (i == rank) {
                         files.put(fileEntry);
