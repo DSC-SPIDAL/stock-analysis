@@ -16,6 +16,8 @@ public class PVectorGenerator {
     private boolean mpi = false;
     private MpiOps mpiOps;
 
+    private Map<String, CleanMetric> metrics = new HashMap<String, CleanMetric>();
+
     private enum DateCheckType {
         MONTH,
         YEAR,
@@ -66,7 +68,7 @@ public class PVectorGenerator {
             }
 
             List<Thread> threads = new ArrayList<Thread>();
-            // start 4 threads
+            // start threads
             for (int i = 0; i < 1; i++) {
                 Thread t = new Thread(new Worker(files));
                 t.start();
@@ -95,6 +97,7 @@ public class PVectorGenerator {
 
         @Override
         public void run() {
+            System.out.println("Vector generator files to proce: " + queue.size());
             while (!queue.isEmpty()) {
                 try {
                     File f = queue.take();
@@ -235,6 +238,7 @@ public class PVectorGenerator {
     private double writeVectors(BufferedWriter bufWriter, int size, String outFileName) throws IOException {
         double capSum = 0;
         int count = 0;
+        int invalidVectors = 0;
         for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Integer, VectorPoint> entry = it.next();
             VectorPoint v = entry.getValue();
@@ -243,6 +247,7 @@ public class PVectorGenerator {
                 String sv = v.serialize();
                 if (!v.isValid()) {
                     // System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
+                    invalidVectors++;
                     it.remove();
                     continue;
                 }
@@ -260,6 +265,9 @@ public class PVectorGenerator {
                 it.remove();
             }
         }
+
+
+
         return capSum;
     }
 
