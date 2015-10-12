@@ -143,7 +143,6 @@ public class PVectorGenerator {
             metric = new CleanMetric();
             this.metrics.put(outFileName, metric);
         }
-
         try {
             FileReader input = new FileReader(inFile);
             FileOutputStream fos = new FileOutputStream(new File(outFileName));
@@ -156,7 +155,7 @@ public class PVectorGenerator {
             double totalCap = 0;
             int capCount  = 0;
             int splitCount = 0;
-            while ((record = Utils.parseFile(bufRead)) != null) {
+            while ((record = Utils.parseFile(bufRead, null, false)) != null) {
                 count++;
                 int key = record.getSymbol();
                 if (record.getFactorToAdjPrice() > 0) {
@@ -209,6 +208,7 @@ public class PVectorGenerator {
             bufWriter.write(v.serialize());
 
             System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
+            metric.stocksWithIncorrectDays = currentPoints.size();
             System.out.println("Metrics for file: " + outFileName + " " + metric.serialize());
             currentPoints.clear();
         } catch (IOException e) {
@@ -253,10 +253,12 @@ public class PVectorGenerator {
         for(Iterator<Map.Entry<Integer, VectorPoint>> it = currentPoints.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Integer, VectorPoint> entry = it.next();
             VectorPoint v = entry.getValue();
-
             if (v.noOfElements() == size) {
+                metric.totalStocks++;
+
                 if (!v.isValid(metric)) {
                     // System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
+                    metric.invalidStocks++;
                     it.remove();
                     continue;
                 }
@@ -270,6 +272,8 @@ public class PVectorGenerator {
                     bufWriter.newLine();
                     // remove it from map
                     vectorCounter++;
+                } else {
+                    metric.invalidStocks++;
                 }
                 it.remove();
             }

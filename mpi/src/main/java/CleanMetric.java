@@ -7,6 +7,9 @@ public class CleanMetric {
     public int properSplitData;
     public int nonProperSplitData;
     public int constantStock;
+    public int totalStocks;
+    public int invalidStocks;
+    public int stocksWithIncorrectDays;
 
     public String serialize() {
         StringBuilder sb = new StringBuilder();
@@ -15,7 +18,9 @@ public class CleanMetric {
         sb.append("ProperSplitData: ").append(properSplitData).append(" ");
         sb.append("NonProperSplitData: ").append(nonProperSplitData).append(" ");
         sb.append("ConstantStock: ").append(constantStock).append(" ");
-
+        sb.append("InvalidStock: ").append(invalidStocks).append(" ");
+        sb.append("TotalStock: ").append(totalStocks).append(" ");
+        sb.append("IncorrectDaysStocks: ").append(stocksWithIncorrectDays).append(" ");
         return sb.toString();
     }
 }

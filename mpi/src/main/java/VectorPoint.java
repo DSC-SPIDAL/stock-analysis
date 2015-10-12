@@ -299,7 +299,8 @@ public class VectorPoint {
         boolean valid = false;
         for (int i = 0; i < elements; i++) {
             double n = numbers[i];
-            if (n <= 0) {
+            // in case of a split we can get something other than -1
+            if (n < 0) {
                 missingCount++;
             }
             if (Math.abs(n - first) > .0001) {
@@ -309,7 +310,7 @@ public class VectorPoint {
 //        if (missingCount  > 0)
 //            System.out.println(missingCount);
 
-        if (missingCount > (elements * .025)) {
+        if (missingCount > (elements * .05)) {
             metric.missingValues++;
             return false;
         }

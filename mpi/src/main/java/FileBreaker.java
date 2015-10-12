@@ -129,7 +129,7 @@ public class FileBreaker {
             bufRead = new BufferedReader(input);
             Record record;
             int count = 0;
-            while ((record = Utils.parseFile(bufRead, metric, false)) != null) {
+            while ((record = Utils.parseFile(bufRead, metric, true)) != null) {
                 if (record.getFactorToAdjPrice() > 0) {
                     splitCount++;
                 }
