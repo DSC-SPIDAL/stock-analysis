@@ -108,6 +108,9 @@ public class PVectorGenerator {
                 }
 
             }
+            for (Map.Entry<String, CleanMetric> e : metrics.entrySet()) {
+                System.out.println(e.getKey() + " : " + e.getValue().serialize());
+            }
         }
     }
 
@@ -252,12 +255,13 @@ public class PVectorGenerator {
             VectorPoint v = entry.getValue();
 
             if (v.noOfElements() == size) {
-                String sv = v.serialize();
                 if (!v.isValid(metric)) {
                     // System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
                     it.remove();
                     continue;
                 }
+                String sv = v.serialize();
+
                 // if many points are missing, this can return null
                 if (sv != null) {
                     capSum += v.getTotalCap();
@@ -266,8 +270,6 @@ public class PVectorGenerator {
                     bufWriter.newLine();
                     // remove it from map
                     vectorCounter++;
-                } else {
-                    // System.out.println("Missing points: " + outFileName + ", " + v.serialize());
                 }
                 it.remove();
             }

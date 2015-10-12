@@ -241,10 +241,10 @@ public class VectorPoint {
         if (factorToAdjPrice > 0) {
             if (Math.abs(factorToAdjPrice - factoToAdjVolume) < .0001) {
                 factor = factor * (factorToAdjPrice + 1);
-                System.out.println("New factor: " + key + " = " + factor);
+                //System.out.println("New factor: " + key + " = " + factor);
                 metric.properSplitData++;
             } else {
-                System.out.println("Pirce != Volume not adjusting: " + key + " = " + factor);
+                //System.out.println("Pirce != Volume not adjusting: " + key + " = " + factor);
                 metric.nonProperSplitData++;
             }
         }
@@ -279,7 +279,7 @@ public class VectorPoint {
             previousVal = numbers[i];
         }
         // if missing count is greater than 5% print and  ignore
-        if (missingCount > (elements * 0.025)) {
+        if (missingCount > (elements * 0.05)) {
             System.out.println("Missing count: " + missingCount);
             return null;
         }
@@ -296,29 +296,39 @@ public class VectorPoint {
         if (elements <= 0) return false;
         double first = numbers[0];
         int missingCount = 0;
+        boolean valid = false;
         for (int i = 0; i < elements; i++) {
             double n = numbers[i];
-            if (n < 0) {
+            if (n <= 0) {
                 missingCount++;
             }
             if (Math.abs(n - first) > .0001) {
-                return true;
+                valid = true;
             }
         }
+//        if (missingCount  > 0)
+//            System.out.println(missingCount);
 
-        if (missingCount > (elements * .05)) {
+        if (missingCount > (elements * .025)) {
             metric.missingValues++;
             return false;
         }
         // check the standard deviation
-        StandardDeviation standardDeviation = new StandardDeviation();
-        double std = standardDeviation.evaluate(numbers);
-        if (Math.abs(std - 0.0) > .00001) {
+//        StandardDeviation standardDeviation = new StandardDeviation();
+//        double std = standardDeviation.evaluate(numbers);
+//        if (Math.abs(std - 0.0) > .00001) {
+//            // metric.constantStock++;
+//            return false;
+//        }
+
+        if (!valid) {
+            for (int i = 0; i < elements; i++) {
+                System.out.print(numbers[i] + " ");
+            }
             metric.constantStock++;
-            return false;
         }
 
-        return false;
+        return valid;
     }
 
     public static void main(String[] args) {

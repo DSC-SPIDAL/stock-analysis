@@ -10,11 +10,11 @@ public class CleanMetric {
 
     public String serialize() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Negative: ").append(negativeCount);
-        sb.append("MissingValues: ").append(missingValues);
-        sb.append("ProperSplitData: ").append(properSplitData);
-        sb.append("NonProperSplitData: ").append(nonProperSplitData);
-        sb.append("ConstantStock: ").append(constantStock);
+        sb.append("Negative: ").append(negativeCount).append(" ");
+        sb.append("MissingValues: ").append(missingValues).append(" ");
+        sb.append("ProperSplitData: ").append(properSplitData).append(" ");
+        sb.append("NonProperSplitData: ").append(nonProperSplitData).append(" ");
+        sb.append("ConstantStock: ").append(constantStock).append(" ");
 
         return sb.toString();
     }

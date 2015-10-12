@@ -21,10 +21,10 @@ public class Utils {
     public static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
     public static Record parseFile(BufferedReader reader) throws FileNotFoundException {
-        return parseFile(reader, null);
+        return parseFile(reader, null, false);
     }
 
-    public static Record parseFile(BufferedReader reader, CleanMetric metric) throws FileNotFoundException {
+    public static Record parseFile(BufferedReader reader, CleanMetric metric, boolean convert) throws FileNotFoundException {
         String myLine = null;
         try {
             while ((myLine = reader.readLine()) != null) {
@@ -40,10 +40,12 @@ public class Utils {
                         double price = -1;
                         if (!array[5].equals("")) {
                             price = Double.parseDouble(array[5]);
-                            if (price < 0) {
-                                price *= -1;
-                                if (metric != null) {
-                                    metric.negativeCount++;
+                            if (convert) {
+                                if (price < 0) {
+                                    price *= -1;
+                                    if (metric != null) {
+                                        metric.negativeCount++;
+                                    }
                                 }
                             }
                         }

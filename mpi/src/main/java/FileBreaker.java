@@ -129,7 +129,7 @@ public class FileBreaker {
             bufRead = new BufferedReader(input);
             Record record;
             int count = 0;
-            while ((record = Utils.parseFile(bufRead, metric)) != null) {
+            while ((record = Utils.parseFile(bufRead, metric, false)) != null) {
                 if (record.getFactorToAdjPrice() > 0) {
                     splitCount++;
                 }
@@ -169,7 +169,7 @@ public class FileBreaker {
             }
 
             System.out.println("Split count for file: " + inFile + " = " + splitCount);
-            System.out.println("Clean metric for file: " + metric);
+            System.out.println("Clean metric for file: " + metric.serialize());
         } catch (IOException e) {
             throw new RuntimeException("Failed to open the file", e);
         } finally {
