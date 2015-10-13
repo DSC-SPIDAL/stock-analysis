@@ -87,30 +87,31 @@ Apply labels to the final rotated points.
 
 ## How to Run
 
+You need to create a directory with the input data. Right now the script assumes an input file with the name 2004_2014.csv. 
+ 
+```
+mkdir STOCK_ANALYSIS
+cd STOCK_ANALYSIS
+mkdir input
+cp [stock_file] input/2004_2014.csv
+```
+
 There are files in bin directory that can be used to run the programs.
 
 To run the pre-process steps, use the file preproc.sh. You can change the parameters in this file.
 
 ```
-sbatch preproc.sh
+sbatch preproc.sh path_to_stocks_base_directory
 ```
 
-To run the damnds algorithm use the stocks.sh and stocks_weight.sh files.
-
-stocks.sh will run the un-weighted mds algorithm
+To run the damnds algorithm use the the command.
 
 ```
-sh stocks.sh path_to_stocks_base_directory
+sh mds_weighted.sh path_to_stocks_base_directory
 ```
 
-stocks_weight.sh will run the weighted mds algorithm
+To run the post-processing steps, use the postproc_all.sh
 
 ```
-sh stocks_weight.sh path_to_stocks_base_directory
-```
-
-To run the post-processing steps, use the postproc.sh
-
-```
-sh postproc.sh
+sh postproc_all.sh path_to_stocks_base_directory
 ```
