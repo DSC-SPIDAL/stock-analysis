@@ -1,4 +1,4 @@
-#!/bin/bash
+ -r#!/bin/bash
 
 #SBATCH -A skamburu
 #SBATCH -N 4
