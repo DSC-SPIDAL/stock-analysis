@@ -1,6 +1,7 @@
 
 import edu.indiana.soic.spidal.common.BinaryReader2D;
 import edu.indiana.soic.spidal.common.Range;
+import edu.indiana.soic.spidal.common.TransformationFunction;
 
 import java.io.*;
 import java.nio.ByteOrder;
@@ -139,7 +140,12 @@ public class DistanceReader {
         short[][] distance = BinaryReader2D.readRowRange(file, new Range(0, size-1),
                 size,
                 ByteOrder.BIG_ENDIAN,
-                true, 1.0);
+                true, new TransformationFunction() {
+                    @Override
+                    public double transform(double val) {
+                        return val;
+                    }
+                });
         writeFile(secondFile, distance);
     }
 
