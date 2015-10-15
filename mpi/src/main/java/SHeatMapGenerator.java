@@ -1,5 +1,6 @@
 import edu.indiana.soic.spidal.common.BinaryReader2D;
 import edu.indiana.soic.spidal.common.Range;
+import edu.indiana.soic.spidal.common.TransformationFunction;
 import org.apache.commons.cli.*;
 
 import java.io.*;
@@ -211,7 +212,12 @@ public class SHeatMapGenerator {
         System.out.println("SCALE: " + scale);
         double[][] finalValues = new double[rows][];
         if (!points) {
-            short[][] values = BinaryReader2D.readRowRange(file, new Range(0, rows - 1), cols, ByteOrder.BIG_ENDIAN, true, 1.0);
+            short[][] values = BinaryReader2D.readRowRange(file, new Range(0, rows - 1), cols, ByteOrder.BIG_ENDIAN, true, new TransformationFunction() {
+                @Override
+                public double transform(double val) {
+                    return val;
+                }
+            });
             for (int i = 0; i < values.length; i++) {
                 finalValues[i] = new double[cols];
                 for (int j = 0; j < values[i].length; j++) {

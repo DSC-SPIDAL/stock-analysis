@@ -1,5 +1,6 @@
 import edu.indiana.soic.spidal.common.BinaryReader2D;
 import edu.indiana.soic.spidal.common.Range;
+import edu.indiana.soic.spidal.common.TransformationFunction;
 
 import java.nio.ByteOrder;
 
@@ -18,7 +19,12 @@ public class MatrixReader {
     }
 
     private void readValues() {
-        values = BinaryReader2D.readRowRange(file, new Range(0, rows - 1), cols, ByteOrder.BIG_ENDIAN, false, 1.0);
+        values = BinaryReader2D.readRowRange(file, new Range(0, rows - 1), cols, ByteOrder.BIG_ENDIAN, false, new TransformationFunction() {
+            @Override
+            public double transform(double val) {
+                return val;
+            }
+        });
     }
 
     public double read(int row, int col) {
