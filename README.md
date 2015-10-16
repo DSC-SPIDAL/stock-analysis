@@ -96,8 +96,22 @@ FileBreaker program is used to break large stock files in to smaller files for p
 
 #### Format of stock files
 
+The stock files are obtained from the CRSP database through the Wharton Research Data Services
+
 ```
-PermNo,Date,StockSym,Price,Volume
+https://wrds-web.wharton.upenn.edu/wrds/
+```
+
+```
+Trading Symbol,
+Price
+Number of Shares Outstanding
+Factor to adjust price
+Factor to adjust shares
+
+In a comma delimited format. (csv)
+
+At the moment we need to take stocks from 2004-01-01 to 2014-Dec-31
 ```
 These stock files are used to create vector files. This step isn't mandatory and vector generator can be used to create vector files directly from the stock file as wel..
 
