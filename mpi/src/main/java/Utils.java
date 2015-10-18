@@ -405,6 +405,21 @@ public class Utils {
                 dates.put(key, list);
                 dateList.add(key);
             } while (lastDate.before(endDate));
+        } else if (mode == 6) {
+            Date lastDate;
+            do {
+                lastDate = addYear(currentDate);
+                String start = getDateString(currentDate);
+                String end = getDateString(lastDate);
+                List<Date> list = new ArrayList<Date>();
+                list.add(currentDate);
+                list.add(lastDate);
+
+                currentDate = addDays(currentDate, 1);
+                String key = start + "_" + end;
+                dates.put(key, list);
+                dateList.add(key);
+            } while (lastDate.before(endDate));
         }
         return dateList;
     }
@@ -467,6 +482,19 @@ public class Utils {
                 list.add(lastDate);
 
                 currentDate = addDays(currentDate, 7);
+                dates.put(start + "_" + end, list);
+            } while (lastDate.before(endDate));
+        } else if (mode == 6) {
+            Date lastDate;
+            do {
+                lastDate = addYear(currentDate);
+                String start = getDateString(currentDate);
+                String end = getDateString(lastDate);
+                List<Date> list = new ArrayList<Date>();
+                list.add(currentDate);
+                list.add(lastDate);
+
+                currentDate = addDays(currentDate, 1);
                 dates.put(start + "_" + end, list);
             } while (lastDate.before(endDate));
         }
@@ -552,12 +580,12 @@ public class Utils {
 
     public static void main(String[] args) {
         try {
-            TreeMap<String, List<Date>> dates = genDates(formatter.parse("20040101"), formatter.parse("20150101"), 5);
+            TreeMap<String, List<Date>> dates = genDates(formatter.parse("20040101"), formatter.parse("20050130"), 6);
 //            for (Map.Entry<String, List<Date>> e : dates.entrySet()) {
 //                System.out.println(e.getKey());
 //            }
 
-            List<String> datesList = genDateList(formatter.parse("20040101"), formatter.parse("20060101"), 5);
+            List<String> datesList = genDateList(formatter.parse("20040101"), formatter.parse("20050130"), 6);
             for (String s : datesList) {
                 System.out.println(s);
             }
