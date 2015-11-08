@@ -220,7 +220,7 @@
     </cluster>
     <cluster>
         <key>30</key>
-        <label>SPECIAL</label>
+        <label>CONSTANT</label>
         <visible>1</visible>
         <default>0</default>
         <color r="158" g="0" b="214" a="214"/>
