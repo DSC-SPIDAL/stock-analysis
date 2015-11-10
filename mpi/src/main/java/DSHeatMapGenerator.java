@@ -22,6 +22,8 @@ public class DSHeatMapGenerator {
     private MpiOps mpiOps;
     private String configFile;
     private String outDir;
+    private double sa;
+    private double sb;
 
     public DSHeatMapGenerator(boolean mpi, String pointFolder, String distanceFolder, String configFile, String outDir) {
         this.mpi = mpi;
@@ -31,6 +33,14 @@ public class DSHeatMapGenerator {
         this.outDir = outDir;
     }
 
+    public void setSa(double sa) {
+        this.sa = sa;
+    }
+
+    public void setSb(double sb) {
+        this.sb = sb;
+    }
+
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("p", true, "Point folder");
@@ -38,6 +48,8 @@ public class DSHeatMapGenerator {
         options.addOption("m", false, "mpi");
         options.addOption("c", true, "Config file");
         options.addOption("o", true, "Out Dir");
+        options.addOption(Utils.createOption("sa", true, "ScaleA", false));
+        options.addOption(Utils.createOption("sb", true, "ScaleB", false));
 
         CommandLineParser commandLineParser = new BasicParser();
         try {
@@ -49,12 +61,23 @@ public class DSHeatMapGenerator {
             String outDir = cmd.getOptionValue("o");
             String print = "point: " + _vectorFile + " ,distance matrix folder: "
                     + _distFile;
+            Object saOption = cmd.getOptionValue("sa");
+            Object sbOption = cmd.getOptionValue("sb");
+
             System.out.println(print);
             if (mpi) {
                 MPI.Init(args);
             }
+
             DSHeatMapGenerator dsHeatMapGenerator = new DSHeatMapGenerator(mpi, _vectorFile, _distFile, configFile, outDir);
+            if (saOption != null) {
+                dsHeatMapGenerator.setSa(Double.parseDouble(saOption.toString()));
+            }
+            if (sbOption != null) {
+                dsHeatMapGenerator.setSb(Double.parseDouble(sbOption.toString()));
+            }
             dsHeatMapGenerator.process();
+
             if (mpi) {
                 MPI.Finalize();
             }

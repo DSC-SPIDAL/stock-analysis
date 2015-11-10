@@ -45,7 +45,7 @@ first_common_file=$first_file_name
 
       first_file=$CONT_COMMON_POINTS/$line/points/first.txt
       second_file=$CONT_COMMON_POINTS/$line/points/second.txt
-      weight_file=$CONT_COMMON_POINTS/$line/weights/second.txt
+      weight_file=$CONT_COMMON_POINTS/$line/weights/second.csv
       filename=$line
 
       no_of_lines=`sed -n '$=' $first_file`
