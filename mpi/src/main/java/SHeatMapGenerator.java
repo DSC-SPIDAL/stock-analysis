@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Properties;
 
 public class SHeatMapGenerator {
-    private static String _aMat;
-    private static String _bMat;
-    private static int _cols;
-    private static int _rows;
-    private static String _outdir;
+    public static String _aMat;
+    public static String _bMat;
+    public static int _cols;
+    public static int _rows;
+    public static String _outdir;
     private static boolean _useTDistanceMaxForA;
     private static boolean _useTDistanceMaxForB;
     private static double _xmaxbound = 1.0;
@@ -33,17 +33,12 @@ public class SHeatMapGenerator {
     private static String _aName;
     private static String _bName;
     private static String _clusterfile;
-    private static String _title;
+    public static String _title;
     private static double _lengthCut;
     private static boolean _readPointsA;
     private static boolean _readPointsB;
     private static double _scaleA = 1.0;
     private static double _scaleB = 1.0;
-
-    private double minX;
-    private double minY;
-    private double maxX;
-    private double maxY;
 
     public static void main(String[] args) {
         Options options = new Options();
@@ -64,7 +59,7 @@ public class SHeatMapGenerator {
         readConfiguration(confiFile);
     }
 
-    private void process() {
+    public void process() {
         // first load the first file
         ReadOutPut outA = readFile(_aMat, _rows, _cols, _readPointsA, _scaleA);
         ReadOutPut outB = readFile(_bMat, _rows, _cols, _readPointsB, _scaleB);
