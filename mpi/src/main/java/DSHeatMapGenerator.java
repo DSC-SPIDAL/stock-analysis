@@ -22,8 +22,8 @@ public class DSHeatMapGenerator {
     private MpiOps mpiOps;
     private String configFile;
     private String outDir;
-    private double sa;
-    private double sb;
+    private double sa = -1;
+    private double sb = -1;
 
     public DSHeatMapGenerator(boolean mpi, String pointFolder, String distanceFolder, String configFile, String outDir) {
         this.mpi = mpi;
@@ -156,6 +156,12 @@ public class DSHeatMapGenerator {
             heatMapGenerator._bMat = distanceFile;
             heatMapGenerator._title = fileNameWithoutExtension;
             heatMapGenerator._outdir = outDir;
+            if (sa > 0) {
+                heatMapGenerator._scaleA = sa;
+            }
+            if (sb > 0) {
+                heatMapGenerator._scaleB = sb;
+            }
 
             heatMapGenerator.process();
         }

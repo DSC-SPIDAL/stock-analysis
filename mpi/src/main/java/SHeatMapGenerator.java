@@ -37,8 +37,8 @@ public class SHeatMapGenerator {
     private static double _lengthCut;
     private static boolean _readPointsA;
     private static boolean _readPointsB;
-    private static double _scaleA = 1.0;
-    private static double _scaleB = 1.0;
+    public static double _scaleA = 1.0;
+    public static double _scaleB = 1.0;
 
     public static void main(String[] args) {
         Options options = new Options();
