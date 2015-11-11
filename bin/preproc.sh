@@ -73,7 +73,7 @@ echo "calculate the weigh matrix for yearly"
 $BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $WEIGHT_MATRIX_DIR -m -n -sh -wc 0.1 | tee $YEARLY_PREPROC_DIR/yearly.weights.output.txt
 
 echo "calculate the simple weigh file for yearly"
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $SIMPLE_WEIGHT_MATRIX_DIR -m -n -sh -wc 0.1 | tee $YEARLY_PREPROC_DIR/yearly.weights.simple.output.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $SIMPLE_WEIGHT_MATRIX_DIR -m -n -sh -s -wc 0.1 | tee $YEARLY_PREPROC_DIR/yearly.weights.simple.output.txt
 
 echo "calculate the weight matrix for global"
 $BUILD/bin/mpirun --report-bindings java -cp $JAR_FILE WeightCalculator -v $GLOBAL_VEC_DIR -d $GLOBAL_WEIGHT_MATRIX_DIR -m -n -sh -wc 0.1 | tee $GLOBAL_PREPROC_DIR/global.weights.output.txt
