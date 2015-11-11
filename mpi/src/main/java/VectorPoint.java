@@ -69,10 +69,13 @@ public class VectorPoint {
     }
 
     public double weight(VectorPoint vc) {
-        return vc.getTotalCap() * this.totalCap;
+        return vc.getTotalCap() * this.getTotalCap();
     }
 
     public double getTotalCap() {
+        if (constantVector) {
+            return  totalCap * Configuration.getInstance().weightAdjustForConstant;
+        }
         return totalCap;
     }
 

@@ -21,20 +21,21 @@ public class WeightCalculator {
     private final boolean sharedInput;
     private String vectorFolder;
     private String distFolder;
-    private String simpleDistFolder; //simple weights, only the market cap of a single stock
     private boolean normalize;
 
     private boolean mpi = false;
     private boolean simple = true;
     private MpiOps mpiOps;
 
-    public WeightCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, boolean simple, boolean sharedInput) {
+
+    public WeightCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, boolean simple, boolean sharedInput, double weightAdjustForConstant) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.normalize = normalize;
         this.simple = simple;
         this.mpi = mpi;
         this.sharedInput = sharedInput;
+        Configuration.getInstance().weightAdjustForConstant = weightAdjustForConstant;
     }
 
     public static void main(String[] args) {
@@ -45,6 +46,8 @@ public class WeightCalculator {
         options.addOption("m", false, "mpi");
         options.addOption("s", false, "True: gen simple list, False: Gen matrix");
         options.addOption("sh", false, "Shared file system");
+        options.addOption("wc", true, "weight adjustment for constant vector");
+
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -54,10 +57,11 @@ public class WeightCalculator {
             boolean mpi = cmd.hasOption("m");
             boolean simple = cmd.hasOption("s");
             boolean sharedInput = cmd.hasOption("sh");
+            double weightAdjust = Double.parseDouble(cmd.getOptionValue("wc"));
             if (mpi) {
                 MPI.Init(args);
             }
-            WeightCalculator program = new WeightCalculator(_vectorFile, _distFile, _normalize, mpi, simple, sharedInput);
+            WeightCalculator program = new WeightCalculator(_vectorFile, _distFile, _normalize, mpi, simple, sharedInput, weightAdjust);
             program.process();
             if (mpi) {
                 MPI.Finalize();
