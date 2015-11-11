@@ -183,10 +183,18 @@ public class WeightCalculator {
             if (vectors.size() == 0) {
                 break;
             }
+
+            double max = Double.MIN_VALUE;
+            for (VectorPoint v : vectors) {
+                if (v.getTotalCap() > max) {
+                    max = v.getTotalCap();
+                }
+            }
+
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 double weight = vectors.get(i).getTotalCap();
-                writer.write(weight);
+                writer.write(weight / max);
                 writer.line();
             }
         } while (true);
