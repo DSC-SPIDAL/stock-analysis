@@ -2,6 +2,8 @@ import org.apache.commons.cli.*;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
 public class LabelApply {
@@ -17,6 +19,7 @@ public class LabelApply {
     private Map<String, Integer> sectorToClazz = new HashMap<String, Integer>();
     private Map<String, String> invertedSectors = new HashMap<String, String>();
     private Map<String, Integer> invertedFixedClases = new HashMap<String, Integer>();
+    private NumberFormat formatter = new DecimalFormat("#0.00");
 
     public static void main(String[] args) {
         Options options = new Options();
@@ -145,9 +148,10 @@ public class LabelApply {
                 Bin sectorRecord = Utils.readBin(line);
                 List<String> stockList = sectorRecord.symbols;
                 String key = Integer.toString(i);
+                String startEnd = formatter.format(sectorRecord.start) + ":" + formatter.format(sectorRecord.end);
                 sectors.put(key, stockList);
                 for (String s : stockList) {
-                    invertedSectors.put(s, key);
+                    invertedSectors.put(s, key + ":" + startEnd);
                 }
                 i++;
             }
@@ -183,7 +187,7 @@ public class LabelApply {
     }
 
     private Map<String, Integer> convertSectorsToClazz(Map<String, List<String>> sectors) {
-        List<String> sectorNames = new ArrayList<>(sectors.keySet());
+        List<String> sectorNames = new ArrayList<String>(sectors.keySet());
         Collections.sort(sectorNames);
         Map<String, Integer> sectorsToClazz = new HashMap<String, Integer>();
         for (int i = 0; i < sectorNames.size(); i++) {

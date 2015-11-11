@@ -135,7 +135,7 @@
         <default>0</default>
         <color r="255" g="202" b="132" a="255"/>
         <size>20</size>
-        <shape>3</shape>
+        <shape>1</shape>
     </cluster>
     <cluster>
         <key>21</key>
@@ -144,7 +144,7 @@
         <default>0</default>
         <color r="158" g="114" b="141" a="255"/>
         <size>20</size>
-        <shape>3</shape>
+        <shape>2</shape>
     </cluster>
     <cluster>
         <key>22</key>
@@ -162,7 +162,7 @@
         <default>0</default>
         <color r="158" g="193" b="255" a="255"/>
         <size>20</size>
-        <shape>3</shape>
+        <shape>4</shape>
     </cluster>
     <cluster>
         <key>24</key>
@@ -171,7 +171,7 @@
         <default>0</default>
         <color r="149" g="158" b="123" a="255"/>
         <size>20</size>
-        <shape>3</shape>
+        <shape>5</shape>
     </cluster>
     <cluster>
         <key>25</key>
@@ -180,7 +180,7 @@
         <default>0</default>
         <color r="255" g="123" b="176" a="255"/>
         <size>20</size>
-        <shape>3</shape>
+        <shape>6</shape>
     </cluster>
     <cluster>
         <key>26</key>
@@ -189,7 +189,7 @@
         <default>0</default>
         <color r="158" g="9" b="0" a="255"/>
         <size>20</size>
-        <shape>3</shape>
+        <shape>1</shape>
     </cluster>
     <cluster>
         <key>27</key>
@@ -198,7 +198,7 @@
         <default>0</default>
         <color r="255" g="185" b="185" a="255"/>
         <size>20</size>
-        <shape>3</shape>
+        <shape>2</shape>
     </cluster>
     <cluster>
         <key>28</key>
@@ -216,7 +216,7 @@
         <default>0</default>
         <color r="158" g="0" b="114" a="255"/>
         <size>20</size>
-        <shape>3</shape>
+        <shape>4</shape>
     </cluster>
     <cluster>
         <key>30</key>
@@ -225,6 +225,6 @@
         <default>0</default>
         <color r="158" g="0" b="214" a="214"/>
         <size>40</size>
-        <shape>6</shape>
+        <shape>1</shape>
     </cluster>
 </clusters>

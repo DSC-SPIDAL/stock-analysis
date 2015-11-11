@@ -3,6 +3,8 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,6 +18,7 @@ public class Histogram {
     private boolean global = false;
     // we will use this many files to generate the global bins
     static public int GLOBAL_FILE_COUNT = 10;
+    private NumberFormat formatter = new DecimalFormat("#0.00");
 
     public Histogram(String vectorFolder, String distFolder, int bins, String stockFile, boolean global) {
         this.vectorFolder = vectorFolder;
@@ -260,7 +263,7 @@ public class Histogram {
         }
         if (sum == 0) return .1;
 //        double delta = max - min;
-        double delta = n[0] - n[n.length - 1];
+        double delta = n[n.length - 1] - n[0];
         return delta * n.length / sum;
     }
 }

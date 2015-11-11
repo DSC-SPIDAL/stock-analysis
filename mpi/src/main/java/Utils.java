@@ -282,6 +282,8 @@ public class Utils {
         double start = Double.parseDouble(parts[1]);
         double end = Double.parseDouble(parts[2]);
         Bin bin = new Bin();
+        bin.start = start;
+        bin.end = end;
         for (int i = 3; i < parts.length; i++) {
             bin.symbols.add(parts[i]);
         }
