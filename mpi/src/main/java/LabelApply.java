@@ -147,11 +147,11 @@ public class LabelApply {
             while ((line = bufRead.readLine()) != null) {
                 Bin sectorRecord = Utils.readBin(line);
                 List<String> stockList = sectorRecord.symbols;
-                String key = Integer.toString(i);
                 String startEnd = formatter.format(sectorRecord.start) + ":" + formatter.format(sectorRecord.end);
+                String key = Integer.toString(i) + ":" + startEnd;
                 sectors.put(key, stockList);
                 for (String s : stockList) {
-                    invertedSectors.put(s, key + ":" + startEnd);
+                    invertedSectors.put(s, key);
                 }
                 i++;
             }
