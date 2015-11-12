@@ -173,7 +173,7 @@ public class WeightCalculator {
 
         int startIndex = 0;
         int endIndex = -1;
-
+        int lineCount = countLines(fileEntry);
         List<VectorPoint> vectors;
         do {
             startIndex = endIndex + 1;
@@ -185,13 +185,40 @@ public class WeightCalculator {
             }
 
             double sum = 0.0;
-            for (VectorPoint v : vectors) {
-                sum += v.getTotalCap();
+            double dmax = Double.MAX_VALUE;
+            double[] caps = new double[lineCount];
+            double[] capMaxs = new double[lineCount];
+            for (int i = 0; i < vectors.size(); i++) {
+                VectorPoint v = vectors.get(i);
+                if (v.isConstantVector()) {
+                    caps[i] = -1;
+                } else {
+                    caps[i] = vectors.get(i).getTotalCap();
+                }
+                if (caps[i] > dmax) {
+                    dmax = caps[i];
+                }
+            }
+
+            int constIndex = -1;
+            for (int i = 0; i < vectors.size(); i++) {
+                VectorPoint v = vectors.get(i);
+                if (v.isConstantVector()) {
+                    capMaxs[i] = -1;
+                    constIndex = i;
+                } else {
+                    capMaxs[i] = Math.max(dmax * .05, Math.pow(caps[i], .25));
+                    sum += capMaxs[i];
+                }
+            }
+
+            if (constIndex >= 0) {
+                capMaxs[constIndex] = sum * Configuration.getInstance().weightAdjustForConstant;
             }
 
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
-                double weight = vectors.get(i).getTotalCap();
+                double weight = capMaxs[i];
                 writer.write(weight / sum);
                 writer.line();
             }
@@ -223,6 +250,8 @@ public class WeightCalculator {
         int endIndex = -1;
 
         List<VectorPoint> vectors;
+        double[] caps = new double[lineCount];
+        double[] capMaxs = new double[lineCount];
         do {
             startIndex = endIndex + 1;
             endIndex = startIndex + INC - 1;
@@ -237,43 +266,71 @@ public class WeightCalculator {
 
             // System.out.println("Processing block: " + startIndex + " : " + endIndex);
             // now start from the begining and go through the whole file
-            List<VectorPoint> secondVectors;
-            do {
-                System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
-                if (readStartIndex != startIndex) {
-                    secondVectors = Utils.readVectors(fileEntry, readStartIndex, readEndIndex);
+//            List<VectorPoint> secondVectors;
+//            do {
+//                System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex);
+//                if (readStartIndex != startIndex) {
+//                    secondVectors = Utils.readVectors(fileEntry, readStartIndex, readEndIndex);
+//                } else {
+//                    secondVectors = vectors;
+//                }
+//
+//                if (secondVectors.size() == 0) {
+//                    break;
+//                }
+//
+//                for (int i = 0; i < secondVectors.size(); i++) {
+//                    VectorPoint sv = secondVectors.get(i);
+//                    for (int j = 0; j < vectors.size(); j++) {
+//                        VectorPoint fv = vectors.get(j);
+//                        double cor = sv.weight(fv);
+//                        if (cor > dmax) {
+//                            dmax = cor;
+//                        }
+//
+//                        if (cor < dmin) {
+//                            dmin = cor;
+//                        }
+//                        values[j][readStartIndex + i] = cor;
+//                    }
+//                }
+//                readStartIndex = readEndIndex + 1;
+//                readEndIndex = readStartIndex + INC - 1;
+//            } while (true);
+
+            double sum = 0;
+            for (int i = 0; i < vectors.size(); i++) {
+                VectorPoint v = vectors.get(i);
+                if (v.isConstantVector()) {
+                    caps[i] = -1;
                 } else {
-                    secondVectors = vectors;
+                    caps[i] = vectors.get(i).getTotalCap();
                 }
-
-                if (secondVectors.size() == 0) {
-                    break;
+                if (caps[i] > dmax) {
+                    dmax = caps[i];
                 }
+            }
 
-                for (int i = 0; i < secondVectors.size(); i++) {
-                    VectorPoint sv = secondVectors.get(i);
-                    for (int j = 0; j < vectors.size(); j++) {
-                        VectorPoint fv = vectors.get(j);
-                        double cor = sv.weight(fv);
-                        if (cor > dmax) {
-                            dmax = cor;
-                        }
-
-                        if (cor < dmin) {
-                            dmin = cor;
-                        }
-                        values[j][readStartIndex + i] = cor;
-                    }
+            int constIndex = -1;
+            for (int i = 0; i < vectors.size(); i++) {
+                VectorPoint v = vectors.get(i);
+                if (v.isConstantVector()) {
+                    capMaxs[i] = -1;
+                    constIndex = i;
+                } else {
+                    capMaxs[i] = Math.max(dmax * .05, Math.pow(caps[i], .25));
+                    sum += capMaxs[i];
                 }
-                readStartIndex = readEndIndex + 1;
-                readEndIndex = readStartIndex + INC - 1;
-            } while (true);
+            }
+
+            if (constIndex >= 0) {
+                capMaxs[constIndex] = sum * Configuration.getInstance().weightAdjustForConstant;
+            }
 
             double max = Double.MIN_VALUE;
             for (int i = 0; i < values.length; i++) {
-                double[] row = values[i];
-                for (int j = 0; j < row.length; j++) {
-                    values[i][j] = Math.max(dmax * .05, Math.pow(values[i][j], .25));
+                for (int j = 0; j < values[i].length; j++) {
+                    values[i][j] = capMaxs[i] * capMaxs[j];
                     if (values[i][j] > max) {
                         max = values[i][j];
                     }
