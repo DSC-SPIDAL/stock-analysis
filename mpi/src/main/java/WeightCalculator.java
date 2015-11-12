@@ -185,7 +185,7 @@ public class WeightCalculator {
             }
 
             double sum = 0.0;
-            double dmax = Double.MAX_VALUE;
+            double dmax = Double.MIN_VALUE;
             double[] caps = new double[lineCount];
             double[] capMaxs = new double[lineCount];
             for (int i = 0; i < vectors.size(); i++) {
@@ -207,7 +207,7 @@ public class WeightCalculator {
                     capMaxs[i] = -1;
                     constIndex = i;
                 } else {
-                    capMaxs[i] = Math.max(dmax * .05, Math.pow(caps[i], .25));
+                    capMaxs[i] = Math.max(dmax * .0000005, Math.pow(caps[i], 0.5));
                     sum += capMaxs[i];
                 }
             }
@@ -234,12 +234,12 @@ public class WeightCalculator {
 
         String outFileName = distFolder + "/" + fileEntry.getName();
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
-        writer = new WriterWrapper(outFileName, false);
+        writer = new WriterWrapper(outFileName, true);
 
         int lineCount = countLines(fileEntry);
 
         // initialize the double arrays for this block
-        double values[][] = new double[INC][];
+        double values[][] = new double[lineCount][];
         for (int i = 0; i < values.length; i++) {
             values[i] = new double[lineCount];
         }
@@ -318,7 +318,7 @@ public class WeightCalculator {
                     capMaxs[i] = -1;
                     constIndex = i;
                 } else {
-                    capMaxs[i] = Math.max(dmax * .05, Math.pow(caps[i], .25));
+                    capMaxs[i] = Math.max(dmax * .0000005, Math.pow(caps[i], .5));
                     sum += capMaxs[i];
                 }
             }
