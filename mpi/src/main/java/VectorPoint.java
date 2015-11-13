@@ -249,7 +249,8 @@ public class VectorPoint {
                 ys[i] = i;
             }
         } else {
-            throw new RuntimeException("Shouldnt reach ...........................");
+            ys = this.numbers;
+            xs = vc.numbers;
         }
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
