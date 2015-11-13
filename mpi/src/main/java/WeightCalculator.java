@@ -215,7 +215,7 @@ public class WeightCalculator {
             }
 
             if (constIndex >= 0) {
-                capMaxs[constIndex] = sum * Configuration.getInstance().weightAdjustForConstant;
+                capMaxs[constIndex] = sum * Configuration.getInstance().weightAdjustForConstant / lineCount;
             }
 
             // write the vectors to file
