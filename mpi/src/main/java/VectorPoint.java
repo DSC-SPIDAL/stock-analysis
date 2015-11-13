@@ -231,10 +231,26 @@ public class VectorPoint {
     }
 
     public double corr(VectorPoint vc) {
-        if (vc.isConstantVector() || constantVector) return 0;
-
-        double []xs = vc.numbers;
-        double []ys = this.numbers;
+        double []xs;
+        double []ys;
+        if (vc.isConstantVector() && this.isConstantVector()) {
+            // both are same so return 1
+            return 1;
+        } else if (vc.isConstantVector()){
+            ys = this.numbers;
+            xs = new double[ys.length];
+            for (int i = 0; i < xs.length; i++) {
+                xs[i] = i;
+            }
+        } else if (this.isConstantVector()) {
+            xs = vc.numbers;
+            ys = new double[xs.length];
+            for (int i = 0; i < ys.length; i++) {
+                ys[i] = i;
+            }
+        } else {
+            throw new RuntimeException("Shouldnt reach ...........................");
+        }
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         return pearsonsCorrelation.correlation(xs, ys);
