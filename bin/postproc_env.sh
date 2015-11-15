@@ -76,6 +76,8 @@ export GLOBAL_POINTS_DIR_NAME=$GLOBAL_MDS_DIR_NAME
 
 # postporc/$WEIGHTED/yearly/rotate/points
 export ROTATE_FINAL_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/points
+# postporc/$WEIGHTED/yearly/rotate/points
+export LABELED_FINAL_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/points/labeled
 # postporc/$WEIGHTED/yearly/rotate/summary
 export ROTATE_FINAL_SUMMARY_DIR_NAME=$YEARLY_POSTPROC_DIR_NAME/rotate/summary
 # postporc/$WEIGHTED/yearly/rotate/points/labeled/byhist

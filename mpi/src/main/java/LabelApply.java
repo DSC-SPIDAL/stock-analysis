@@ -1,6 +1,13 @@
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FilenameUtils;
+import pviz.Cluster;
+import pviz.Clusters;
+import pviz.Plotviz;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -14,6 +21,9 @@ public class LabelApply {
     private String originalStockFile;
     private String sectorFile;
     private boolean histogram;
+    private String cluserInputFile;
+    private String clusterOutputFile;
+    private NumberFormat intgerFormaterr = new DecimalFormat("#00");
 
     private Map<Integer, String> permNoToSymbol = new HashMap<Integer, String>();
     private Map<String, Integer> sectorToClazz = new HashMap<String, Integer>();
@@ -30,6 +40,8 @@ public class LabelApply {
         options.addOption("s", true, "Sector file"); // If Histogram true then set this as the folder to histogram output
         options.addOption("h", false, "Gen from histogram");
         options.addOption("e", true, "Extra classes file"); // a file containing fixed classes
+        options.addOption("ci", true, "Cluster input file");
+        options.addOption("co", true, "Cluster output file");
 
         CommandLineParser commandLineParser = new BasicParser();
         try {
@@ -41,15 +53,17 @@ public class LabelApply {
             String sectorFile = cmd.getOptionValue("s");
             boolean histogram = cmd.hasOption("h");
             String fixedClasses = cmd.getOptionValue("e");
+            String clusterInputFile = cmd.getOptionValue("ci");
+            String clusterOutputFile = cmd.getOptionValue("co");
 
-            LabelApply program = new LabelApply(vectorFile, pointsFolder, distFolder, originalStocks, sectorFile, histogram, fixedClasses);
+            LabelApply program = new LabelApply(vectorFile, pointsFolder, distFolder, originalStocks, sectorFile, histogram, fixedClasses, clusterInputFile, clusterOutputFile);
             program.process();
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public LabelApply(String vectorFolder, String pointsFolder, String distFolder, String originalStockFile, String sectorFile, boolean histogram, String fixedClasses) {
+    public LabelApply(String vectorFolder, String pointsFolder, String distFolder, String originalStockFile, String sectorFile, boolean histogram, String fixedClasses, String clusterInputFile, String clusterOutputFile) {
         this.vectorFolder = vectorFolder;
         this.pointsFolder = pointsFolder;
         this.distFolder = distFolder;
@@ -57,6 +71,8 @@ public class LabelApply {
         this.histogram = histogram;
         this.sectorFile = sectorFile;
         this.fixedClassesFile = fixedClasses;
+        this.clusterOutputFile = clusterOutputFile;
+        this.cluserInputFile = clusterInputFile;
         init();
     }
 
@@ -66,8 +82,6 @@ public class LabelApply {
         for (Map.Entry<Integer, String> entry : permNoToSymbol.entrySet()) {
             symbolToPerm.put(entry.getValue(), entry.getKey());
         }
-
-
     }
 
     public void process() {
@@ -76,10 +90,15 @@ public class LabelApply {
             System.out.println("In should be a folder: " + vectorFolder);
             return;
         }
+        boolean clusterSaved = false;
         this.invertedFixedClases = loadFixedClasses(fixedClassesFile);
         if (!histogram) {
             Map<String, List<String>> sectors = loadStockSectors(sectorFile);
             sectorToClazz = convertSectorsToClazz(sectors);
+            if (!clusterSaved) {
+                changeClassLabels();
+                clusterSaved = true;
+            }
             for (Map.Entry<String, Integer> entry : sectorToClazz.entrySet()) {
                 System.out.println(entry.getKey() + " : " + entry.getValue());
             }
@@ -94,11 +113,85 @@ public class LabelApply {
 
                 Map<String, List<String>> sectors = loadHistoSectors(sectorFile + "/" + fileNameWithOutExt + ".csv");
                 sectorToClazz = convertSectorsToClazz(sectors);
+                if (!clusterSaved) {
+                    changeClassLabels();
+                    clusterSaved = true;
+                }
                 for (Map.Entry<String, Integer> entry : sectorToClazz.entrySet()) {
                     System.out.println(entry.getKey() + " : " + entry.getValue());
                 }
             }
             processFile(fileNameWithOutExt);
+        }
+    }
+
+    private Clusters loadClusters(String cluserInputFile) {
+        Clusters clusters;
+        FileInputStream adrFile = null;
+        try {
+            adrFile = new FileInputStream(cluserInputFile);
+            JAXBContext ctx = JAXBContext.newInstance(Clusters.class);
+            Unmarshaller um = ctx.createUnmarshaller();
+            clusters = (Clusters) um.unmarshal(adrFile);
+            return clusters;
+        }
+        catch (FileNotFoundException | JAXBException e) {
+            e.printStackTrace();
+        } finally {
+            if (adrFile != null) {
+                try {
+                    adrFile.close();
+                } catch (IOException ignore) {
+                }
+            }
+        }
+        return null;
+    }
+
+    public static void saveClusters(String outFileName, Clusters plotviz) throws FileNotFoundException, JAXBException {
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(outFileName);
+            JAXBContext ctx = JAXBContext.newInstance(Clusters.class);
+            Marshaller ma = ctx.createMarshaller();
+            ma.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            ma.marshal(plotviz, fileOutputStream);
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException ignore) {
+                }
+            }
+        }
+    }
+
+
+    public void changeClassLabels() {
+        System.out.println("Reading cluster file: " + cluserInputFile);
+        Clusters clusters = loadClusters(cluserInputFile);
+        if (clusters == null) {
+            System.out.println("Not clusters found to change");
+            return;
+        }
+        Map<Integer, String> classToSector = new HashMap<Integer, String>();
+        for (Map.Entry<String, Integer> e: sectorToClazz.entrySet()) {
+            classToSector.put(e.getValue(), e.getKey());
+        }
+        for (Cluster c : clusters.getCluster()) {
+            // find the cluster label
+            // this is the label
+            String key = classToSector.get(c.getKey());
+            if (key != null ) {
+                System.out.println("Setting label: " + key + " to cluster: " + c.getKey()   );
+                c.setLabel(key);
+            }
+        }
+        try {
+            System.out.println("Writing cluster file: " + clusterOutputFile);
+            saveClusters(clusterOutputFile, clusters);
+        } catch (FileNotFoundException | JAXBException e) {
+            throw new RuntimeException("Failed to write clusters", e);
         }
     }
 
@@ -143,12 +236,12 @@ public class LabelApply {
             BufferedReader bufRead = new BufferedReader(input);
             String line;
 
-            int i = 0;
+            int i = 1;
             while ((line = bufRead.readLine()) != null) {
                 Bin sectorRecord = Utils.readBin(line);
                 List<String> stockList = sectorRecord.symbols;
-                String startEnd = formatter.format(sectorRecord.start) + ":" + formatter.format(sectorRecord.end);
-                String key = Integer.toString(i) + ":" + startEnd;
+                String startEnd = formatter.format(sectorRecord.end);
+                String key = intgerFormaterr.format(i) + ":" + startEnd;
                 sectors.put(key, stockList);
                 for (String s : stockList) {
                     invertedSectors.put(s, key);

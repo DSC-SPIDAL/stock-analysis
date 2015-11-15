@@ -422,6 +422,20 @@ public class Utils {
                 dates.put(key, list);
                 dateList.add(key);
             } while (lastDate.before(endDate));
+        } else if (mode == 7) {
+            Date lastDate = addYear(currentDate);;
+            do {
+                String start = getDateString(currentDate);
+                String end = getDateString(lastDate);
+                List<Date> list = new ArrayList<Date>();
+                list.add(currentDate);
+                list.add(lastDate);
+
+                lastDate = addDays(lastDate, 7);
+                String key = start + "_" + end;
+                dates.put(key, list);
+                dateList.add(key);
+            } while (lastDate.before(endDate));
         }
         return dateList;
     }
@@ -497,6 +511,18 @@ public class Utils {
                 list.add(lastDate);
 
                 currentDate = addDays(currentDate, 1);
+                dates.put(start + "_" + end, list);
+            } while (lastDate.before(endDate));
+        } else if (mode == 7) {
+            Date lastDate = addYear(currentDate);;
+            do {
+                String start = getDateString(currentDate);
+                String end = getDateString(lastDate);
+                List<Date> list = new ArrayList<Date>();
+                list.add(currentDate);
+                list.add(lastDate);
+
+                lastDate = addDays(lastDate, 7);
                 dates.put(start + "_" + end, list);
             } while (lastDate.before(endDate));
         }
@@ -587,7 +613,7 @@ public class Utils {
 //                System.out.println(e.getKey());
 //            }
 
-            List<String> datesList = genDateList(formatter.parse("20040101"), formatter.parse("20050130"), 6);
+            List<String> datesList = genDateList(formatter.parse("20040101"), formatter.parse("20050130"), 7);
             for (String s : datesList) {
                 System.out.println(s);
             }
