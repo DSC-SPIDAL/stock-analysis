@@ -62,7 +62,7 @@ public class PSVectorGenerator {
             this.dates = dates;
         }
 
-        for (Map.Entry<String, List<Date>> ed : dates.entrySet()) {
+        for (Map.Entry<String, List<Date>> ed : this.dates.entrySet()) {
             Date start = ed.getValue().get(0);
             Date end = ed.getValue().get(1);
             processFile(inFolder, start, end, ed.getKey());
