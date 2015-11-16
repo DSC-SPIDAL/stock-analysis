@@ -58,13 +58,14 @@ echo "breaking files"
 # generate vector files
 echo "generate vector files"
 #$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PVectorGenerator -i $BREAKS_DIR -o $VECTOR_DIR -d 300 -m | tee $PREPROC_DIR/yearly.vector.output.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PSVectorGenerator -i $INPUT_DIR/$BASE_DIR/input/2004_2014.csv -o $VECTOR_DIR -d 3000 -m -s 20040101 -e 20060101 -md 7 | tee $PREPROC_DIR/yearly.vector.output.txt
 
 # generate global vector file
 #echo "generate global vector files"
 java -cp $JAR_FILE PVectorGenerator -i $INPUT_DIR -o $GLOBAL_VEC_DIR -d 3000 | tee $GLOBAL_PREPROC_DIR/global.vector.output.txt
 
 echo "caclulate the distance matrix for normal data"
-#$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $VECTOR_DIR -d $MATRIX_DIR -m -t 5 -s -o $INPUT_DIR/$STOCK_FILE_NAME | tee $YEARLY_PREPROC_DIR/yearly.distances.output.txt
+#$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $VECTOR_DIR -d $MATRIX_DIR -m -t 5 -s | tee $YEARLY_PREPROC_DIR/yearly.distances.output.txt
 
 echo "caclulate the distance matrix for global data set"
 #$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $GLOBAL_VEC_DIR -d $GLOBAL_MATRIX_DIR -m -t 5 -s | tee $GLOBAL_PREPROC_DIR/global.distances.output.txt

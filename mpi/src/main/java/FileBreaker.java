@@ -30,8 +30,8 @@ public class FileBreaker {
         DAY
     }
 
-    public FileBreaker(String inFile, String outFile, String startDate, int days, String endDate, boolean mpi) {
-        this.mode = days;
+    public FileBreaker(String inFile, String outFile, String startDate, int mode, String endDate, boolean mpi) {
+        this.mode = mode;
         this.inFile = inFile;
         this.outDir = outFile;
         this.startDate = Utils.parseDateString(startDate);

@@ -5,112 +5,67 @@ import org.apache.commons.cli.*;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
-public class PVectorGenerator {
+public class PSVectorGenerator {
     private final String inFolder;
     private final String outFolder;
     private Map<Integer, VectorPoint> currentPoints = new HashMap<Integer, VectorPoint>();
     private int days;
     private boolean mpi = false;
     private MpiOps mpiOps;
+    private Date startDate;
+    private Date endDate;
+    private int mode;
+    TreeMap<String, List<Date>> dates = new TreeMap<String, List<Date>>();
 
     private Map<String, CleanMetric> metrics = new HashMap<String, CleanMetric>();
 
-    private enum DateCheckType {
-        MONTH,
-        YEAR,
-        CONT_YEAR,
-    }
-
-    public PVectorGenerator(String inFile, String outFile, int days, boolean mpi) {
+    public PSVectorGenerator(String inFile, String outFile, int days, boolean mpi, String startDate, String endDate, int mode) {
         this.days = days;
         this.inFolder = inFile;
         this.outFolder = outFile;
         this.mpi = mpi;
+        this.startDate = Utils.parseDateString(startDate);
+        this.endDate = Utils.parseDateString(endDate);
+        this.mode = mode;
     }
 
     public void process() {
         System.out.println("starting vector generator...");
         File inFolder = new File(this.inFolder);
-        if (!inFolder.isDirectory()) {
-            System.out.println("In should be a folder");
-            return;
-        }
-
+        TreeMap<String, List<Date>> dates = Utils.genDates(this.startDate, this.endDate, this.mode);
         // create the out directory
         Utils.createDirectory(outFolder);
 
-        int rank = 0;
-        int size = 0;
         int filesPerProcess = 0;
-        try {
-            BlockingQueue<File> files = new LinkedBlockingQueue<File>();
-            if (mpi) {
+        if (mpi) {
+            try {
                 mpiOps = new MpiOps();
-                rank = mpiOps.getRank();
-                size = mpiOps.getSize();
+                int rank = mpiOps.getRank();
+                int size = mpiOps.getSize();
+                Iterator<String> datesItr = dates.keySet().iterator();
                 int i = 0;
-                for (int j = 0; j < inFolder.listFiles().length; j++) {
-                    File fileEntry = inFolder.listFiles()[j];
+                while (datesItr.hasNext()) {
+                    String next = datesItr.next();
                     if (i == rank) {
-                        files.put(fileEntry);
+                        this.dates.put(next, dates.get(next));
                     }
                     i++;
                     if (i == size) {
                         i = 0;
                     }
                 }
-            } else {
-                Collections.addAll(files, inFolder.listFiles());
+            } catch (MPIException e) {
+                e.printStackTrace();
             }
-
-            List<Thread> threads = new ArrayList<Thread>();
-            // start threads
-            for (int i = 0; i < 1; i++) {
-                Thread t = new Thread(new Worker(files));
-                t.start();
-                threads.add(t);
-            }
-
-            for (Thread t : threads) {
-                try {
-                    t.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            System.out.println("Vector generator finished...");
-        } catch (MPIException e) {
-            throw new RuntimeException("Failed to communicate");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private class Worker implements Runnable {
-        private BlockingQueue<File> queue;
-
-        private Worker(BlockingQueue<File> queue) {
-            this.queue = queue;
+        } else {
+            this.dates = dates;
         }
 
-        @Override
-        public void run() {
-            System.out.println("Vector generator files to proce: " + queue.size());
-            while (!queue.isEmpty()) {
-                try {
-                    File f = queue.take();
-                    processFile(f);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            for (Map.Entry<String, CleanMetric> e : metrics.entrySet()) {
-                System.out.println(e.getKey() + " : " + e.getValue().serialize());
-            }
+        for (Map.Entry<String, List<Date>> ed : dates.entrySet()) {
+            Date start = ed.getValue().get(0);
+            Date end = ed.getValue().get(1);
+            processFile(inFolder, start, end, ed.getKey());
         }
     }
 
@@ -131,13 +86,14 @@ public class PVectorGenerator {
     /**
      * Process a stock file and generate vectors for a month or year period
      */
-    private void processFile(File inFile) {
+    private void processFile(File inFile, Date startDate, Date endDate, String outFile) {
         BufferedWriter bufWriter = null;
         BufferedReader bufRead = null;
+        System.out.println("Calc: " + outFile + Utils.formatter.format(startDate) + ":" + Utils.formatter.format(endDate));
         int size = -1;
         vectorCounter = 0;
-        String outFileName = outFolder + "/" + inFile.getName();
-
+        String outFileName = outFolder + "/" + outFile + ".csv";
+        int capCount = 0;
         CleanMetric metric = this.metrics.get(outFileName);
         if (metric == null) {
             metric = new CleanMetric();
@@ -153,9 +109,12 @@ public class PVectorGenerator {
             int count = 0;
             int fullCount = 0;
             double totalCap = 0;
-            int capCount  = 0;
             int splitCount = 0;
             while ((record = Utils.parseFile(bufRead, null, false)) != null) {
+                // not a record we are interested in
+                if (!check(startDate, endDate, record.getDate())) {
+                    continue;
+                }
                 count++;
                 int key = record.getSymbol();
                 if (record.getFactorToAdjPrice() > 0) {
@@ -178,7 +137,7 @@ public class PVectorGenerator {
                 }
                 // sort the already seen symbols and determine how many days are there in this period
                 // we take the highest number as the number of days
-                if (currentPoints.size() > 1000 && size == -1) {
+                if (currentPoints.size() > 2000 && size == -1) {
                     List<Integer> pointSizes = new ArrayList<Integer>();
                     for (VectorPoint v : currentPoints.values()) {
                         pointSizes.add(v.noOfElements());
@@ -212,7 +171,7 @@ public class PVectorGenerator {
             System.out.println("Metrics for file: " + outFileName + " " + metric.serialize());
             currentPoints.clear();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to open the file");
+            throw new RuntimeException("Failed to open the file", e);
         } finally {
             try {
                 if (bufWriter != null) {
@@ -283,21 +242,11 @@ public class PVectorGenerator {
         return capSum;
     }
 
-    private boolean check(Date data1, Date date2, DateCheckType check) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.setTime(data1);
-        cal2.setTime(date2);
-        if (check == DateCheckType.MONTH) {
-            if(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH)) {
-                return true;
-            }
-        } else if (check == DateCheckType.YEAR) {
-            if(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)) {
-                return true;
-            }
+    private boolean check(Date start, Date end, Date compare) {
+        if (compare == null) {
+            System.out.println("Comapre null*****************");
         }
-        return false;
+        return (compare.equals(start) || compare.after(start)) && compare.before(end);
     }
 
     public static void main(String[] args) {
@@ -306,6 +255,10 @@ public class PVectorGenerator {
         options.addOption("o", true, "Output file");
         options.addOption("d", true, "Number of days");
         options.addOption("m", false, "MPI");
+        options.addOption("s", true, "Start date");
+        options.addOption("e", true, "End date");
+        options.addOption("md", true, "mode");
+
         CommandLineParser commandLineParser = new BasicParser();
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
@@ -313,10 +266,13 @@ public class PVectorGenerator {
             String output = cmd.getOptionValue("o");
             String days = cmd.getOptionValue("d");
             boolean mpi = cmd.hasOption("m");
+            String mode = cmd.getOptionValue("md");
+            String start = cmd.getOptionValue("s");
+            String end = cmd.getOptionValue("e");
             if (mpi) {
                 MPI.Init(args);
             }
-            PVectorGenerator vg = new PVectorGenerator(input, output, Integer.parseInt(days), mpi);
+            PSVectorGenerator vg = new PSVectorGenerator(input, output, Integer.parseInt(days), mpi, start, end, Integer.parseInt(mode));
             vg.process();
             if (mpi) {
                 MPI.Finalize();

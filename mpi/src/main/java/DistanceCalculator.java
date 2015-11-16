@@ -17,17 +17,14 @@ public class DistanceCalculator {
     private MpiOps mpiOps;
     private int distanceType;
     private boolean sharedInput = false;
-    private String originalStockFile;
-    private Map<Integer, String> permNoToSymbol = new HashMap<Integer, String>();
 
-    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, int distanceType, boolean sharedInput, String originalStockFile) {
+    public DistanceCalculator(String vectorFolder, String distFolder, boolean normalize, boolean mpi, int distanceType, boolean sharedInput) {
         this.vectorFolder = vectorFolder;
         this.distFolder = distFolder;
         this.normalize = normalize;
         this.mpi = mpi;
         this.distanceType = distanceType;
         this.sharedInput = sharedInput;
-        this.originalStockFile = originalStockFile;
     }
 
     public static void main(String[] args) {
@@ -38,7 +35,6 @@ public class DistanceCalculator {
         options.addOption("m", false, "mpi");
         options.addOption("t", true, "distance type");
         options.addOption("s", false, "shared input directory");
-        options.addOption("o", true, "Original stocks file");
 
         CommandLineParser commandLineParser = new BasicParser();
         try {
@@ -49,7 +45,6 @@ public class DistanceCalculator {
             boolean mpi = cmd.hasOption("m");
             int distanceType = Integer.parseInt(cmd.getOptionValue("t"));
             boolean sharedInput = cmd.hasOption("s");
-            String originalStockFile = cmd.getOptionValue("o");
             String print = "vector: " + _vectorFile + " ,distance matrix folder: "
                     + _distFile + " ,normalize: "
                     + _normalize + " ,mpi: " + mpi
@@ -59,12 +54,13 @@ public class DistanceCalculator {
             if (mpi) {
                 MPI.Init(args);
             }
-            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType, sharedInput, originalStockFile);
+            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType, sharedInput);
             program.process();
             if (mpi) {
                 MPI.Finalize();
             }
         } catch (MPIException | ParseException e) {
+            e.printStackTrace();
             System.out.println(options.toString());
         }
     }
@@ -111,12 +107,6 @@ public class DistanceCalculator {
                 }
             } else {
                 files.addAll(list);
-            }
-
-            if (originalStockFile != null && !originalStockFile.equals("")) {
-                if (new File(originalStockFile).exists()) {
-                    permNoToSymbol = Utils.loadMapping(originalStockFile);
-                }
             }
 
             List<Thread> threads = new ArrayList<Thread>();
@@ -205,7 +195,7 @@ public class DistanceCalculator {
 
         List<VectorPoint> vectors;
 
-        do {
+//        do {
             startIndex = endIndex + 1;
             endIndex = startIndex + INC - 1;
 
@@ -213,24 +203,13 @@ public class DistanceCalculator {
             int readEndIndex = INC - 1;
 
             vectors = Utils.readVectors(fileEntry, startIndex, endIndex);
-            if (vectors.size() == 0) {
-                break;
-            }
+//            if (vectors.size() == 0) {
+//                break;
+//            }
 
             // System.out.println("Processing block: " + startIndex + " : " + endIndex);
             // now start from the begining and go through the whole file
-            List<VectorPoint> secondVectors;
-            do {
-
-                if (readStartIndex != startIndex) {
-                    secondVectors = Utils.readVectors(fileEntry, readStartIndex, readEndIndex);
-                } else {
-                    secondVectors = vectors;
-                }
-
-                if (secondVectors.size() == 0) {
-                    break;
-                }
+            List<VectorPoint> secondVectors = vectors;
                 System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex + " read size: " + secondVectors.size());
                 for (int i = 0; i < secondVectors.size(); i++) {
                     VectorPoint sv = secondVectors.get(i);
@@ -264,7 +243,6 @@ public class DistanceCalculator {
                 }
                 readStartIndex = readEndIndex + 1;
                 readEndIndex = readStartIndex + INC - 1;
-            } while (true);
             System.out.println("MAX distance is: " + dmax);
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
@@ -284,11 +262,11 @@ public class DistanceCalculator {
                         throw new RuntimeException("Invalid distance");
                     }
                     short shortValue = (short) (doubleValue * Short.MAX_VALUE);
-                    writer.writeShort((short) shortValue);
+                    writer.writeShort(shortValue);
                 }
                 writer.line();
             }
-        } while (true);
+//        } while (true);
         if (writer != null) {
             writer.close();
         }
