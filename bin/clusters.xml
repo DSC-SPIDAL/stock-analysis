@@ -14,7 +14,7 @@
         <label>1</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="255" g="78" b="0" a="255"/>
+        <color r="255" g="0" b="0" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -23,7 +23,7 @@
         <label>2</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="255" g="157" b="0" a="255"/>
+        <color r="186" g="40" b="40" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -32,7 +32,7 @@
         <label>3</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="255" g="235" b="0" a="255"/>
+        <color r="184" g="69" b="43" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -41,7 +41,7 @@
         <label>4</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="196" g="255" b="0" a="255"/>
+        <color r="173" g="72" b="39" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -50,7 +50,7 @@
         <label>5</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="118" g="255" b="0" a="255"/>
+        <color r="235" g="178" b="67" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -59,16 +59,16 @@
         <label>6</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="39" g="255" b="0" a="255"/>
+        <color r="59" g="153" b="69" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
-    <cluster>
+    <cluster>>
         <key>7</key>
         <label>7</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="0" g="255" b="39" a="255"/>
+        <color r="76" g="163" b="132" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -77,7 +77,7 @@
         <label>8</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="0" g="255" b="118" a="255"/>
+        <color r="63" g="145" b="163" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -86,7 +86,7 @@
         <label>9</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="0" g="255" b="196" a="255"/>
+        <color r="7" g="88" b="184" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
@@ -95,7 +95,7 @@
         <label>10</label>
         <visible>1</visible>
         <default>0</default>
-        <color r="0" g="235" b="255" a="255"/>
+        <color r="1" g="61" b="117" a="255"/>
         <size>1</size>
         <shape>3</shape>
     </cluster>
