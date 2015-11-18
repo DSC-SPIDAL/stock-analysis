@@ -313,12 +313,12 @@ public class WeightCalculator {
                 }
             }
 
-            int constIndex = -1;
+            List<Integer> constIndex = new ArrayList<Integer>();
             for (int i = 0; i < vectors.size(); i++) {
                 VectorPoint v = vectors.get(i);
                 if (v.isConstantVector()) {
                     capMaxs[i] = -1;
-                    constIndex = i;
+                    constIndex.add(i);
                 } else {
                     double pow = Math.pow(caps[i], 0.25);
                     double maxPow = Math.pow(dmax, 0.25);
@@ -327,8 +327,8 @@ public class WeightCalculator {
                 }
             }
 
-            if (constIndex >= 0) {
-                capMaxs[constIndex] = sum * Configuration.getInstance().weightAdjustForConstant / lineCount;
+            for (int l : constIndex) {
+                capMaxs[l] = sum * Configuration.getInstance().weightAdjustForConstant / lineCount;
             }
 
             double max = Double.MIN_VALUE;

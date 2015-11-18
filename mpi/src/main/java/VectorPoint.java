@@ -59,7 +59,10 @@ public class VectorPoint {
     }
 
     public boolean isConstantVector() {
-        return constantVector;
+        if (key < 10) {
+            return true;
+        }
+        return false;
     }
 
     public int getElements() {

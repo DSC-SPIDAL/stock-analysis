@@ -228,22 +228,27 @@ public class PSVectorGenerator {
             VectorPoint v = new VectorPoint(0, new double[]{0});
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
+            bufWriter.newLine();
 
             v = new VectorPoint(1, new double[]{0});
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
+            bufWriter.newLine();
 
             v = new VectorPoint(2, new double[]{0});
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
+            bufWriter.newLine();
 
             v = new VectorPoint(3, new double[]{0});
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
+            bufWriter.newLine();
 
             v = new VectorPoint(4, new double[]{0});
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
+            bufWriter.newLine();
 
             System.out.println("Total stocks: " + vectorCounter + " bad stocks: " + currentPoints.size());
             metric.stocksWithIncorrectDays = currentPoints.size();
