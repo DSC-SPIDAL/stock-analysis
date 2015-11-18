@@ -396,7 +396,7 @@ public class VectorPoint {
             }
         }
 
-        if (missingCount > (elements * .5)) {
+        if (missingCount > (elements * .05)) {
             metric.missingValues++;
             for (int i = 0; i < elements; i++) {
                 System.out.print(numbers[i] + " ");
