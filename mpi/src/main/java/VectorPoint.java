@@ -30,12 +30,20 @@ public class VectorPoint {
     public static final double CONST_DISTANCE = .5;
 
     public VectorPoint(int key, int size) {
+        this(key, size, false);
+    }
+
+    public VectorPoint(int key, int size, boolean indexed) {
         this.key = key;
         this.numbers = new double[size];
         for (int i = 0; i < numbers.length; i++) {
             numbers[i] = -1;
         }
-        elements = 0;
+        if (indexed) {
+            elements = size;
+        } else {
+            elements = 0;
+        }
     }
 
     public void setConstantVector(boolean constantVector) {
@@ -233,28 +241,90 @@ public class VectorPoint {
     public double corr(VectorPoint vc) {
         double []xs;
         double []ys;
-        if (vc.isConstantVector() && this.isConstantVector()) {
+        ys = this.numbers;
+        xs = vc.numbers;
+
+        if (vc.getKey() == this.getKey()) {
             // both are same so return 1
             return 1;
-        } else if (vc.isConstantVector()){
-            ys = this.numbers;
+        }
+
+        if (vc.getKey() < 10) {
             xs = new double[ys.length];
-            for (int i = 0; i < xs.length; i++) {
-                xs[i] = i;
+            double point1Delta = 1.1 / xs.length;
+            double point2Delta = 1.2 / xs.length;
+            double decreasePoint1Delta = 1 / (xs.length * 1.1);
+            double decreasePoint2Delta = 1 / (xs.length * 1.2);
+
+            if (vc.getKey() == 1) {
+                for (int i = 0; i < xs.length; i++) {
+                    xs[i] = 1 + i * point1Delta;
+                }
             }
-        } else if (this.isConstantVector()) {
-            xs = vc.numbers;
+            if (vc.getKey() == 2) {
+                for (int i = 0; i < xs.length; i++) {
+                    xs[i] = 1 + i * point2Delta;
+                }
+            }
+            if (vc.getKey() == 3) {
+                for (int i = 0; i < xs.length; i++) {
+                    xs[i] = 1 - i * decreasePoint1Delta;
+                }
+            }
+            if (vc.getKey() == 4) {
+                for (int i = 0; i < xs.length; i++) {
+                    xs[i] = 1 - i * decreasePoint2Delta;
+                }
+            }
+        }
+
+        if (this.getKey() < 10) {
             ys = new double[xs.length];
-            for (int i = 0; i < ys.length; i++) {
-                ys[i] = i;
+            double point1Delta = 1.1 / ys.length;
+            double point2Delta = 1.2 / ys.length;
+            double decreasePoint1Delta = 1 / (ys.length * 1.1);
+            double decreasePoint2Delta = 1 / (ys.length * 1.2);
+
+            if (this.getKey() == 1) {
+                for (int i = 0; i < ys.length; i++) {
+                    ys[i] = 1 + i * point1Delta;
+                }
             }
-        } else {
-            ys = this.numbers;
-            xs = vc.numbers;
+            if (this.getKey() == 2) {
+                for (int i = 0; i < ys.length; i++) {
+                    ys[i] = 1 + i * point2Delta;
+                }
+            }
+            if (this.getKey() == 3) {
+                for (int i = 0; i < ys.length; i++) {
+                    ys[i] = 1 - i * decreasePoint1Delta;
+                }
+            }
+            if (this.getKey() == 4) {
+                for (int i = 0; i < ys.length; i++) {
+                    ys[i] = 1 - i * decreasePoint2Delta;
+                }
+            }
         }
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         return pearsonsCorrelation.correlation(xs, ys);
+    }
+
+    public boolean add(double number, double factorToAdjPrice, double factoToAdjVolume, CleanMetric metric, int index) {
+        if (numbers[index] != -1) return false;
+        if (factorToAdjPrice > 0) {
+            if (Math.abs(factorToAdjPrice - factoToAdjVolume) < .0001) {
+                factor = factor * (factorToAdjPrice + 1);
+                //System.out.println("New factor: " + key + " = " + factor);
+                metric.properSplitData++;
+            } else {
+                //System.out.println("Pirce != Volume not adjusting: " + key + " = " + factor);
+                metric.nonProperSplitData++;
+            }
+        }
+        numbers[index] = factor * number;
+        return true;
     }
 
     public void add(double number, double factorToAdjPrice, double factoToAdjVolume, CleanMetric metric) {
@@ -288,20 +358,9 @@ public class VectorPoint {
     public String serialize() {
         double marketCap = this.totalCap / this.elements;
         StringBuilder sb = new StringBuilder(Integer.toString(key)).append(" ").append(Double.toString(marketCap)).append(" ");
-        double previousVal = 0;
         int missingCount = 0;
         for (int i = 0; i < elements; i++) {
-            if (numbers[i] == -1) {
-                missingCount++;
-                numbers[i] = previousVal;
-            }
             sb.append(Double.toString(numbers[i])).append(" ");
-            previousVal = numbers[i];
-        }
-        // if missing count is greater than 5% print and  ignore
-        if (missingCount > (elements * 0.05)) {
-            System.out.println("Missing count: " + missingCount);
-            return null;
         }
         return sb.toString();
     }
@@ -316,40 +375,37 @@ public class VectorPoint {
         if (elements <= 0) return false;
         double first = numbers[0];
         int missingCount = 0;
-        boolean valid = false;
+        double previousVal = 0;
+        boolean change = false;
         for (int i = 0; i < elements; i++) {
             double n = numbers[i];
+            if (numbers[i] == -1) {
+                missingCount++;
+                numbers[i] = previousVal;
+            }
+            previousVal = numbers[i];
             // in case of a split we can get something other than -1
             if (n < 0) {
                 missingCount++;
             }
             if (Math.abs(n - first) > .0001) {
-                valid = true;
+                change = true;
             }
         }
-//        if (missingCount  > 0)
-//            System.out.println(missingCount);
 
         if (missingCount > (elements * .05)) {
             metric.missingValues++;
             return false;
         }
-        // check the standard deviation
-//        StandardDeviation standardDeviation = new StandardDeviation();
-//        double std = standardDeviation.evaluate(numbers);
-//        if (Math.abs(std - 0.0) > .00001) {
-//            // metric.constantStock++;
-//            return false;
-//        }
 
-        if (!valid) {
+        if (!change) {
             for (int i = 0; i < elements; i++) {
                 System.out.print(numbers[i] + " ");
             }
             metric.constantStock++;
         }
 
-        return valid;
+        return change;
     }
 
     public static void main(String[] args) {

@@ -1,3 +1,5 @@
+import java.text.ParseException;
+import java.util.Date;
 
 public class Test {
     public static void main(String[] args) {
@@ -45,6 +47,15 @@ public class Test {
             }
             System.out.println();
         }
+
+        try {
+            Date d1 = Utils.formatter.parse("20040101");
+            Date d2 = Utils.formatter.parse("20040101");
+            System.out.println(d1.equals(d2));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
 
     }
 }

@@ -16,7 +16,7 @@ public class PSVectorGenerator {
     private Date startDate;
     private Date endDate;
     private int mode;
-    TreeMap<String, List<Date>> dates = new TreeMap<String, List<Date>>();
+    private TreeMap<String, List<Date>> dates = new TreeMap<String, List<Date>>();
 
     private Map<String, CleanMetric> metrics = new HashMap<String, CleanMetric>();
 
@@ -33,7 +33,7 @@ public class PSVectorGenerator {
     public void process() {
         System.out.println("starting vector generator...");
         File inFolder = new File(this.inFolder);
-        TreeMap<String, List<Date>> dates = Utils.genDates(this.startDate, this.endDate, this.mode);
+        TreeMap<String, List<Date>> allDates = Utils.genDates(this.startDate, this.endDate, this.mode);
         // create the out directory
         Utils.createDirectory(outFolder);
 
@@ -43,12 +43,12 @@ public class PSVectorGenerator {
                 mpiOps = new MpiOps();
                 int rank = mpiOps.getRank();
                 int size = mpiOps.getSize();
-                Iterator<String> datesItr = dates.keySet().iterator();
+                Iterator<String> datesItr = allDates.keySet().iterator();
                 int i = 0;
                 while (datesItr.hasNext()) {
                     String next = datesItr.next();
                     if (i == rank) {
-                        this.dates.put(next, dates.get(next));
+                        this.dates.put(next, allDates.get(next));
                     }
                     i++;
                     if (i == size) {
@@ -59,14 +59,73 @@ public class PSVectorGenerator {
                 e.printStackTrace();
             }
         } else {
-            this.dates = dates;
+            this.dates = allDates;
         }
+
+        // now go through the file and figure out the dates that should be considered
+        Map<String, Map<Date, Integer>> datesList = findDates(this.inFolder);
 
         for (Map.Entry<String, List<Date>> ed : this.dates.entrySet()) {
             Date start = ed.getValue().get(0);
             Date end = ed.getValue().get(1);
-            processFile(inFolder, start, end, ed.getKey());
+            processFile(inFolder, start, end, ed.getKey(), datesList.get(ed.getKey()));
         }
+    }
+
+    private Map<String, Map<Date, Integer>> findDates(String inFile) {
+        FileReader input = null;
+        // a map of datestring -> map <date string, index>
+        Map<String, Map<Date, Integer>> outDates = new HashMap<String, Map<Date, Integer>>();
+        Map<String, Set<Date>> tempDates = new HashMap<String, Set<Date>>();
+
+        // initialize temp dates
+        for (String dateRange : this.dates.keySet()) {
+            tempDates.put(dateRange, new TreeSet<Date>());
+        }
+
+        try {
+            input = new FileReader(inFile);
+            BufferedReader bufRead = new BufferedReader(input);
+            Record record;
+            while ((record = Utils.parseFile(bufRead, null, false)) != null) {
+                // check what date this record belongs to
+                for (Map.Entry<String, List<Date>> ed : this.dates.entrySet()) {
+                    Date start = ed.getValue().get(0);
+                    Date end = ed.getValue().get(1);
+                    if (isDateWithing(start, end, record.getDate())) {
+                        Set<Date> tempDateList = tempDates.get(ed.getKey());
+                        tempDateList.add(record.getDate());
+                    }
+                }
+            }
+
+            for (Map.Entry<String, Set<Date>> ed : tempDates.entrySet()) {
+                Set<Date> datesSet = ed.getValue();
+                int i = 0;
+                Map<Date, Integer> dateIntegerMap = new HashMap<Date, Integer>();
+                for (Date d : datesSet) {
+                    dateIntegerMap.put(d, i);
+                    i++;
+                }
+                outDates.put(ed.getKey(), dateIntegerMap);
+            }
+        } catch (FileNotFoundException e) {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException ignore) {
+                }
+            }
+        }
+
+        for (Map.Entry<String, Set<Date>> ed : tempDates.entrySet()) {
+            StringBuilder sb = new StringBuilder();
+            for (Date d : ed.getValue()) {
+                sb.append(Utils.formatter.format(d)).append(" ");
+            }
+            System.out.println(ed.getKey() + ":"  + sb.toString());
+        }
+        return outDates;
     }
 
     private void printExistingVectors() {
@@ -86,12 +145,13 @@ public class PSVectorGenerator {
     /**
      * Process a stock file and generate vectors for a month or year period
      */
-    private void processFile(File inFile, Date startDate, Date endDate, String outFile) {
+    private void processFile(File inFile, Date startDate, Date endDate, String outFile, Map<Date, Integer> datesList) {
         BufferedWriter bufWriter = null;
         BufferedReader bufRead = null;
         System.out.println("Calc: " + outFile + Utils.formatter.format(startDate) + ":" + Utils.formatter.format(endDate));
         int size = -1;
         vectorCounter = 0;
+        int noOfDays = datesList.size();
         String outFileName = outFolder + "/" + outFile + ".csv";
         int capCount = 0;
         CleanMetric metric = this.metrics.get(outFileName);
@@ -112,7 +172,7 @@ public class PSVectorGenerator {
             int splitCount = 0;
             while ((record = Utils.parseFile(bufRead, null, false)) != null) {
                 // not a record we are interested in
-                if (!check(startDate, endDate, record.getDate())) {
+                if (!isDateWithing(startDate, endDate, record.getDate())) {
                     continue;
                 }
                 count++;
@@ -123,15 +183,18 @@ public class PSVectorGenerator {
                 // check weather we already have the vector seen
                 VectorPoint point = currentPoints.get(key);
                 if (point == null) {
-                    point = new VectorPoint(key, days);
+                    point = new VectorPoint(key, noOfDays, true);
                     currentPoints.put(key, point);
                 }
-                if (!point.isFull()) {
-                    point.add(record.getPrice(), record.getFactorToAdjPrice(), record.getFactorToAdjVolume(), metric);
-                    point.addCap(record.getVolume() * record.getPrice());
-                } else {
-                    System.out.println("Point full cannot add more....");
+
+                // figure out the index
+                int index = datesList.get(record.getDate());
+                if (!point.add(record.getPrice(), record.getFactorToAdjPrice(), record.getFactorToAdjVolume(), metric, index)) {
+                    metric.dupRecords++;
+                    System.out.println("dup: " + record.serialize());
                 }
+                point.addCap(record.getVolume() * record.getPrice());
+
                 if (point.noOfElements() == size) {
                     fullCount++;
                 }
@@ -149,7 +212,7 @@ public class PSVectorGenerator {
                 // now write the current vectors, also make sure we have the size determined correctly
                 if (currentPoints.size() > 1000 && size != -1 && fullCount > 750) {
                     System.out.println("Processed: " + count);
-                    totalCap += writeVectors(bufWriter, size, metric);
+                    totalCap += writeVectors(bufWriter, noOfDays, metric);
                     capCount++;
                     fullCount = 0;
                 }
@@ -163,6 +226,22 @@ public class PSVectorGenerator {
 
 //            write the constant vector at the end
             VectorPoint v = new VectorPoint(0, new double[]{0});
+            v.addCap(totalCap);
+            bufWriter.write(v.serialize());
+
+            v = new VectorPoint(1, new double[]{0});
+            v.addCap(totalCap);
+            bufWriter.write(v.serialize());
+
+            v = new VectorPoint(2, new double[]{0});
+            v.addCap(totalCap);
+            bufWriter.write(v.serialize());
+
+            v = new VectorPoint(3, new double[]{0});
+            v.addCap(totalCap);
+            bufWriter.write(v.serialize());
+
+            v = new VectorPoint(4, new double[]{0});
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
 
@@ -231,6 +310,7 @@ public class PSVectorGenerator {
                     bufWriter.newLine();
                     // remove it from map
                     vectorCounter++;
+                    metric.writtenStocks++;
                 } else {
                     metric.invalidStocks++;
                 }
@@ -242,7 +322,7 @@ public class PSVectorGenerator {
         return capSum;
     }
 
-    private boolean check(Date start, Date end, Date compare) {
+    private boolean isDateWithing(Date start, Date end, Date compare) {
         if (compare == null) {
             System.out.println("Comapre null*****************");
         }
