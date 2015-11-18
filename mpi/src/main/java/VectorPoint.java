@@ -385,14 +385,11 @@ public class VectorPoint {
                 if (numbers[i] == -1) {
                     missingCount++;
                     numbers[i] = previousVal;
+                } else {
+                    numbers[i] = numbers[i] * -1;
                 }
-                numbers[i] = numbers[i] * -1;
             }
             previousVal = numbers[i];
-            // in case of a split we can get something other than -1
-            if (n < 0) {
-                numbers[i] = numbers[i] * -1;
-            }
             if (Math.abs(n - first) > .0001) {
                 change = true;
             }
