@@ -1,7 +1,6 @@
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.util.Random;
@@ -102,9 +101,9 @@ public class VectorPoint {
 //                if (isValid() && vc.isValid()) {
 //                    System.out.println("Errrrrrrrrrrrrrrrrrrrrrrrrr");
                     System.out.println("Not a number..............................................");
-                    if (!isValid(new CleanMetric())) System.out.println("Not valid");
+                    if (!cleanVector(new CleanMetric())) System.out.println("Not valid");
                     System.out.println(s);
-                    if (!vc.isValid(new CleanMetric())) System.out.println("Not valid");
+                    if (!vc.cleanVector(new CleanMetric())) System.out.println("Not valid");
                     System.out.println(s2);
                     System.out.println("NAN");
                 }
@@ -370,9 +369,9 @@ public class VectorPoint {
 
     /**
      * Check weather this vector is a valid one
-     * @return true if the vector is valid
+     * @return true if the vector is cleaned
      */
-    public boolean isValid(CleanMetric metric) {
+    public boolean cleanVector(CleanMetric metric) {
         if (constantVector) return true;
         // for now lets just check weather this has same values, if so this is not a valid vector
         if (elements <= 0) return false;
@@ -382,12 +381,12 @@ public class VectorPoint {
         boolean change = false;
         for (int i = 0; i < elements; i++) {
             double n = numbers[i];
-            if (numbers[i] == -1) {
-                missingCount++;
-                numbers[i] = previousVal;
-                if (numbers[i] < 0) {
-                    numbers[i] = numbers[i] * -1;
+            if (numbers[i] < 0) {
+                if (numbers[i] == -1) {
+                    missingCount++;
+                    numbers[i] = previousVal;
                 }
+                numbers[i] = numbers[i] * -1;
             }
             previousVal = numbers[i];
             // in case of a split we can get something other than -1
@@ -445,6 +444,6 @@ public class VectorPoint {
         System.out.println(System.currentTimeMillis() - t);
 
         VectorPoint p = new VectorPoint(1, new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
-        System.out.println(p.isValid(new CleanMetric()));
+        System.out.println(p.cleanVector(new CleanMetric()));
     }
 }

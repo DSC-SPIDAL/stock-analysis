@@ -299,7 +299,7 @@ public class PSVectorGenerator {
             if (v.noOfElements() == size) {
                 metric.totalStocks++;
 
-                if (!v.isValid(metric)) {
+                if (!v.cleanVector(metric)) {
                     // System.out.println("Vector not valid: " + outFileName + ", " + v.serialize());
                     metric.invalidStocks++;
                     it.remove();
