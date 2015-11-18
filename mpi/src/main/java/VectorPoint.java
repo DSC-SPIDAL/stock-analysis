@@ -252,7 +252,11 @@ public class VectorPoint {
         }
 
         if (vc.getKey() < 10) {
-            xs = new double[ys.length];
+            if (this.getKey() < 10) {
+                xs = new double[100];
+            } else {
+                xs = new double[ys.length];
+            }
             double point1Delta = 1.1 / xs.length;
             double point2Delta = 1.2 / xs.length;
             double decreasePoint1Delta = 1 / (xs.length * 1.1);
@@ -281,7 +285,11 @@ public class VectorPoint {
         }
 
         if (this.getKey() < 10) {
-            ys = new double[xs.length];
+            if (vc.getKey() < 10) {
+                ys = new double[100];
+            } else {
+                ys = new double[xs.length];
+            }
             double point1Delta = 1.1 / ys.length;
             double point2Delta = 1.2 / ys.length;
             double decreasePoint1Delta = 1 / (ys.length * 1.1);
