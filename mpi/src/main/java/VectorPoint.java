@@ -385,6 +385,9 @@ public class VectorPoint {
             if (numbers[i] == -1) {
                 missingCount++;
                 numbers[i] = previousVal;
+                if (numbers[i] < 0) {
+                    numbers[i] = numbers[i] * -1;
+                }
             }
             previousVal = numbers[i];
             // in case of a split we can get something other than -1
