@@ -389,15 +389,18 @@ public class VectorPoint {
             previousVal = numbers[i];
             // in case of a split we can get something other than -1
             if (n < 0) {
-                missingCount++;
+                numbers[i] = numbers[i] * -1;
             }
             if (Math.abs(n - first) > .0001) {
                 change = true;
             }
         }
 
-        if (missingCount > (elements * .05)) {
+        if (missingCount > (elements * .5)) {
             metric.missingValues++;
+            for (int i = 0; i < elements; i++) {
+                System.out.print(numbers[i] + " ");
+            }
             return false;
         }
 
