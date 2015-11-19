@@ -262,11 +262,10 @@ public class VectorPoint {
             } else {
                 xs = new double[ys.length];
             }
-            double point1Delta = 0.001;
-            double point2Delta = 0.002;
-            double decreasePoint1Delta = 0.001;
-            double decreasePoint2Delta = 0.002;
-
+            double point1Delta = .1/250;
+            double point2Delta = .2/250;
+            double decreasePoint1Delta = .1/250;
+            double decreasePoint2Delta = .2/250;
             if (vc.getKey() == 1) {
                 for (int i = 0; i < xs.length; i++) {
                     xs[i] = start + i * point1Delta;
@@ -295,10 +294,10 @@ public class VectorPoint {
             } else {
                 ys = new double[xs.length];
             }
-            double point1Delta = 0.001;
-            double point2Delta = 0.002;
-            double decreasePoint1Delta = 0.001;
-            double decreasePoint2Delta = 0.002;
+            double point1Delta = 0.1/250;
+            double point2Delta = 0.2/250;
+            double decreasePoint1Delta = 0.1/250;
+            double decreasePoint2Delta = 0.2/250;
 
             if (this.getKey() == 1) {
                 for (int i = 0; i < ys.length; i++) {
@@ -430,10 +429,14 @@ public class VectorPoint {
         double x[] = {1, 2, 3, 4, 5, 6, 7, 8};
 //        double y[] = {2, 4, 8, 16, 32, 64, 128, 256};
 //        double y[] = {1, 2, 3, 4, 5, 6, 7, 8};
-        double y[] = {8, 7, 6, 5, 3, 2, 1, 0};
+        double y[] = {1, 4, 6, 8, 10, 12, 14, 16};
+
+        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+        double aa = pearsonsCorrelation.correlation(x, y);
+        System.out.println(aa);
 
         VectorPoint vc = new VectorPoint(1, 10);
-        //double correlation = vc.correlation(x, y);
+//        double correlation = vc.correlation(x, y);
         //System.out.println((1 - correlation) / 2);
         double x1 = vc.modCorrelation(x, y);
 //        System.out.println(x1);
@@ -464,7 +467,7 @@ public class VectorPoint {
 
 //        System.out.println(c0.corr(c1));
 //        System.out.println(c1.corr(c2));
-        System.out.println(c2.corr(c3));
+        System.out.println(c3.corr(c4));
 //        System.out.println(c3.corr(c4));
     }
 }
