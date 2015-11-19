@@ -233,7 +233,7 @@
         <visible>1</visible>
         <default>0</default>
         <color r="0" g="204" b="0" a="214"/>
-        <size>40</size>
+        <size>30</size>
         <shape>1</shape>
     </cluster>
     <cluster>
@@ -242,7 +242,7 @@
         <visible>1</visible>
         <default>0</default>
         <color r="0" g="102" b="0" a="214"/>
-        <size>40</size>
+        <size>30</size>
         <shape>1</shape>
     </cluster>
     <cluster>
@@ -251,7 +251,7 @@
         <visible>1</visible>
         <default>0</default>
         <color r="255" g="102" b="0" a="214"/>
-        <size>40</size>
+        <size>30</size>
         <shape>1</shape>
     </cluster>
     <cluster>
@@ -260,7 +260,7 @@
         <visible>1</visible>
         <default>0</default>
         <color r="255" g="0" b="0" a="214"/>
-        <size>40</size>
+        <size>30</size>
         <shape>1</shape>
     </cluster>
 </clusters>
