@@ -304,10 +304,10 @@ public class Utils {
                 maps.put(record.getSymbol(), record.getSymbolString());
             }
             maps.put(0, "CONST");
-            maps.put(31, "10INC");
-            maps.put(32, "10INC");
-            maps.put(33, "10INC");
-            maps.put(34, "10INC");
+            maps.put(1, "10INC");
+            maps.put(2, "10INC");
+            maps.put(3, "10INC");
+            maps.put(4, "10INC");
             System.out.println("No of stocks: " + maps.size());
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Failed to open file");
