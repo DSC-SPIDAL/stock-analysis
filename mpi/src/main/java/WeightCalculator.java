@@ -201,6 +201,7 @@ public class WeightCalculator {
             }
 
             int constIndex = -1;
+            double pMax = Double.MIN_VALUE;
             for (int i = 0; i < vectors.size(); i++) {
                 VectorPoint v = vectors.get(i);
                 if (v.isConstantVector()) {
@@ -211,11 +212,14 @@ public class WeightCalculator {
                     double maxPow = Math.pow(dmax, 0.25);
                     capMaxs[i] = Math.max(maxPow * 0.05, pow);
                     sum += capMaxs[i];
+                    if (capMaxs[i] > pMax) {
+                        pMax = capMaxs[i];
+                    }
                 }
             }
 
             if (constIndex >= 0) {
-                capMaxs[constIndex] = sum * Configuration.getInstance().weightAdjustForConstant / lineCount;
+                capMaxs[constIndex] = pMax * Configuration.getInstance().weightAdjustForConstant;
             }
 
             // write the vectors to file
@@ -314,6 +318,7 @@ public class WeightCalculator {
             }
 
             List<Integer> constIndex = new ArrayList<Integer>();
+            double pMax = Double.MIN_VALUE;
             for (int i = 0; i < vectors.size(); i++) {
                 VectorPoint v = vectors.get(i);
                 if (v.isConstantVector()) {
@@ -324,11 +329,14 @@ public class WeightCalculator {
                     double maxPow = Math.pow(dmax, 0.25);
                     capMaxs[i] = Math.max(maxPow * 0.05, pow);
                     sum += capMaxs[i];
+                    if (capMaxs[i] > pMax) {
+                        pMax = capMaxs[i];
+                    }
                 }
             }
 
             for (int l : constIndex) {
-                capMaxs[l] = sum * Configuration.getInstance().weightAdjustForConstant / lineCount;
+                capMaxs[l] = pMax * Configuration.getInstance().weightAdjustForConstant;
             }
 
             double max = Double.MIN_VALUE;

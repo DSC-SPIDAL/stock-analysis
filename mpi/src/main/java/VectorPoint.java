@@ -241,6 +241,7 @@ public class VectorPoint {
     }
 
     public double corr(VectorPoint vc) {
+        final int start = 100;
         double []xs;
         double []ys;
         ys = this.numbers;
@@ -251,35 +252,39 @@ public class VectorPoint {
             return 1;
         }
 
+        if (vc.getKey() == 0 || this.getKey() == 0) {
+            return 0;
+        }
+
         if (vc.getKey() < 10) {
             if (this.getKey() < 10) {
                 xs = new double[100];
             } else {
                 xs = new double[ys.length];
             }
-            double point1Delta = 1.1 / xs.length;
-            double point2Delta = 1.2 / xs.length;
-            double decreasePoint1Delta = 1 / (xs.length * 1.1);
-            double decreasePoint2Delta = 1 / (xs.length * 1.2);
+            double point1Delta = 0.001;
+            double point2Delta = 0.002;
+            double decreasePoint1Delta = 0.001;
+            double decreasePoint2Delta = 0.002;
 
             if (vc.getKey() == 1) {
                 for (int i = 0; i < xs.length; i++) {
-                    xs[i] = 1 + i * point1Delta;
+                    xs[i] = start + i * point1Delta;
                 }
             }
             if (vc.getKey() == 2) {
                 for (int i = 0; i < xs.length; i++) {
-                    xs[i] = 1 + i * point2Delta;
+                    xs[i] = start + i * point2Delta;
                 }
             }
             if (vc.getKey() == 3) {
                 for (int i = 0; i < xs.length; i++) {
-                    xs[i] = 1 - i * decreasePoint1Delta;
+                    xs[i] = start - i * decreasePoint1Delta;
                 }
             }
             if (vc.getKey() == 4) {
                 for (int i = 0; i < xs.length; i++) {
-                    xs[i] = 1 - i * decreasePoint2Delta;
+                    xs[i] = start - i * decreasePoint2Delta;
                 }
             }
         }
@@ -290,29 +295,29 @@ public class VectorPoint {
             } else {
                 ys = new double[xs.length];
             }
-            double point1Delta = 1.1 / ys.length;
-            double point2Delta = 1.2 / ys.length;
-            double decreasePoint1Delta = 1 / (ys.length * 1.1);
-            double decreasePoint2Delta = 1 / (ys.length * 1.2);
+            double point1Delta = 0.001;
+            double point2Delta = 0.002;
+            double decreasePoint1Delta = 0.001;
+            double decreasePoint2Delta = 0.002;
 
             if (this.getKey() == 1) {
                 for (int i = 0; i < ys.length; i++) {
-                    ys[i] = 1 + i * point1Delta;
+                    ys[i] = start + i * point1Delta;
                 }
             }
             if (this.getKey() == 2) {
                 for (int i = 0; i < ys.length; i++) {
-                    ys[i] = 1 + i * point2Delta;
+                    ys[i] = start + i * point2Delta;
                 }
             }
             if (this.getKey() == 3) {
                 for (int i = 0; i < ys.length; i++) {
-                    ys[i] = 1 - i * decreasePoint1Delta;
+                    ys[i] = start - i * decreasePoint1Delta;
                 }
             }
             if (this.getKey() == 4) {
                 for (int i = 0; i < ys.length; i++) {
-                    ys[i] = 1 - i * decreasePoint2Delta;
+                    ys[i] = start - i * decreasePoint2Delta;
                 }
             }
         }
@@ -431,7 +436,7 @@ public class VectorPoint {
         //double correlation = vc.correlation(x, y);
         //System.out.println((1 - correlation) / 2);
         double x1 = vc.modCorrelation(x, y);
-        System.out.println(x1);
+//        System.out.println(x1);
 
         double a[] = new double[2048];
         double b[] = new double[2048];
@@ -446,9 +451,20 @@ public class VectorPoint {
         double k[] = StatUtils.normalize(b);
         EuclideanDistance distance = new EuclideanDistance();
         distance.compute(z, k);
-        System.out.println(System.currentTimeMillis() - t);
+//        System.out.println(System.currentTimeMillis() - t);
 
         VectorPoint p = new VectorPoint(1, new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
-        System.out.println(p.cleanVector(new CleanMetric()));
+//        System.out.println(p.cleanVector(new CleanMetric()));
+
+        VectorPoint c0 = new VectorPoint(0, 100);
+        VectorPoint c1 = new VectorPoint(1, 100);
+        VectorPoint c2 = new VectorPoint(2, 100);
+        VectorPoint c3 = new VectorPoint(3, 100);
+        VectorPoint c4 = new VectorPoint(4, 100);
+
+//        System.out.println(c0.corr(c1));
+//        System.out.println(c1.corr(c2));
+        System.out.println(c2.corr(c3));
+//        System.out.println(c3.corr(c4));
     }
 }
