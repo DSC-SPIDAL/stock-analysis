@@ -305,9 +305,9 @@ public class Utils {
             }
             maps.put(0, "CONST");
             maps.put(1, "10INC");
-            maps.put(2, "10INC");
-            maps.put(3, "10INC");
-            maps.put(4, "10INC");
+            maps.put(2, "20INC");
+            maps.put(3, "10DEC");
+            maps.put(4, "20DEC");
             System.out.println("No of stocks: " + maps.size());
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Failed to open file");
