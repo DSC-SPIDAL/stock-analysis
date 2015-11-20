@@ -34,6 +34,9 @@ public class PSVectorGenerator {
         System.out.println("starting vector generator...");
         File inFolder = new File(this.inFolder);
         TreeMap<String, List<Date>> allDates = Utils.genDates(this.startDate, this.endDate, this.mode);
+        for (String dateString : allDates.keySet()) {
+            System.out.println(dateString + " ");
+        }
         // create the out directory
         Utils.createDirectory(outFolder);
 
