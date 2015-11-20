@@ -236,17 +236,17 @@
         <size>30</size>
         <shape>1</shape>
     </cluster>
+    <!--<cluster>-->
+        <!--<key>32</key>-->
+        <!--<label>20%-INC</label>-->
+        <!--<visible>1</visible>-->
+        <!--<default>0</default>-->
+        <!--<color r="0" g="102" b="0" a="214"/>-->
+        <!--<size>30</size>-->
+        <!--<shape>1</shape>-->
+    <!--</cluster>-->
     <cluster>
         <key>32</key>
-        <label>20%-INC</label>
-        <visible>1</visible>
-        <default>0</default>
-        <color r="0" g="102" b="0" a="214"/>
-        <size>30</size>
-        <shape>1</shape>
-    </cluster>
-    <cluster>
-        <key>33</key>
         <label>10%-DEC</label>
         <visible>1</visible>
         <default>0</default>
@@ -254,13 +254,13 @@
         <size>30</size>
         <shape>1</shape>
     </cluster>
-    <cluster>
-        <key>34</key>
-        <label>20%-DEC</label>
-        <visible>1</visible>
-        <default>0</default>
-        <color r="255" g="0" b="0" a="214"/>
-        <size>30</size>
-        <shape>1</shape>
-    </cluster>
+    <!--<cluster>-->
+        <!--<key>34</key>-->
+        <!--<label>20%-DEC</label>-->
+        <!--<visible>1</visible>-->
+        <!--<default>0</default>-->
+        <!--<color r="255" g="0" b="0" a="214"/>-->
+        <!--<size>30</size>-->
+        <!--<shape>1</shape>-->
+    <!--</cluster>-->
 </clusters>
