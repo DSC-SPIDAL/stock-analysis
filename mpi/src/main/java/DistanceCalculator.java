@@ -166,7 +166,7 @@ public class DistanceCalculator {
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
         //File smallDirFile = new File(smallValDir);
         //smallDirFile.mkdirs();
-        writer = new WriterWrapper(outFileName, true);
+        writer = new WriterWrapper(outFileName, false);
         //WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
         // +1 to accomodate constant sctock
         int lineCount = countLines(fileEntry);

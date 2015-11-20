@@ -64,6 +64,7 @@ public class PvizGenerator {
         }
         catch (FileNotFoundException | JAXBException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             if (adrFile != null) {
                 try {
@@ -72,7 +73,6 @@ public class PvizGenerator {
                 }
             }
         }
-        return null;
     }
 
 
