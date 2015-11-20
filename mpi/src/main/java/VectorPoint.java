@@ -262,10 +262,10 @@ public class VectorPoint {
             } else {
                 xs = new double[ys.length];
             }
-            double point1Delta = 1/250;
-            double point2Delta = 2/250;
-            double decreasePoint1Delta = 1/250;
-            double decreasePoint2Delta = 2/250;
+            double point1Delta = 1.0/250;
+            double point2Delta = 2.0/250;
+            double decreasePoint1Delta = 1.0250;
+            double decreasePoint2Delta = 2.0/250;
             if (vc.getKey() == 0) {
                 for (int i = 0; i < xs.length; i++) {
                     if (i / 2 == 0) {
@@ -303,10 +303,10 @@ public class VectorPoint {
             } else {
                 ys = new double[xs.length];
             }
-            double point1Delta = 1/250;
-            double point2Delta = 2/250;
-            double decreasePoint1Delta = 1/250;
-            double decreasePoint2Delta = 2/250;
+            double point1Delta = 1.0/250;
+            double point2Delta = 2.0/250;
+            double decreasePoint1Delta = 1.0/250;
+            double decreasePoint2Delta = 2.0/250;
 
             if (this.getKey() == 0) {
                 for (int i = 0; i < ys.length; i++) {
@@ -341,7 +341,13 @@ public class VectorPoint {
         }
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
-        return pearsonsCorrelation.correlation(xs, ys);
+        double correlation = pearsonsCorrelation.correlation(xs, ys);
+
+//        if (vc.getKey() < 10 || this.getKey() < 10) {
+//            System.out.println(correlation);
+//        }
+
+        return correlation;
     }
 
     public boolean add(double number, double factorToAdjPrice, double factoToAdjVolume, CleanMetric metric, int index) {
