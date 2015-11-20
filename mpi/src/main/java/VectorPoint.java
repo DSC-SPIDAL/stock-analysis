@@ -262,10 +262,10 @@ public class VectorPoint {
             } else {
                 xs = new double[ys.length];
             }
-            double point1Delta = .1/250;
-            double point2Delta = .2/250;
-            double decreasePoint1Delta = .1/250;
-            double decreasePoint2Delta = .2/250;
+            double point1Delta = 1/250;
+            double point2Delta = 2/250;
+            double decreasePoint1Delta = 1/250;
+            double decreasePoint2Delta = 2/250;
             if (vc.getKey() == 0) {
                 for (int i = 0; i < xs.length; i++) {
                     if (i / 2 == 0) {
@@ -280,21 +280,21 @@ public class VectorPoint {
                     xs[i] = start + i * point1Delta;
                 }
             }
+//            if (vc.getKey() == 2) {
+//                for (int i = 0; i < xs.length; i++) {
+//                    xs[i] = start + i * point2Delta;
+//                }
+//            }
             if (vc.getKey() == 2) {
-                for (int i = 0; i < xs.length; i++) {
-                    xs[i] = start + i * point2Delta;
-                }
-            }
-            if (vc.getKey() == 3) {
                 for (int i = 0; i < xs.length; i++) {
                     xs[i] = start - i * decreasePoint1Delta;
                 }
             }
-            if (vc.getKey() == 4) {
-                for (int i = 0; i < xs.length; i++) {
-                    xs[i] = start - i * decreasePoint2Delta;
-                }
-            }
+//            if (vc.getKey() == 4) {
+//                for (int i = 0; i < xs.length; i++) {
+//                    xs[i] = start - i * decreasePoint2Delta;
+//                }
+//            }
         }
 
         if (this.getKey() < 10) {
@@ -303,8 +303,8 @@ public class VectorPoint {
             } else {
                 ys = new double[xs.length];
             }
-            double point1Delta = 0.1/250;
-            double point2Delta = 0.2/250;
+            double point1Delta = 1/250;
+            double point2Delta = 2/250;
             double decreasePoint1Delta = 0.1/250;
             double decreasePoint2Delta = 0.2/250;
 
@@ -323,21 +323,21 @@ public class VectorPoint {
                     ys[i] = start + i * point1Delta;
                 }
             }
-            if (this.getKey() == 2) {
-                for (int i = 0; i < ys.length; i++) {
-                    ys[i] = start + i * point2Delta;
-                }
-            }
+//            if (this.getKey() == 2) {
+//                for (int i = 0; i < ys.length; i++) {
+//                    ys[i] = start + i * point2Delta;
+//                }
+//            }
             if (this.getKey() == 3) {
                 for (int i = 0; i < ys.length; i++) {
                     ys[i] = start - i * decreasePoint1Delta;
                 }
             }
-            if (this.getKey() == 4) {
-                for (int i = 0; i < ys.length; i++) {
-                    ys[i] = start - i * decreasePoint2Delta;
-                }
-            }
+//            if (this.getKey() == 4) {
+//                for (int i = 0; i < ys.length; i++) {
+//                    ys[i] = start - i * decreasePoint2Delta;
+//                }
+//            }
         }
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
@@ -445,10 +445,10 @@ public class VectorPoint {
     }
 
     public static void main(String[] args) {
-        double x[] = {1, 2, 3, 4, 5, 6, 7, 8};
-//        double y[] = {2, 4, 8, 16, 32, 64, 128, 256};
-//        double y[] = {1, 2, 3, 4, 5, 6, 7, 8};
-        double y[] = {1, 4, 6, 8, 10, 12, 14, 16};
+//        double x[] = {100, 101, 102, 103, 104, 105, 106, 107};
+//        double y[] = {100, 102, 104, 106, 108, 110, 112, 114};
+        double x[] = {100, 110, 120, 130, 140, 150, 160, 170};
+        double y[] = {100, 150, 200, 250, 300, 350, 400, 450};
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         double aa = pearsonsCorrelation.correlation(x, y);
