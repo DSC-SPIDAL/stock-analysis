@@ -212,7 +212,7 @@ public class PVectorGenerator {
             System.out.println("Metrics for file: " + outFileName + " " + metric.serialize());
             currentPoints.clear();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to open the file");
+            throw new RuntimeException("Failed to open the file", e);
         } finally {
             try {
                 if (bufWriter != null) {
