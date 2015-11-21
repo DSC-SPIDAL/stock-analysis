@@ -252,9 +252,9 @@ public class VectorPoint {
             return 1;
         }
 
-        if (vc.getKey() == 0 || this.getKey() == 0) {
-            return 0;
-        }
+//        if (vc.getKey() == 0 || this.getKey() == 0) {
+//            return 0;
+//        }
 
         if (vc.getKey() < 10) {
             if (this.getKey() < 10) {
