@@ -241,7 +241,7 @@ public class VectorPoint {
     }
 
     public double corr(VectorPoint vc) {
-        final int start = 100;
+        final int start = 1;
         double []xs;
         double []ys;
         ys = this.numbers;
@@ -256,16 +256,17 @@ public class VectorPoint {
             return 0;
         }
 
+        double point1Delta = 0.1/250;
+        double point2Delta = 0.2/250;
+        double decreasePoint1Delta = Math.pow(1/1.1, 10)/250;
+        double decreasePoint2Delta = Math.pow(1/1.2, 10)/250;
         if (vc.getKey() < 10) {
             if (this.getKey() < 10) {
                 xs = new double[100];
             } else {
                 xs = new double[ys.length];
             }
-            double point1Delta = 1.0/250;
-            double point2Delta = 2.0/250;
-            double decreasePoint1Delta = 1.0250;
-            double decreasePoint2Delta = 2.0/250;
+
             if (vc.getKey() == 0) {
                 for (int i = 0; i < xs.length; i++) {
                     if (i % 2 == 0) {
@@ -303,10 +304,6 @@ public class VectorPoint {
             } else {
                 ys = new double[xs.length];
             }
-            double point1Delta = 1.0/250;
-            double point2Delta = 2.0/250;
-            double decreasePoint1Delta = 1.0/250;
-            double decreasePoint2Delta = 2.0/250;
 
             if (this.getKey() == 0) {
                 for (int i = 0; i < ys.length; i++) {
