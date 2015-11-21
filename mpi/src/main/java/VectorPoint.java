@@ -268,7 +268,7 @@ public class VectorPoint {
             double decreasePoint2Delta = 2.0/250;
             if (vc.getKey() == 0) {
                 for (int i = 0; i < xs.length; i++) {
-                    if (i / 2 == 0) {
+                    if (i % 2 == 0) {
                         xs[i] = start + point1Delta;
                     } else {
                         xs[i] = start - point1Delta;
@@ -310,7 +310,7 @@ public class VectorPoint {
 
             if (this.getKey() == 0) {
                 for (int i = 0; i < ys.length; i++) {
-                    if (i / 2 == 0) {
+                    if (i % 2 == 0) {
                         ys[i] = start + point1Delta;
                     } else {
                         ys[i] = start - point1Delta;
