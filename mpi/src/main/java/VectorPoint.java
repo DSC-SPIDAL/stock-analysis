@@ -260,12 +260,22 @@ public class VectorPoint {
         double point2Delta = 0.02/250;
         double decreasePoint1Delta = (1.0 - 1.0/1.01)/250;
         double decreasePoint2Delta = (1.0- 1.0/1.02)/250;
+
+        double alpha10 = 0.1;
+        double alpha10Day = alpha10 / 250;
+        double alpha20 = 0.2;
+        double alpha20Day = alpha20 / 250;
+
+
         if (vc.getKey() < 10) {
             if (this.getKey() < 10) {
                 xs = new double[100];
             } else {
                 xs = new double[ys.length];
             }
+
+            double bd = 1.0;
+            double ed = 0.0;
 
             if (vc.getKey() == 0) {
                 for (int i = 0; i < xs.length; i++) {
@@ -276,25 +286,38 @@ public class VectorPoint {
                     }
                 }
             }
-            if (vc.getKey() == 1) {
+            else if (vc.getKey() == 1) {
                 for (int i = 0; i < xs.length; i++) {
-                    xs[i] = start + i * point1Delta;
+                    ed = (1 + alpha10Day) * bd;
+                    //System.out.println(ed);
+                    bd = ed;
+                    xs[i] = ed;
                 }
             }
-            if (vc.getKey() == 2) {
+            else if (vc.getKey() == 2) {
                 for (int i = 0; i < xs.length; i++) {
-                    xs[i] = start + i * point2Delta;
+                    ed = (1 + alpha20Day) * bd;
+                    //System.out.println(ed);
+                    bd = ed;
+                    xs[i] = ed;
                 }
             }
-            if (vc.getKey() == 3) {
+            else if (vc.getKey() == 3) {
                 for (int i = 0; i < xs.length; i++) {
-                    xs[i] = start - i * decreasePoint1Delta;
+                    ed = bd / (1 + alpha10Day);
+                    bd = ed;
+                    xs[i] = ed;
                 }
             }
-            if (vc.getKey() == 4) {
+            else if (vc.getKey() == 4) {
+                //StringBuilder sb = new StringBuilder("20 Dec XS: ");
                 for (int i = 0; i < xs.length; i++) {
-                    xs[i] = start - i * decreasePoint2Delta;
+                    ed = bd / (1 + alpha20Day);
+                    bd = ed;
+                    xs[i] = ed;
+                    //sb.append(ed).append(" ");
                 }
+//                System.out.println(sb);
             }
         }
 
@@ -304,6 +327,9 @@ public class VectorPoint {
             } else {
                 ys = new double[xs.length];
             }
+
+            double bd = 1.0;
+            double ed = 0.0;
 
             if (this.getKey() == 0) {
                 for (int i = 0; i < ys.length; i++) {
@@ -317,23 +343,36 @@ public class VectorPoint {
 
             if (this.getKey() == 1) {
                 for (int i = 0; i < ys.length; i++) {
-                    ys[i] = start + i * point1Delta;
+                    ed = (1 + alpha10Day) * bd;
+                    //System.out.println(ed);
+                    bd = ed;
+                    ys[i] = ed;
                 }
             }
             if (this.getKey() == 2) {
                 for (int i = 0; i < ys.length; i++) {
-                    ys[i] = start + i * point2Delta;
+                    ed = (1 + alpha20Day) * bd;
+                    //System.out.println(ed);
+                    bd = ed;
+                    ys[i] = ed;
                 }
             }
             if (this.getKey() == 3) {
                 for (int i = 0; i < ys.length; i++) {
-                    ys[i] = start - i * decreasePoint1Delta;
+                    ed = bd / (1 + alpha10Day);
+                    bd = ed;
+                    ys[i] = ed;
                 }
             }
             if (this.getKey() == 4) {
+//                StringBuilder sb = new StringBuilder("20 Dec YS: ");
                 for (int i = 0; i < ys.length; i++) {
-                    ys[i] = start - i * decreasePoint2Delta;
+                    ed = bd / (1 + alpha20Day);
+                    bd = ed;
+                    ys[i] = ed;
+//                    sb.append(ed).append(" ");
                 }
+//                System.out.println(sb);
             }
         }
 
@@ -487,12 +526,21 @@ public class VectorPoint {
         VectorPoint c3 = new VectorPoint(3, 100);
         VectorPoint c4 = new VectorPoint(4, 100);
 
-        double alpha = 1.05;
+        double alpha = 0.1;
         double alphaDay = alpha / 250;
         double bd = 1;
         double ed = 0;
         for (int i = 0; i < 2800; i++) {
-            System.out.println(1 - i /(alphaDay + 1));
+            ed = (1 + alphaDay) * bd;
+            //System.out.println(ed);
+            bd = ed;
+        }
+
+        bd = 1;
+        for (int i = 0; i < 2800; i++) {
+            ed = bd / (1 + alphaDay);
+            System.out.println(ed);
+            bd = ed;
         }
     }
 }
