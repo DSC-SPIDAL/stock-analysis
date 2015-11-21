@@ -256,10 +256,10 @@ public class VectorPoint {
             return 0;
         }
 
-        double point1Delta = 0.1/250;
-        double point2Delta = 0.2/250;
-        double decreasePoint1Delta = Math.pow(1/1.1, 10)/250;
-        double decreasePoint2Delta = Math.pow(1/1.2, 10)/250;
+        double point1Delta = 0.01/250;
+        double point2Delta = 0.02/250;
+        double decreasePoint1Delta = (1.0 - 1.0/1.01)/250;
+        double decreasePoint2Delta = (1.0- 1.0/1.02)/250;
         if (vc.getKey() < 10) {
             if (this.getKey() < 10) {
                 xs = new double[100];
@@ -487,9 +487,12 @@ public class VectorPoint {
         VectorPoint c3 = new VectorPoint(3, 100);
         VectorPoint c4 = new VectorPoint(4, 100);
 
-//        System.out.println(c0.corr(c1));
-//        System.out.println(c1.corr(c2));
-        System.out.println(c3.corr(c4));
-//        System.out.println(c3.corr(c4));
+        double alpha = 1.05;
+        double alphaDay = alpha / 250;
+        double bd = 1;
+        double ed = 0;
+        for (int i = 0; i < 2800; i++) {
+            System.out.println(1 - i /(alphaDay + 1));
+        }
     }
 }
