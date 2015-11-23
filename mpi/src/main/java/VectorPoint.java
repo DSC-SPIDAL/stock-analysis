@@ -313,7 +313,7 @@ public class VectorPoint {
         double alpha20 = 0.2;
         double alpha20Day = alpha20 / 250;
 
-        int noOfElements = elements >  0 ? elements : 100;
+        int noOfElements = elements >  1 ? elements : 100;
         if (vc.getKey() < 10) {
             if (this.getKey() < 10) {
                 xs = new double[noOfElements];
@@ -424,13 +424,19 @@ public class VectorPoint {
         }
 
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
-        double correlation = pearsonsCorrelation.correlation(xs, ys);
+        try {
+            double correlation = pearsonsCorrelation.correlation(xs, ys);
+            return correlation;
+        } catch (Exception e) {
+            System.out.println(xs.length + " " + ys.length);
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
 
 //        if (vc.getKey() < 10 || this.getKey() < 10) {
 //            System.out.println(correlation);
 //        }
 
-        return correlation;
     }
 
     public boolean add(double number, double factorToAdjPrice, double factoToAdjVolume, CleanMetric metric, int index) {

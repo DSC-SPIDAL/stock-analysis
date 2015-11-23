@@ -186,6 +186,7 @@ public class Utils {
             String line;
             int count = 0;
             int readCount = 0;
+            int globalVectorLength = -1;
             while ((line = br.readLine()) != null) {
                 if (count >= startIndex) {
                     readCount++;
@@ -201,8 +202,11 @@ public class Utils {
                             numbers[i - 2] = Double.parseDouble(parts[i]);
                         }
                         VectorPoint p = new VectorPoint(key, numbers);
-                        if (key == 0) {
+                        if (key < 10) {
+                            p = new VectorPoint(key, globalVectorLength, true);
                             p.setConstantVector(true);
+                        } else if (globalVectorLength < 0){
+                            globalVectorLength = vectorLength;
                         }
                         p.addCap(cap);
                         vecs.add(p);
