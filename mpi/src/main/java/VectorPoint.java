@@ -43,6 +43,53 @@ public class VectorPoint {
         } else {
             elements = 0;
         }
+        double []ys;
+        final int start = 1;
+        double alpha10 = 0.1;
+        double alpha10Day = alpha10 / 250;
+        double alpha20 = 0.2;
+        double alpha20Day = alpha20 / 250;
+        if (this.getKey() < 10) {
+            ys = new double[elements];
+
+            double bd = 1.0;
+            double ed = 0.0;
+
+            if (this.getKey() == 1) {
+                for (int i = 0; i < ys.length; i++) {
+                    ed = (1 + alpha10Day) * bd;
+                    //System.out.println(ed);
+                    bd = ed;
+                    ys[i] = ed;
+                }
+            }
+            if (this.getKey() == 2) {
+                for (int i = 0; i < ys.length; i++) {
+                    ed = (1 + alpha20Day) * bd;
+                    //System.out.println(ed);
+                    bd = ed;
+                    ys[i] = ed;
+                }
+            }
+            if (this.getKey() == 3) {
+                for (int i = 0; i < ys.length; i++) {
+                    ed = bd / (1 + alpha10Day);
+                    bd = ed;
+                    ys[i] = ed;
+                }
+            }
+            if (this.getKey() == 4) {
+//                StringBuilder sb = new StringBuilder("20 Dec YS: ");
+                for (int i = 0; i < ys.length; i++) {
+                    ed = bd / (1 + alpha20Day);
+                    bd = ed;
+                    ys[i] = ed;
+//                    sb.append(ed).append(" ");
+                }
+//                System.out.println(sb);
+            }
+            this.numbers = ys;
+        }
     }
 
     public void setConstantVector(boolean constantVector) {
@@ -155,7 +202,7 @@ public class VectorPoint {
     }
 
     public static double vectorLength(int type, VectorPoint vp) {
-        if (vp.isConstantVector()) return 0;
+        if (vp.getKey() == 0) return 0;
 
         double change = vp.change();
         if (type == 1) {

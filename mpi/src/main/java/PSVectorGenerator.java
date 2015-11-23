@@ -228,27 +228,27 @@ public class PSVectorGenerator {
             capCount++;
 
 //            write the constant vector at the end
-            VectorPoint v = new VectorPoint(0, new double[]{0});
+            VectorPoint v = new VectorPoint(0, noOfDays, true);
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
             bufWriter.newLine();
 
-            v = new VectorPoint(1, new double[]{0});
+            v = new VectorPoint(1, noOfDays, true);
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
             bufWriter.newLine();
 
-            v = new VectorPoint(2, new double[]{0});
+            v = new VectorPoint(2, noOfDays, true);
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
             bufWriter.newLine();
 
-            v = new VectorPoint(3, new double[]{0});
+            v = new VectorPoint(3, noOfDays, true);
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
             bufWriter.newLine();
 
-            v = new VectorPoint(4, new double[]{0});
+            v = new VectorPoint(4, noOfDays, true);
             v.addCap(totalCap);
             bufWriter.write(v.serialize());
             bufWriter.newLine();
