@@ -313,10 +313,10 @@ public class VectorPoint {
         double alpha20 = 0.2;
         double alpha20Day = alpha20 / 250;
 
-
+        int noOfElements = elements >  0 ? elements : 100;
         if (vc.getKey() < 10) {
             if (this.getKey() < 10) {
-                xs = new double[100];
+                xs = new double[noOfElements];
             } else {
                 xs = new double[ys.length];
             }
@@ -370,7 +370,7 @@ public class VectorPoint {
 
         if (this.getKey() < 10) {
             if (vc.getKey() < 10) {
-                ys = new double[100];
+                ys = new double[noOfElements];
             } else {
                 ys = new double[xs.length];
             }
