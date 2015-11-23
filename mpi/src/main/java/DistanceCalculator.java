@@ -166,7 +166,7 @@ public class DistanceCalculator {
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
         //File smallDirFile = new File(smallValDir);
         //smallDirFile.mkdirs();
-        writer = new WriterWrapper(outFileName, false);
+        writer = new WriterWrapper(outFileName, true);
         //WriterWrapper smallWriter = new WriterWrapper(smallOutFileName, true);
         // +1 to accomodate constant sctock
         int lineCount = countLines(fileEntry);
@@ -213,7 +213,7 @@ public class DistanceCalculator {
                 System.out.println("Reading second block: " + readStartIndex + " : " + readEndIndex + " read size: " + secondVectors.size());
                 for (int i = 0; i < secondVectors.size(); i++) {
                     VectorPoint sv = secondVectors.get(i);
-                    double v = VectorPoint.vectorLength(2, sv);
+                    double v = VectorPoint.vectorLength(1, sv);
                     for (int z = 0; z < 100; z++) {
                         if (v < (z + 1) * .1) {
                             chanegHisto[z]++;
@@ -243,13 +243,13 @@ public class DistanceCalculator {
                 }
                 readStartIndex = readEndIndex + 1;
                 readEndIndex = readStartIndex + INC - 1;
-            System.out.println("MAX distance is: " + dmax);
+            System.out.println("MAX distance is: " + dmax + " MIN Distance is: " + dmin);
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 for (int j = 0; j < values[i].length; j++) {
                     double doubleValue = values[i][j]/dmax;
                     for (int k = 0; k < 100; k++) {
-                        if (doubleValue < (k + 1) * dmax / 100) {
+                        if (doubleValue < (k + 1.0) / 100) {
                             histogram[k]++;
                             break;
                         }
