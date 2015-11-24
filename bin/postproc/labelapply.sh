@@ -62,7 +62,7 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -o $ORIGINAL_STOCK_FILE \
 -s $SEC_FILE \
 -e fixedclasses.txt \
--ci clusters.xml \
+-ci sector_clusters.xml \
 -co $BASE_DIR/$LABELED_FINAL_DIR_NAME/sector_clusters.xml
 
 
@@ -76,5 +76,5 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -o $ORIGINAL_STOCK_FILE \
 -s $SEC_FILE \
 -e fixedclasses.txt \
--ci clusters.xml \
+-ci sector_clusters.xml \
 -co $BASE_DIR/$LABELED_FINAL_DIR_NAME/sector_global_clusters.xml
