@@ -76,10 +76,12 @@ mvn clean install
 
 MDSasChisq
 ----
-Download the project from https://github.iu.edu/skamburu/MDSasChisq
+Download the project from https://github.com/DSC-SPIDAL/MDSasChisq.git and switch to the ompi1.8.1 branch
 
 ```
 git clone git@github.iu.edu:skamburu/MDSasChisq.git
+git fetch
+git checkout ompi1.8.1
 cd MDSasChisq
 mvn clean install
 ```
