@@ -4,15 +4,15 @@
 . ./postproc_env.sh $1
 
 # generate common points
-#sh postproc/c_rotations.sh
+sh postproc/c_rotations.sh
 #sh postproc/cont_rotate.sh
 #sh postproc/common_points.sh
 ### generate histograms
-#sh postproc/histogram.sh
+sh postproc/histogram.sh
 ## rotations
 #sh postproc/rotate.sh
 ## apply labels
-#sh postproc/labelapply.sh
+sh postproc/labelapply.sh
 ## generate heat maps
 #sh postproc/heatmap.sh
 #sh postproc/dheatmap.sh
