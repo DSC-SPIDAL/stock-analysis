@@ -80,9 +80,9 @@ Download the project from https://github.com/DSC-SPIDAL/MDSasChisq.git and switc
 
 ```
 git clone git@github.iu.edu:skamburu/MDSasChisq.git
+cd MDSasChisq
 git fetch
 git checkout ompi1.8.1
-cd MDSasChisq
 mvn clean install
 ```
 
