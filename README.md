@@ -92,10 +92,6 @@ We first pre-process the data to create distance matrix files that are required 
 
 ## Pre-Processing
 
-### FileBreaker
-
-FileBreaker program is used to break large stock files in to smaller files for processing. For example if we are interested in processing yearly data the stock file can be broken by year to multiple files.
-
 #### Format of stock files
 
 The stock files are obtained from the CRSP database through the Wharton Research Data Services
@@ -117,9 +113,10 @@ At the moment we need to take stocks from 2004-01-01 to 2014-Dec-31
 ```
 These stock files are used to create vector files. This step isn't mandatory and vector generator can be used to create vector files directly from the stock file as wel..
 
-### PVectorGenerator
+### PSVectorGenerator
 
 This program creates a file with stocks in a vector format. Each row of the file contains stock identifier, stock cap and day prices as a vector.
+For each data segment of the time series, a separate vector file is created.
 
 ```
 PermNo,Cap,prices.....
@@ -127,7 +124,7 @@ PermNo,Cap,prices.....
 
 ### DistanceCalculator
 
-Produces a distance file given the vector files. Various measures like correlation, correlation squared, euclidean are implemented as distance measures.
+Produces a distance file given a vector file. Various measures like correlation, correlation squared, euclidean are implemented as distance measures.
 
 ### WeightCalculator
 
@@ -168,11 +165,26 @@ cp [stock_file] input/2004_2014.csv
 
 There are files in bin directory that can be used to run the programs.
 
+### Pre-Processing
+
 To run the pre-process steps, use the file preproc.sh. You can change the parameters in this file.
 
 ```
 sbatch preproc.sh path_to_stocks_base_directory
 ```
+
+The pre-processing creates the following directories and files.
+
+```
+STOCK_ANALYSIS/preproc/global
+STOCK_ANALYSIS/preproc/yearly
+```
+
+global directory contains the vector files, distance files and weight files for the whole 2004 to 2014 period.
+
+The yearly directory contains the vector files, distance files and weight files for each of the data segments from the 2004 to 2014 period.
+
+### Algorithm
 
 To run the damnds algorithm use the the command.
 
@@ -180,8 +192,40 @@ To run the damnds algorithm use the the command.
 sh mds_weighted.sh path_to_stocks_base_directory
 ```
 
+The output of the damnds program will be in the folder
+
+```
+STOCK_ANALYSIS/mds/weighted 
+```
+
+It will have two folders with running the algorithm on global data as well as yearly segments.
+
+```
+STOCK_ANALYSIS/mds/weighted/global
+STOCK_ANALYSIS/mds/weighted/yearly
+```
+
+### Post processing
+
 To run the post-processing steps, use the postproc_all.sh
 
 ```
-sh postproc_all.sh path_to_stocks_base_directory
+sh postproc_all.sh STOCK_ANALYSIS
 ```
+
+The post processing will provide the final outputs. They will be in a directory called
+
+```
+STOCK_ANALYSIS/postproc
+```
+
+Again postproc will contain global and yearly directories.
+
+The final label applied pviz files which are ready to display will be found in
+
+```
+STOCK_ANALYSIS/postproc/weighted/yearly/rotate/points/labeled/byhist/pviz
+```
+
+
+
