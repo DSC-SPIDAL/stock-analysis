@@ -58,7 +58,7 @@ echo "breaking files"
 # generate vector files
 echo "generate vector files"
 #$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PVectorGenerator -i $BREAKS_DIR -o $VECTOR_DIR -d 300 -m | tee $PREPROC_DIR/yearly.vector.output.txt
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PSVectorGenerator -i $INPUT_DIR/2004_2014.csv -o $VECTOR_DIR -d 3000 -m -s 20040101 -e 20060101 -md 7 | tee $PREPROC_DIR/yearly.vector.output.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PSVectorGenerator -i $INPUT_DIR/2004_2014.csv -o $VECTOR_DIR -d 3000 -m -s 20040101 -e 20050110 -md 7 | tee $PREPROC_DIR/yearly.vector.output.txt
 
 # generate global vector file
 #echo "generate global vector files"
