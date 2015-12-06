@@ -53,6 +53,8 @@ Prerequisites
   ```
   * Few examples are available in `$OMPI_181/examples`. Please use `mpijavac` with other parameters similar to `javac` command to compile OpenMPI Java programs. Once compiled `mpirun [options] java -cp <classpath> class-name arguments` command with proper values set as arguments will run the program. 
 
+5. Cluster with Slurm Job Manager
+  * The scripts assume a cluster with Slurm job manager. You are welcome to convert the scripts to another Job management system as well.
 
 Stock Analysis Project
 ----
@@ -66,7 +68,7 @@ mvn clean install
 
 DAMDS Project
 ----
-Download the project from https://github.com/DSC-SPIDAL/damds.git and build.
+Download the project from https://github.com/DSC-SPIDAL/damds.git and checkout the workingbuild.
 
 ```
 git clone https://github.com/DSC-SPIDAL/damds.git
