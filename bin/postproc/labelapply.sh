@@ -50,31 +50,31 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -ci clusters.xml \
 -co $BASE_DIR/$LABELED_FINAL_DIR_NAME/histo_global_clusters.xml
 
-echo "APPLY SECTOR LABELS"
-SEC_LABEL_OUT=$BASE_DIR/$SECTOR_LABEL_OUT_DIR_NAME
-mkdir -p $SEC_LABEL_OUT
-SEC_FILE=$BASE_DIR/$GLOBAL_STOCK_DIR_NAME/all_companylist.csv
-
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
--v $CONT_VECS \
--p $FINAL_ROTATE \
--d $SEC_LABEL_OUT \
--o $ORIGINAL_STOCK_FILE \
--s $SEC_FILE \
--e fixedclasses.txt \
--ci sector_clusters.xml \
--co $BASE_DIR/$LABELED_FINAL_DIR_NAME/sector_clusters.xml
-
-
-echo "APPLY GLOBAL SECTOR LABELS"
-GLOBAL_SEC_LABEL_OUT=$BASE_DIR/$GLOBAL_SECTOR_LABEL_OUT_DIR_NAME
-mkdir -p $GLOBAL_SEC_LABEL_OUT
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
--v $BASE_DIR/$GLOBAL_VEC_DIR_NAME \
--p $BASE_DIR/$GLOBAL_POINTS_DIR_NAME \
--d $GLOBAL_SEC_LABEL_OUT \
--o $ORIGINAL_STOCK_FILE \
--s $SEC_FILE \
--e fixedclasses.txt \
--ci sector_clusters.xml \
--co $BASE_DIR/$LABELED_FINAL_DIR_NAME/sector_global_clusters.xml
+#echo "APPLY SECTOR LABELS"
+#SEC_LABEL_OUT=$BASE_DIR/$SECTOR_LABEL_OUT_DIR_NAME
+#mkdir -p $SEC_LABEL_OUT
+#SEC_FILE=$BASE_DIR/$GLOBAL_STOCK_DIR_NAME/all_companylist.csv
+#
+#java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
+#-v $CONT_VECS \
+#-p $FINAL_ROTATE \
+#-d $SEC_LABEL_OUT \
+#-o $ORIGINAL_STOCK_FILE \
+#-s $SEC_FILE \
+#-e fixedclasses.txt \
+#-ci sector_clusters.xml \
+#-co $BASE_DIR/$LABELED_FINAL_DIR_NAME/sector_clusters.xml
+#
+#
+#echo "APPLY GLOBAL SECTOR LABELS"
+#GLOBAL_SEC_LABEL_OUT=$BASE_DIR/$GLOBAL_SECTOR_LABEL_OUT_DIR_NAME
+#mkdir -p $GLOBAL_SEC_LABEL_OUT
+#java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply \
+#-v $BASE_DIR/$GLOBAL_VEC_DIR_NAME \
+#-p $BASE_DIR/$GLOBAL_POINTS_DIR_NAME \
+#-d $GLOBAL_SEC_LABEL_OUT \
+#-o $ORIGINAL_STOCK_FILE \
+#-s $SEC_FILE \
+#-e fixedclasses.txt \
+#-ci sector_clusters.xml \
+#-co $BASE_DIR/$LABELED_FINAL_DIR_NAME/sector_global_clusters.xml
