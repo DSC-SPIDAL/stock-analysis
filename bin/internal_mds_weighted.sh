@@ -14,7 +14,7 @@ opts="-XX:+UseG1GC -Xms512m -Xmx512m"
 
 tpn=1
 echo $SLURM_JOB_NUM_NODES 
-mkdir $HOME/mmaps
+mkdir -p $HOME/mmaps
 wd=`pwd`
 
 $BUILD/bin/mpirun --report-bindings --mca btl ^tcp java $opts -cp $cp -DNumberDataPoints=$2 -DDistanceMatrixFile=$1 -DPointsFile=$3.txt -DTimingFile=$5timing.txt -DSummaryFile=$5.summary.txt -DWeightMatrixFile=$4 -DTransformationFunction=trfm.DistanceTransformer edu.indiana.soic.spidal.damds.Program  -c config.properties -n $SLURM_JOB_NUM_NODES -t $tpn -mmaps 4 -mmapdir $HOME/mmaps 2>&1 | tee $5.summary.txt
