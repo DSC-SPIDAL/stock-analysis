@@ -17,7 +17,6 @@ Prerequisites
     *  Red Hat Enterprise Linux Server release 5.10 (Tikanga)
     *  Ubuntu 12.04.3 LTS
     *  Ubuntu 12.10
-  * This may work in Windows systems depending on the ability to setup OpenMPI properly, however, this has not been tested and we recommend choosing a Linux based operating system instead.
  
 2. Java
   * Download Oracle JDK 8 from http://www.oracle.com/technetwork/java/javase/downloads/index.html
@@ -70,7 +69,20 @@ Prerequisites
 Compiling the Projects
 -----
 
-Now lets look at the Projects we need to compile and install in-order to run the system.
+Now lets look at the Projects we need to compile and install in-order to run the system. 
+
+Common Project
+------
+
+In order to build the DAMDS project first you will need to build the common project. Common holds some utilities used by other projects in the DSC-SPIDAL project.
+
+Download the project from https://github.com/DSC-SPIDAL/common and build it.
+
+```
+git clone https://github.com/DSC-SPIDAL/common.git
+cd common
+mvn clean install
+```
 
 Stock Analysis Project
 ------
@@ -85,16 +97,6 @@ mvn clean install
 
 DAMDS Project
 ------
-
-In order to build the DAMDS project first you will need to build the common project. Common holds some utilities used by other projects in the DSC-SPIDAL project.
-
-Download the project from https://github.com/DSC-SPIDAL/common and build it.
-
-```
-git clone https://github.com/DSC-SPIDAL/common.git
-cd common
-mvn clean install
-```
 
 Damds is the MDS algorithm for producing the 3D plots. Download the project from https://github.com/DSC-SPIDAL/damds and checkout the workingmmap branch and build it.
 
@@ -273,6 +275,13 @@ The final label applied pviz files which are ready to display will be found in
 ```
 STOCK_ANALYSIS/postproc/weighted/yearly/rotate/points/labeled/byhist/pviz
 ```
+
+Example Run of the Application
+----
+
+Here is an example run of the application. We assume you have downloaded and compiled all the projects required.
+
+
 
 
 
