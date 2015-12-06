@@ -66,7 +66,12 @@ Prerequisites
   * The scripts assume a cluster with Slurm job manager. You are welcome to convert the scripts to another Job management system as well.
   * Also the programs assumes that the files are in a shared directory which can be accessed by all the nodes in the cluster
 6. Jblass program
-
+  * Install Jblas by following http://jblas.org/
+  ```
+  git clone https://github.com/mikiobraun/jblas.git
+  cd jblas
+  mvn install
+  ```
   
 Compiling the Projects
 -----
@@ -370,7 +375,7 @@ While the jobs are running you can view their output.
 tail -f slurm-932.out
 ```
 
-After the jobs completed look at the points directories to see the result of the algorithm.
+After the jobs are completed look at the points directories to see the result of the algorithm.
 
 ```
 cd ~\stockbench
@@ -387,3 +392,12 @@ cd ~/stock-analysis/bin
 sh postproc_all.sh ~/stockbench
 ```
 
+This script will prepare the files for visualization. You can see the final files in XML format in
+
+```
+cd ~/stockbench/
+ls postproc/weighted/yearly/rotate/points/labeled/byhist/pviz/
+20040101_20050101.pviz  20040101_20050108.pviz
+```
+
+These files can be uploaded to http://spidal-gw.dsc.soic.indiana.edu/ for visualization.
