@@ -372,6 +372,18 @@ tail -f slurm-932.out
 
 After the jobs completed look at the points directories to see the result of the algorithm.
 
+```
+cd ~\stockbench
+ls mds/weighted/yearly/
+20040101_20050101.txt  20040101_20050108.txt  summary
+```
 
+Each individual file holds the 3D points.
 
+Now lets run the post processing steps.
+
+```
+cd ~/stock-analysis/bin
+sh postproc_all.sh ~/stockbench
+```
 
