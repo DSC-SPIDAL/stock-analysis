@@ -65,6 +65,8 @@ Prerequisites
 5. Cluster with Slurm Job Manager
   * The scripts assume a cluster with Slurm job manager. You are welcome to convert the scripts to another Job management system as well.
   * Also the programs assumes that the files are in a shared directory which can be accessed by all the nodes in the cluster
+6. Jblass program
+
   
 Compiling the Projects
 -----
@@ -92,6 +94,8 @@ You will use the scripts inside the bin directory of stock-analysis project to r
 ```
 git clone https://github.com/iotcloud/stock-analysis.git
 cd stock-analysis
+git fetch
+git checkout stockbench
 mvn clean install
 ```
 
@@ -279,11 +283,12 @@ STOCK_ANALYSIS/postproc/weighted/yearly/rotate/points/labeled/byhist/pviz
 Example Run of the Application
 ----
 
-Here is an example run of the application. We assume you have downloaded and compiled all the projects required.
+Here is an example run of the application. We assume you have downloaded and compiled all the projects required. 
+In this example run the stockbench and stock-analysis directories are created in the user's home directory.
 
 ```
-mkdir stockbench
-cd stockbench
+mkdir ~\stockbench
+cd ~\stockbench
 mkdir input
 # assume we have the input file in the home folder
 cp ~/2004_2014.csv input/
@@ -291,6 +296,73 @@ cp ~/2004_2014.csv input/
 
 Now we are ready to run the pre-processing steps
 
+```
+cd ~\stock-analysis/bin
+sbatch preproc.sh ~/stockbench
+```
+
+Wait until the job finishes. You can monitor the job by using the squeue command
+
+```
+squeue
+```
+
+You'll see a output like following indicating your job is still running. i.e ST is R (Running). 
+
+```
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+  930   general preproc. skamburu  R       0:03      2 j-[097-098]
+```
+
+You can monitor the output of the pre-processing steps by looking at the slurm job output file. For example in the above case a file name slurm-930.out is created.
+
+```
+tail -f slurm-930.out
+```
+
+After the jobs is finished, look at the files to make sure they are created. The preproc files are created inside preproc directory.
+
+```
+cd ~\stockbench
+# vector files
+ls -l preproc/yearly/vectors/
+total 17944
+-rw-r--r--. 1 skamburu users 9100765 Dec  6 01:51 20040101_20050101.csv
+-rw-r--r--. 1 skamburu users 9269864 Dec  6 01:51 20040101_20050108.csv
+
+
+# distance files
+ls -l preproc/yearly/distances/
+
+total 152960
+-rw-r--r--. 1 skamburu users 78425288 Dec  6 01:53 20040101_20050101.csv
+-rw-r--r--. 1 skamburu users 78200018 Dec  6 01:53 20040101_20050108.csv
+
+# weight files
+ls -l preproc/yearly/weights/matrix/
+total 152956
+-rw-r--r--. 1 skamburu users 78425288 Dec  6 01:57 20040101_20050101.csv
+-rw-r--r--. 1 skamburu users 78200018 Dec  6 01:57 20040101_20050108.csv
+```
+
+Now lets run the mds algorithm
+
+```
+cd ~/stock-analysis/bin
+sh mds_weighted.sh ~/stockbench
+```
+
+This will create several jobs depending on the number of segments you have in the vectors folder.
+
+```
+squeue
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+  932   general internal skamburu  R       0:04      4 j-[097-100]
+  933   general internal skamburu  R       0:04      4 j-[101-104]
+  934   general internal skamburu  R       0:01      4 j-[105-108]
+```
+
+Wait until all the mds runs are completed.
 
 
 
