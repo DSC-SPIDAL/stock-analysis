@@ -65,6 +65,8 @@ Prerequisites
 5. Cluster with Slurm Job Manager
   * The scripts assume a cluster with Slurm job manager. You are welcome to convert the scripts to another Job management system as well.
   * Also the programs assumes that the files are in a shared directory which can be accessed by all the nodes in the cluster
+6. Jblass program
+
   
 Compiling the Projects
 -----
@@ -344,6 +346,23 @@ total 152956
 ```
 
 Now lets run the mds algorithm
+
+```
+cd ~/stock-analysis/bin
+sh mds_weighted.sh ~/stockbench
+```
+
+This will create several jobs depending on the number of segments you have in the vectors folder.
+
+```
+squeue
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+  932   general internal skamburu  R       0:04      4 j-[097-100]
+  933   general internal skamburu  R       0:04      4 j-[101-104]
+  934   general internal skamburu  R       0:01      4 j-[105-108]
+```
+
+Wait until all the mds runs are completed.
 
 
 
