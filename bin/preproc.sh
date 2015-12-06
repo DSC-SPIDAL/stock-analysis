@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #SBATCH -A skamburu
-#SBATCH -N 28
+#SBATCH -N 2
 #SBATCH --tasks-per-node=1
 #SBATCH --time=04:00:00
 if [ $# -eq 0 ]
