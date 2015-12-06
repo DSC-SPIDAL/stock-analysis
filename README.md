@@ -281,6 +281,16 @@ Example Run of the Application
 
 Here is an example run of the application. We assume you have downloaded and compiled all the projects required.
 
+```
+mkdir stockbench
+cd stockbench
+mkdir input
+# assume we have the input file in the home folder
+cp ~/2004_2014.csv input/
+```
+
+Now we are ready to run the pre-processing steps
+
 
 
 
