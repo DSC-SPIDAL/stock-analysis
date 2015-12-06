@@ -1,4 +1,4 @@
-# Time Series Analysis of Stocks
+## Time Series Analysis of Stocks
 
 This is a guide to show how to install and run the project.
 
@@ -68,7 +68,7 @@ Prerequisites
   * Also the programs assumes that the files are in a shared directory which can be accessed by all the nodes in the cluster
   
 Compiling the Projects
----
+-----
 
 Now lets look at the Projects we need to compile and install in-order to run the system.
 
@@ -126,30 +126,25 @@ Then we apply the MDS algorithm to these files. After this we do some post proce
 
 ## Pre-Processing
 
+The stock files are obtained from the CRSP database through the Wharton Research Data Services https://wrds-web.wharton.upenn.edu/wrds/
+
+First the input stock file has to be downloaded. This file contains daily stock records for each stock present in the stock exchange.
+
 #### Format of stock files
 
-The stock files are obtained from the CRSP database through the Wharton Research Data Services
+The stock input file should contain the following information in a comma delimited csv format.
 
 ```
-https://wrds-web.wharton.upenn.edu/wrds/
+Trading Symbol, Price, Number of Shares Outstanding, Factor to adjust price, Factor to adjust shares
 ```
 
-```
-Trading Symbol,
-Price
-Number of Shares Outstanding
-Factor to adjust price
-Factor to adjust shares
+At the moment we consider stocks from 2004-01-01 to 2014-Dec-31. The input file name is hard coded in the scripts and you should use the name
 
-In a comma delimited format. (csv)
-
-At the moment we need to take stocks from 2004-01-01 to 2014-Dec-31
-```
-These stock files are used to create vector files. This step isn't mandatory and vector generator can be used to create vector files directly from the stock file as wel..
+2004_2014.csv as the input file name.
 
 ### PSVectorGenerator
 
-This program creates a file with stocks in a vector format. Each row of the file contains stock identifier, stock cap and day prices as a vector.
+This program creates a file with stocks in a vector format. Each row of the file contains stock identifier, stock cap and daily prices as a vector.
 For each data segment of the time series, a separate vector file is created.
 
 ```
