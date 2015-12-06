@@ -320,7 +320,7 @@ You can monitor the output of the pre-processing steps by looking at the slurm j
 tail -f slurm-930.out
 ```
 
-After the jobs is finished, look at the files to make sure they are created. The preproc files are created inside preproc directory.
+After the job is finished i.e squeue command displays no jobs, look at the files to make sure they are created. The preproc files are created inside preproc directory.
 
 ```
 cd ~\stockbench
@@ -363,6 +363,14 @@ JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
 ```
 
 Wait until all the mds runs are completed.
+
+While the jobs are running you can view their output.
+
+```
+tail -f slurm-932.out
+```
+
+After the jobs completed look at the points directories to see the result of the algorithm.
 
 
 
