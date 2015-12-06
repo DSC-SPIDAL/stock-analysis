@@ -1,4 +1,14 @@
-# stock-analysis
+# Time Series Analysis of Stocks
+
+This is a guide to show how to install and run the project.
+
+A detailed description of the details project can be found in the technical paper
+
+https://github.com/DSC-SPIDAL/publications/raw/master/stocks/stocks_visualization.pdf
+
+and the poster
+
+https://github.com/DSC-SPIDAL/publications/raw/master/stocks/stock_poster.pdf
 
 Prerequisites
 -----
@@ -113,10 +123,6 @@ mvn clean install
 
 We first pre-process the data to create distance matrix files that are required by the MDS algorithm. 
 Then we apply the MDS algorithm to these files. After this we do some post processing to create the final output.
-
-A detailed description of the project can be found in the technical paper
-
-https://github.com/DSC-SPIDAL/publications/raw/master/stocks/stocks_visualization.pdf
 
 ## Pre-Processing
 
