@@ -14,10 +14,10 @@ opts="-XX:+UseG1GC -Xms512m -Xmx512m"
 
 tpn=1
 echo $SLURM_JOB_NUM_NODES 
-
+mkdir $HOME/mmaps
 wd=`pwd`
 
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java $opts -cp $cp -DNumberDataPoints=$2 -DDistanceMatrixFile=$1 -DPointsFile=$3.txt -DTimingFile=$5timing.txt -DSummaryFile=$5.summary.txt -DWeightMatrixFile=$4 -DTransformationFunction=trfm.DistanceTransformer edu.indiana.soic.spidal.damds.Program  -c config.properties -n $SLURM_JOB_NUM_NODES -t $tpn 2>&1 | tee $5.summary.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java $opts -cp $cp -DNumberDataPoints=$2 -DDistanceMatrixFile=$1 -DPointsFile=$3.txt -DTimingFile=$5timing.txt -DSummaryFile=$5.summary.txt -DWeightMatrixFile=$4 -DTransformationFunction=trfm.DistanceTransformer edu.indiana.soic.spidal.damds.Program  -c config.properties -n $SLURM_JOB_NUM_NODES -t $tpn -mmap 4 -mmapdir $HOME/mmaps 2>&1 | tee $5.summary.txt
 #$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java $opts -cp $cp -DNumberDataPoints=$2 -DDistanceMatrixFile=$1 -DPointsFile=$3.txt -DTimingFile=$5timing.txt -DSummaryFile=$5.summary.txt -DWeightMatrixFile=$4 edu.indiana.soic.spidal.damds.Program  -c config.properties -n $SLURM_JOB_NUM_NODES -t $tpn | tee $5.summary.txt
 echo "Finished $0 on `date`" >> status.txt
 
