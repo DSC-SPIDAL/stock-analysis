@@ -235,7 +235,7 @@ public class VectorPoint {
                 if (v < minChange) {
                     minChange = v;
                 }
-                if (v > 3) v = 3;
+                if (v > 10) v = 10;
                 if (v < .1) v = .1;
 
 //                double v1 = .02 * Math.abs(Math.exp(v));
