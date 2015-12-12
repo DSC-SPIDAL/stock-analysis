@@ -22,7 +22,7 @@ mkdir -p $CONT_COMMON_POINTS
 mkdir -p $FINAL_ROTATE
 
 echo "Generating point list"
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar CCommonGenerator -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS -r $FINAL_ROTATE -sd 20040101 -ed 20050110 -l -md 5 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.list.out.txt
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar CCommonGenerator -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS -r $FINAL_ROTATE -sd 20040101 -ed 20150101 -l -md 5 | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.list.out.txt
 
 FILE_LIST=$CONT_COMMON_POINTS/list.txt
 echo "Copying the first point file to rotate folder"
