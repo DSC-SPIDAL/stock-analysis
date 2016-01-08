@@ -1,0 +1,275 @@
+<clusters>
+    <!-- first 10 clusters with rainbow -->
+    <cluster>
+        <key>0</key>
+        <label>UNKWN</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="255" g="0" b="0" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>1</key>
+        <label>1</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="171" g="3" b="3" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>2</key>
+        <label>2</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="199" g="24" b="0" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>3</key>
+        <label>3</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="179" g="84" b="44" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>4</key>
+        <label>4</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="173" g="117" b="50" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>5</key>
+        <label>5</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="235" g="178" b="67" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>6</key>
+        <label>6</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="59" g="153" b="69" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>>
+        <key>7</key>
+        <label>7</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="76" g="163" b="132" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>8</key>
+        <label>8</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="63" g="145" b="163" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>9</key>
+        <label>9</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="7" g="88" b="184" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>10</key>
+        <label>10</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="1" g="61" b="117" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>11</key>
+        <label>11</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="0" g="157" b="255" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>12</key>
+        <label>12</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="0" g="78" b="255" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>13</key>
+        <label>13</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="0" g="0" b="255" a="255"/>
+        <size>1</size>
+        <shape>3</shape>
+    </cluster>
+
+    <!-- distinct cluster-->
+    <cluster>
+        <key>20</key>
+        <label>Tech</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="191" g="0" b="63" a="255"/>
+        <size>10</size>
+        <shape>1</shape>
+    </cluster>
+    <cluster>
+        <key>21</key>
+        <label>Energy</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="127" g="211" b="25" a="255"/>
+        <size>10</size>
+        <shape>2</shape>
+    </cluster>
+    <cluster>
+        <key>22</key>
+        <label>Indus</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="255" g="63" b="0" a="255"/>
+        <size>10</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>23</key>
+        <label>Consumer-N</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="20" g="131" b="102" a="255"/>
+        <size>10</size>
+        <shape>4</shape>
+    </cluster>
+    <cluster>
+        <key>24</key>
+        <label>Finance</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="89" g="11" b="63" a="255"/>
+        <size>10</size>
+        <shape>5</shape>
+    </cluster>
+    <cluster>
+        <key>25</key>
+        <label>RealState</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="153" g="75" b="0  " a="255"/>
+        <size>10</size>
+        <shape>6</shape>
+    </cluster>
+    <cluster>
+        <key>26</key>
+        <label>Consumer</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="255" g="0" b="0" a="255"/>
+        <size>10</size>
+        <shape>1</shape>
+    </cluster>
+    <cluster>
+        <key>27</key>
+        <label>Telecom</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="0" g="168" b="51" a="255"/>
+        <size>10</size>
+        <shape>2</shape>
+    </cluster>
+    <cluster>
+        <key>28</key>
+        <label>Utilities</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="127" g="0" b="127" a="255"/>
+        <size>10</size>
+        <shape>3</shape>
+    </cluster>
+    <cluster>
+        <key>29</key>
+        <label>Materials</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="255" g="127" b="0" a="255"/>
+        <size>10</size>
+        <shape>4</shape>
+    </cluster>
+    <cluster>
+        <key>30</key>
+        <label>Health</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="255" g="127" b="0" a="255"/>
+        <size>10</size>
+        <shape>5</shape>
+    </cluster>
+    <cluster>
+        <key>31</key>
+        <label>CONSTANT</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="253" g="247" b="255" a="255"/>
+        <size>20</size>
+        <shape>1</shape>
+    </cluster>
+    <cluster>
+        <key>32</key>
+        <label>10%-INC</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="148" g="175" b="204" a="214"/>
+        <size>20</size>
+        <shape>1</shape>
+    </cluster>
+    <cluster>
+        <key>33</key>
+        <label>20%-INC</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="41" g="95" b="153" a="214"/>
+        <size>20</size>
+        <shape>1</shape>
+    </cluster>
+    <cluster>
+        <key>34</key>
+        <label>10%-DEC</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="255" g="255" b="127" a="214"/>
+        <size>20</size>
+        <shape>1</shape>
+    </cluster>
+    <cluster>
+        <key>35</key>
+        <label>20%-DEC</label>
+        <visible>1</visible>
+        <default>0</default>
+        <color r="255" g="255" b="0" a="214"/>
+        <size>20</size>
+        <shape>1</shape>
+    </cluster>
+</clusters>
