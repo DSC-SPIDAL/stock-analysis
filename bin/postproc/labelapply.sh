@@ -33,8 +33,8 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -d $LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
 -s $HIST_DIR -h \
--e fixedclasses.txt \
--ci clusters.xml \
+-e ../inputFiles/ETFS_cluster.csv \
+-ci ../inputFiles/clusters_fixed.xml \
 -co $BASE_DIR/$LABELED_FINAL_DIR_NAME/histo_clusters.xml
 
 GLOBAL_LABEL_OUT=$BASE_DIR/$GLOBAL_LABEL_OUT_DIR_NAME
@@ -46,8 +46,8 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -d $GLOBAL_LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
 -s $GLOBAL_HIST_DIR -h \
--e fixedclasses.txt \
--ci clusters.xml \
+-e ../inputFiles/ETFS_cluster.csv \
+-ci ../inputFiles/clusters_fixed.xml \
 -co $BASE_DIR/$LABELED_FINAL_DIR_NAME/histo_global_clusters.xml
 
 echo "APPLY SECTOR LABELS"
@@ -75,6 +75,6 @@ java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar LabelApply
 -d $GLOBAL_SEC_LABEL_OUT \
 -o $ORIGINAL_STOCK_FILE \
 -s $SEC_FILE \
--e fixedclasses.txt \
+-e ../inputFiles/ETFS_cluster.csv \
 -ci sector_clusters.xml \
 -co $BASE_DIR/$LABELED_FINAL_DIR_NAME/sector_global_clusters.xml
