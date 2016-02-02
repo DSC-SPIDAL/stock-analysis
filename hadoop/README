@@ -1,0 +1,56 @@
+Assumptions
+ *  2004_2014.csv files is copied to HDFS and location is defined in HBASE_INPUT_PATH constant which is hdfs://156.56.179.122:9000/input
+
+Map Reduce
+==========
+Steps :
+    1. Insert data to HBase
+        1.1 Create table(Stock2004_2014Table) and column family(Stock2004_2014CF) in HBase
+            main class : StockBulkDataLoader
+            mapper class : StockInsertAllMapper
+            reducer class : StockInsertReducer
+            data structure : row key : id_symbol, row val : col family key : date col family val : price_cap
+
+        1.2 Create table (StockDatesTable), CF - StockDatesCF to store dates
+            main class : StockDateLoader
+            mapper class : StockInsertDateMapper
+            reducer class : StockInsertDateReducer
+            data structure : row key : date, row val : date
+
+    2. Read Data from HBase
+        Read Stock2004_2014Table content during a period and find regression (intercept, slope and error)
+         main class : StockDataReader
+         mapper class : StockDataReaderMapper
+
+    3. Read data from HBase for given range and with mode and write vector files to HDFS
+        command : ./bin/hadoop jar ~/chathuri/hadoop/hadoop-2.7.1/stock-kmeans-1.0.0-jar-with-dependencies.jar msc.fall2015.stock.kmeans.hbase.StockVectorCalculator 20100719 20110719 5
+    5. Read vector file and calculate distance and write the distance file to HDFS
+        command : ./bin/hadoop jar ~/chathuri/hadoop/hadoop-2.7.1/stock-kmeans-1.0.0-jar-with-dependencies.jar msc.fall2015.stock.kmeans.hbase.hbase.pwd.PairWiseAlignment hdfs://156.56.179.122:9000/output/20100719_20110719/part-r-00000 6031 6031
+
+
+Crunch
+======
+
+Steps :
+    1. Insert data to HBase
+        1.1 Create table(Stock2004_2014Table) and column family(Stock2004_2014CF) in HBase
+            main class : CrunchStockAllDataInserter
+            data structure : row key : id_symbol, row val : date_price_cap
+            command : ./bin/hadoop jar ~/chathuri/hadoop/hadoop-2.7.1/stock-kmeans-1.0.0-jar-with-dependencies.jar msc.fall2015.stock.kmeans.hbase.crunch.CrunchHBaseAllDataInserter
+
+        1.2 Create table (StockDatesTable), CF - StockDatesCF to store dates
+            main class : CrunchStockDateInserter
+            data structure : row key : date, row val : date
+            command : ./bin/hadoop jar ~/chathuri/hadoop/hadoop-2.7.1/stock-kmeans-1.0.0-jar-with-dependencies.jar msc.fall2015.stock.kmeans.hbase.crunch.CrunchHBaseDateInserter
+
+    2. Read Data from HBase
+        Read Stock2004_2014Table content during a period and find regression (intercept, slope and error)
+         main class : CrunchStockDataReader
+         command : ./bin/hadoop jar ~/chathuri/hadoop/hadoop-2.7.1/stock-kmeans-1.0.0-jar-with-dependencies.jar msc.fall2015.stock.kmeans.hbase.crunch.CrunchHBaseDataReader 20110719 20110919
+
+    3. Read data from HBase for given range and with mode and write vector files to HDFS
+        command : ./bin/hadoop jar ~/chathuri/hadoop/hadoop-2.7.1/stock-kmeans-1.0.0-jar-with-dependencies.jar msc.fall2015.stock.kmeans.hbase.crunch.CrunchStockVectorCalculater 20100719 20110719 5
+
+
+
+
