@@ -175,7 +175,7 @@
     </cluster>
     <cluster>
         <key>25</key>
-        <label>RealState</label>
+        <label>RealEstate</label>
         <visible>1</visible>
         <default>0</default>
         <color r="153" g="75" b="0  " a="255"/>
