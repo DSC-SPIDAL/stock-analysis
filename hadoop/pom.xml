@@ -77,7 +77,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>msc.fall2015.stock.kmeans.hbase.crunch.CrunchStockVectorCalculater</mainClass>
+                            <mainClass>edu.indiana.soic.ts.crunch.CrunchStockVectorCalculater</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>./resources/</Class-Path>
