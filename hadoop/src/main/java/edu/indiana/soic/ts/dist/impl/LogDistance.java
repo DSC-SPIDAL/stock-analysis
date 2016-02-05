@@ -12,6 +12,8 @@ import java.util.Map;
 public class LogDistance implements DistanceFunction {
     private static Logger LOG = LoggerFactory.getLogger(LogDistance.class);
 
+    private int type;
+
     public void prepare(Map conf) {
 
     }
@@ -21,12 +23,7 @@ public class LogDistance implements DistanceFunction {
             double c = corr(v1, v2);
             double l1 = vectorLength(1, v1);
             double l2 = vectorLength(1, v2);
-            double sqrt = Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
-            if (sqrt == 0) {
-            } else if (sqrt > 100000) {
-                System.out.println("Sqrt = " + sqrt);
-            }
-            return sqrt;
+            return Math.sqrt(Math.pow(l1, 2) + Math.pow(l2, 2) - 2 * l1 * l2 * c);
         } else {
             double c = corr(v1, v2);
             double l1 = 1;

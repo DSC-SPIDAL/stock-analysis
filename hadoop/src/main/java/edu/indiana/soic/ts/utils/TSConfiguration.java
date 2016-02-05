@@ -6,14 +6,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Map;
 
-public class Configuration {
+public class TSConfiguration {
     public static final String BASE_PATH = "base.path";
 
     private final Map conf;
 
     private String basePath;
 
-    public Configuration(String file) {
+    public TSConfiguration(String file) {
         try {
             this.conf = (Map) Yaml.load(new File(file));
             this.basePath = getString(BASE_PATH);
