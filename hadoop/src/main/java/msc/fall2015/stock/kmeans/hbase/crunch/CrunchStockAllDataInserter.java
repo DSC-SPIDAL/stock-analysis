@@ -23,7 +23,7 @@ package msc.fall2015.stock.kmeans.hbase.crunch;
 
 import com.google.protobuf.ServiceException;
 import msc.fall2015.stock.kmeans.hbase.crunch.utils.CrunchUtils;
-import msc.fall2015.stock.kmeans.utils.Constants;
+import msc.fall2015.stock.kmeans.hbase.utils.Constants;
 import org.apache.crunch.PCollection;
 import org.apache.crunch.Pipeline;
 import org.apache.crunch.PipelineResult;

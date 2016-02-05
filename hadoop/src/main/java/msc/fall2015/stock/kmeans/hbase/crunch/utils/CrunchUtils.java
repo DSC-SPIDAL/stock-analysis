@@ -21,7 +21,7 @@
 
 package msc.fall2015.stock.kmeans.hbase.crunch.utils;
 
-import msc.fall2015.stock.kmeans.utils.Constants;
+import msc.fall2015.stock.kmeans.hbase.utils.Constants;
 import org.apache.crunch.DoFn;
 import org.apache.crunch.Emitter;
 import org.apache.crunch.PCollection;

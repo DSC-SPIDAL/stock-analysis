@@ -22,7 +22,7 @@
 package msc.fall2015.stock.kmeans.hbase.mapreduce;
 
 import com.google.protobuf.ServiceException;
-import msc.fall2015.stock.kmeans.utils.Constants;
+import msc.fall2015.stock.kmeans.hbase.utils.Constants;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.*;

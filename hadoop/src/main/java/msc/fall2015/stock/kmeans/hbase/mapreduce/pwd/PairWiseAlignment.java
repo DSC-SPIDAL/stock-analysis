@@ -54,7 +54,6 @@ package msc.fall2015.stock.kmeans.hbase.mapreduce.pwd;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -64,11 +63,9 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -116,7 +113,7 @@ public class PairWiseAlignment extends Configured implements Tool {
 		Job job = new Job(conf, "Pairwise-analysis");
 
 		/* create the base dir for this job. Delete and recreates if it exists */
-		Path hdMainDir = new Path(msc.fall2015.stock.kmeans.utils.Constants.HDFS_HOME_PATH + "swg-hadoop");
+		Path hdMainDir = new Path(msc.fall2015.stock.kmeans.hbase.utils.Constants.HDFS_HOME_PATH + "swg-hadoop");
         FileSystem fs = FileSystem.get(conf);
 		fs.delete(hdMainDir, true);
 		Path hdInputDir = new Path(hdMainDir, "data");

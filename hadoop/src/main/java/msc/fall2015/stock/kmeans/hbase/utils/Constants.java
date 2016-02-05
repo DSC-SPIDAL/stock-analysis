@@ -19,7 +19,7 @@
  *
 */
 
-package msc.fall2015.stock.kmeans.utils;
+package msc.fall2015.stock.kmeans.hbase.utils;
 
 public class Constants {
     public static final String STOCK_TABLE_NAME = "Stock2004_2014Table";
@@ -53,5 +53,11 @@ public class Constants {
         public static final String START_DATE = "start_date";
         public static final String END_DATE = "end_date";
         public static final String NO_OF_DAYS = "no_of_days";
+    }
+
+    public class Histogram {
+        public static final String MIN = "histogram.min";
+        public static final String MAX = "histogram.max";
+        public static final String NO_OF_BINS = "histogram.bins";
     }
 }

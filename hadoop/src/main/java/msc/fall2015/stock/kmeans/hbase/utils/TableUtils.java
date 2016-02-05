@@ -1,7 +1,6 @@
 package msc.fall2015.stock.kmeans.hbase.utils;
 
 import com.google.protobuf.ServiceException;
-import msc.fall2015.stock.kmeans.utils.Constants;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HTableDescriptor;

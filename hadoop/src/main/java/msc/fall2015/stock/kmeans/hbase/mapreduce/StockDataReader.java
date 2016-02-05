@@ -22,7 +22,7 @@
 package msc.fall2015.stock.kmeans.hbase.mapreduce;
 
 import msc.fall2015.stock.kmeans.hbase.utils.TableUtils;
-import msc.fall2015.stock.kmeans.utils.Constants;
+import msc.fall2015.stock.kmeans.hbase.utils.Constants;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Scan;

@@ -97,6 +97,10 @@ public class VectorPoint {
         }
     }
 
+    public String getSymbol() {
+        return symbol;
+    }
+
     public void setConstantVector(boolean constantVector) {
         this.constantVector = constantVector;
     }

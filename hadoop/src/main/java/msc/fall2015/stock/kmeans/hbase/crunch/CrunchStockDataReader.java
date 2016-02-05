@@ -22,7 +22,7 @@
 package msc.fall2015.stock.kmeans.hbase.crunch;
 
 import com.google.protobuf.ServiceException;
-import msc.fall2015.stock.kmeans.utils.Constants;
+import msc.fall2015.stock.kmeans.hbase.utils.Constants;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.apache.crunch.*;
 import org.apache.crunch.fn.Aggregators;

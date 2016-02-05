@@ -1,37 +1,69 @@
 package msc.fall2015.stock.kmeans.hbase.mapreduce.postproc;
 
-import msc.fall2015.stock.kmeans.hbase.mapreduce.StockDataReaderMapper;
-import msc.fall2015.stock.kmeans.hbase.mapreduce.StockVectorCalculatorMapper;
 import msc.fall2015.stock.kmeans.hbase.utils.Bin;
-import msc.fall2015.stock.kmeans.hbase.utils.TableUtils;
+import msc.fall2015.stock.kmeans.hbase.utils.Constants;
 import msc.fall2015.stock.kmeans.hbase.utils.Utils;
-import msc.fall2015.stock.kmeans.utils.Constants;
+import msc.fall2015.stock.kmeans.hbase.utils.VectorPoint;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.TreeMap;
 
 public class StockHistogramGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(StockHistogramGenerator.class);
 
-    private Bin[] getBins(int noOfBins, int max, int min) {
+    public class HistogramMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
+        private Bin[] bins;
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException {
+            super.setup(context);
+
+            Configuration conf = context.getConfiguration();
+            double min = conf.getDouble(Constants.Histogram.MIN, -1);
+            double max = conf.getDouble(Constants.Histogram.MAX, 1);
+            int noOfBins = conf.getInt(Constants.Histogram.NO_OF_BINS, 50);
+
+            this.bins = getBins(noOfBins, max, min);
+        }
+
+        @Override
+        protected void map(LongWritable key, Text value, Context context)
+                throws IOException, InterruptedException {
+            VectorPoint p = Utils.parseVector(value.toString());
+            if (p != null) {
+                double d = vectorDelta(p.getNumbers());
+                int binIndex = getBinIndex(d, this.bins);
+                context.write(new IntWritable(binIndex), new Text(p.getSymbol()));
+            }
+        }
+    }
+
+    private static int getBinIndex(double val, Bin []bins) {
+        for (int i = 0; i < bins.length; i++) {
+            Bin b = bins[i];
+            // add all that is below the 0'th bin to 0
+            if (val < b.start) {
+                return i;
+            }
+
+            if (b.start <= val && b.end >= val) {
+                return i;
+            }
+        }
+        // add all that is over the last bin value to last
+        return bins.length - 1;
+    }
+
+    private static Bin[] getBins(int noOfBins, double max, double min) {
         double delta = (max - min) / noOfBins;
         Bin []bins = new Bin[noOfBins];
         for (int i = 0; i < bins.length; i++) {
@@ -43,7 +75,16 @@ public class StockHistogramGenerator {
         return bins;
     }
 
-    private
+    private static double vectorDelta(double []n) {
+        double sum = 0.0;
+        for (double aN : n) {
+            sum += aN;
+        }
+        if (sum == 0) return .1;
+        double delta = n[n.length - 1] - n[0];
+        return delta * n.length / sum;
+    }
+
 
     public static void main(String[] args) {
         Options options = new Options();

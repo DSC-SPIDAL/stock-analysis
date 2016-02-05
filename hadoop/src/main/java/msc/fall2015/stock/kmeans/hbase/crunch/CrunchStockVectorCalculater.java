@@ -24,7 +24,7 @@ package msc.fall2015.stock.kmeans.hbase.crunch;
 import msc.fall2015.stock.kmeans.hbase.utils.CleanMetric;
 import msc.fall2015.stock.kmeans.hbase.utils.TableUtils;
 import msc.fall2015.stock.kmeans.hbase.utils.VectorPoint;
-import msc.fall2015.stock.kmeans.utils.Constants;
+import msc.fall2015.stock.kmeans.hbase.utils.Constants;
 import org.apache.crunch.*;
 import org.apache.crunch.impl.mr.MRPipeline;
 import org.apache.crunch.io.hbase.HBaseSourceTarget;
