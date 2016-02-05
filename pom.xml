@@ -10,5 +10,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>mpi</module>
+        <module>hadoop</module>
     </modules>
 </project>

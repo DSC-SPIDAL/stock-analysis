@@ -31,7 +31,7 @@ import java.io.IOException;
 
 
 public class StockInsertDateMapper extends
-        Mapper<LongWritable, Text, Text, Text   > {
+        Mapper<LongWritable, Text, Text, Text> {
 
     private static final Logger log = LoggerFactory.getLogger(StockBulkDataLoader.class);
 

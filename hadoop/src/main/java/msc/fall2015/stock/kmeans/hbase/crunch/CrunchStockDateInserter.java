@@ -50,7 +50,6 @@ public class CrunchStockDateInserter extends Configured implements Tool, Seriali
         System.exit(res);
     }
 
-    @Override
     public int run(final String[] args) throws Exception {
         createTable();
         final Configuration config = getConf();

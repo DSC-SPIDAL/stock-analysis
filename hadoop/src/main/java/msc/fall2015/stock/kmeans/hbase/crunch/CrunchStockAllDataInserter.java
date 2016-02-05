@@ -50,7 +50,6 @@ public class CrunchStockAllDataInserter extends Configured implements Tool, Seri
         System.exit(res);
     }
 
-    @Override
     public int run(final String[] args) throws Exception {
         createTable();
         final Configuration config = getConf();

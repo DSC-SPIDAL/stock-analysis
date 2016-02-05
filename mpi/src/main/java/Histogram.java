@@ -1,6 +1,5 @@
 import org.apache.commons.cli.*;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
-import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import java.io.*;
 import java.text.DecimalFormat;

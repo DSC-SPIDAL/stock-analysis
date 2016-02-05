@@ -105,20 +105,4 @@ public class StockBulkDataLoader {
         FileOutputFormat.setOutputPath(job, new Path(Constants.HDFS_OUTPUT_PATH));
         return job;
     }
-
-//    public static Job configureInsertPerYearJob(Configuration configuration) throws IOException {
-//        Job job = new Job(configuration, "HBase Bulk Import Example");
-//        job.setJarByClass(StockInsertPerYearMapper.class);
-//
-//        job.setMapperClass(StockInsertPerYearMapper.class);
-//        job.setMapOutputKeyClass(ImmutableBytesWritable.class);
-//        job.setMapOutputValueClass(KeyValue.class);
-//
-//        job.setInputFormatClass(TextInputFormat.class);
-//        FileInputFormat.addInputPath(job, new Path(Constants.HDFS_INPUT_PATH));
-//        FileOutputFormat.setOutputPath(job, new Path(Constants.HDFS_OUTPUT_PATH));
-//        TableMapReduceUtil.initTableReducerJob(Constants.STOCK_TABLE_NAME, null, job);
-//        job.setNumReduceTasks(0);
-//        return job;
-//    }
 }

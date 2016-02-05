@@ -1,0 +1,23 @@
+base.dir: "/home/supun"
+
+preproc.dir: "preproc"
+
+# time shifts
+time.window: 1
+time.shift: 7
+
+# weather accumulating
+accumulating: false
+
+# vector properties
+vector.dir: "vectors"
+
+# distance properties
+distance.dir: "distance"
+
+# histogram properties
+histogram.bins: 50
+histogram.min: -1
+histogram.max: 1
+
+
