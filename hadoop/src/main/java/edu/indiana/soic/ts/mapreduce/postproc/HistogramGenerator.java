@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class StockHistogramGenerator {
-    private static final Logger LOG = LoggerFactory.getLogger(StockHistogramGenerator.class);
+public class HistogramGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(HistogramGenerator.class);
 
     public class HistogramMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
         private Bin[] bins;

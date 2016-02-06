@@ -19,8 +19,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StockPVizGenerator {
-    private static final Logger LOG = LoggerFactory.getLogger(StockPVizGenerator.class);
+public class PVizGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(PVizGenerator.class);
 
     public class PViZGeneratorMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
         private String clusterFile;

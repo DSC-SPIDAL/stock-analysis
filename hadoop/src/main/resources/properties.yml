@@ -2,10 +2,13 @@ base.dir: "/home/supun"
 
 preproc.dir: "preproc"
 
+# dates
+date.start: "2004-01-01"
+date.end: "2015-01-01"
+
 # distance calculation
 distance.function: "edu.indiana.soic.ts.dist.imple.LogDistance"
 distance.type: 1
-
 
 # time shifts
 time.window: 1
