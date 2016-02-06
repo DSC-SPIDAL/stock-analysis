@@ -21,8 +21,14 @@
 
 package edu.indiana.soic.ts.mapreduce;
 
+import edu.indiana.soic.ts.utils.TSConfiguration;
 import edu.indiana.soic.ts.utils.TableUtils;
 import edu.indiana.soic.ts.utils.Constants;
+import edu.indiana.soic.ts.utils.Utils;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -32,26 +38,33 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.ho.yaml.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class StockVectorCalculator {
-    private static String startDate;
-    private static String endDate;
-    private static int mode;
-    private static final Logger log = LoggerFactory.getLogger(StockDataReader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StockDataReader.class);
 
-    public static void main(String[] args) {
+    private String startDate;
+    private String endDate;
+    private int mode;
+
+    public void configure(Map conf) {
+        startDate = (String) conf.get(TSConfiguration.START_DATE);
+        endDate = (String) conf.get(TSConfiguration.END_DATE);
+    }
+
+    public void submitJob() {
         try {
-            startDate = args[1];
-            endDate = args[2];
-            mode = Integer.valueOf(args[3]);
             System.out.println("Start Date : " + startDate);
             System.out.println("End Date : " + endDate);
             if (startDate == null || startDate.isEmpty()) {
@@ -91,22 +104,41 @@ public class StockVectorCalculator {
                 FileOutputFormat.setOutputPath(job, new Path(Constants.HDFS_OUTPUT_PATH + id));  // adjust directories as required
                 boolean b = job.waitForCompletion(true);
                 if (!b) {
-                    throw new IOException("error with job!");
+                    LOG.error("Error with job...!!!");
+                    throw new IOException("Error with job...!!!");
                 }
             }
 
         } catch (ParseException e) {
-            log.error("Error while parsing date", e);
+            LOG.error("Error while parsing date", e);
             throw new RuntimeException("Error while parsing date", e);
-        } catch (InterruptedException e) {
-            log.error("Error while creating the job", e);
+        } catch (InterruptedException | ClassNotFoundException | IOException e) {
+            LOG.error("Error while creating the job", e);
             throw new RuntimeException("Error while creating the job", e);
-        } catch (ClassNotFoundException e) {
-            log.error("Error while creating the job", e);
-            throw new RuntimeException("Error while creating the job", e);
-        } catch (IOException e) {
-            log.error("Error while creating the job", e);
-            throw new RuntimeException("Error while creating the job", e);
+        }
+    }
+
+    public static void main(String[] args) {
+        Options options = new Options();
+        options.addOption(Utils.createOption("c", true, "Configuration file", true));
+        CommandLineParser commandLineParser = new BasicParser();
+        CommandLine cmd;
+        try {
+            cmd = commandLineParser.parse(options, args);
+            String  configFile = cmd.getOptionValue("c");
+            Map conf = (Map) Yaml.load(new File(configFile));
+
+            StockVectorCalculator vectorCalculator = new StockVectorCalculator();
+            vectorCalculator.configure(conf);
+            vectorCalculator.submitJob();
+        } catch (org.apache.commons.cli.ParseException e) {
+            String s = "Invalid command line options";
+            LOG.error(s, e);
+            throw new RuntimeException(s, e);
+        } catch (FileNotFoundException e) {
+            String s = "Failed read the configuration";
+            LOG.error(s, e);
+            throw new RuntimeException(s, e);
         }
     }
 }

@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class TSConfiguration {
     public static final String BASE_PATH = "base.path";
+    public static final String START_DATE = "time.start";
+    public static final String END_DATE = "time.end";
 
     private final Map conf;
 
