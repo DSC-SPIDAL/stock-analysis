@@ -1,8 +1,20 @@
 package edu.indiana.soic.ts.utils;
 
+import edu.indiana.soic.ts.pviz.Plotviz;
 import org.apache.commons.cli.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
+    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
+
     public static Option createOption(String opt, boolean hasArg, String description, boolean required) {
         Option symbolListOption = new Option(opt, hasArg, description);
         symbolListOption.setRequired(required);
@@ -26,5 +38,63 @@ public class Utils {
             return p;
         }
         return null;
+    }
+
+    public static List<VectorPoint> readVectors(File file) {
+        List<VectorPoint> vecs = new ArrayList<VectorPoint>();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                // process the line.
+                VectorPoint p = parseVector(line);
+                vecs.add(p);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException ignore) {
+                }
+            }
+        }
+        return vecs;
+    }
+
+    public static void savePlotViz(String outFileName, Plotviz plotviz) throws FileNotFoundException, JAXBException {
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(outFileName);
+            JAXBContext ctx = JAXBContext.newInstance(Plotviz.class);
+            Marshaller ma = ctx.createMarshaller();
+            ma.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            ma.marshal(plotviz, fileOutputStream);
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException ignore) {
+                }
+            }
+        }
+    }
+
+    public static Point readPoint(String line) throws Exception {
+        try {
+            String[] splits = line.split("\t");
+
+            int i = Integer.parseInt(splits[0]);
+            double x = Double.parseDouble(splits[1]);
+            double y = Double.parseDouble(splits[2]);
+            double z = Double.parseDouble(splits[3]);
+            int clazz = Integer.parseInt(splits[4]);
+
+            return new Point(i, x, y, z, clazz);
+        } catch (NumberFormatException e) {
+            throw new Exception(e);
+        }
     }
 }

@@ -16,7 +16,7 @@ public class PvizGenerator {
 
     public static void main(String[] args) {
         Options options = new Options();
-        options.addOption("c", true, "Cluste file");
+        options.addOption("c", true, "Cluster file");
         options.addOption("p", true, "Points folder");
         options.addOption("d", true, "Output folder");
         options.addOption("o", true, "Original stock file");

@@ -10,6 +10,8 @@ import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 
 public class StockVectorCalculatorMapper extends TableMapper<IntWritable, Text> {
+    private static final Logger LOG = LoggerFactory.getLogger(StockVectorCalculatorMapper.class);
     /**
      * The start date we are interested in
      */
@@ -64,7 +67,7 @@ public class StockVectorCalculatorMapper extends TableMapper<IntWritable, Text> 
                     String column = Bytes.toString(entryVersion.getKey());
                     byte[] val = entry.getValue();
                     String valOfColumn = new String(val);
-                    System.out.println("RowKey : " + rowKey + " Column Key : " + column + " Column Val : " + valOfColumn);
+                    LOG.info("RowKey : " + rowKey + " Column Key : " + column + " Column Val : " + valOfColumn);
                     if (!valOfColumn.isEmpty()) {
                         String[] priceAndCap = valOfColumn.split("_");
                         if (priceAndCap.length > 1) {
