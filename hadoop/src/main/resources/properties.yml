@@ -1,4 +1,5 @@
 base.dir: "/home/supun"
+input.dir: "input"
 
 preproc.dir: "preproc"
 

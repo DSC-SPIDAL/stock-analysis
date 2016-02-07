@@ -118,22 +118,14 @@ public class StockVectorCalculator {
     }
 
     public static void main(String[] args) {
-        Options options = new Options();
-        options.addOption(Utils.createOption("c", true, "Configuration file", true));
-        CommandLineParser commandLineParser = new BasicParser();
-        CommandLine cmd;
+
         try {
-            cmd = commandLineParser.parse(options, args);
-            String  configFile = cmd.getOptionValue("c");
+            String  configFile = Utils.getConfigurationFile(args);
             Map conf = (Map) Yaml.load(new File(configFile));
 
             StockVectorCalculator vectorCalculator = new StockVectorCalculator();
             vectorCalculator.configure(conf);
             vectorCalculator.submitJob();
-        } catch (org.apache.commons.cli.ParseException e) {
-            String s = "Invalid command line options";
-            LOG.error(s, e);
-            throw new RuntimeException(s, e);
         } catch (FileNotFoundException e) {
             String s = "Failed read the configuration";
             LOG.error(s, e);

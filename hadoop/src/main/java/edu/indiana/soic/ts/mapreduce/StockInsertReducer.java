@@ -49,12 +49,12 @@ public class StockInsertReducer extends TableReducer<Text, Text, ImmutableBytesW
             if (val != null){
                 String value = val.toString();
                 String[] split = value.split("_");
-                if (split.length > 2){
-                    row.add(Constants.STOCK_TABLE_CF_BYTES, Bytes.toBytes(split[0]), Bytes.toBytes(split[1] + "_" + split[2]));
-                }else if (split.length > 1 && split.length < 2){
-                    row.add(Constants.STOCK_TABLE_CF_BYTES, Bytes.toBytes(split[0]), Bytes.toBytes(split[1] + "_NAN" ));
-                }else if (split.length > 0 && split.length <1){
-                    row.add(Constants.STOCK_TABLE_CF_BYTES, Bytes.toBytes(split[0]), Bytes.toBytes("NAN_NAN" ));
+                if (split.length > 4){
+                    row.addColumn(Constants.STOCK_TABLE_CF_BYTES, Bytes.toBytes(split[0]), Bytes.toBytes(split[1] + "_" + split[2] + "_" + split[3] + "_" + split[4] ));
+                } else if (split.length > 1 && split.length < 2){
+                    row.addColumn(Constants.STOCK_TABLE_CF_BYTES, Bytes.toBytes(split[0]), Bytes.toBytes(split[1] + "_NAN" ));
+                } else if (split.length > 0 && split.length <1){
+                    row.addColumn(Constants.STOCK_TABLE_CF_BYTES, Bytes.toBytes(split[0]), Bytes.toBytes("NAN_NAN" ));
                 }
             }
         }

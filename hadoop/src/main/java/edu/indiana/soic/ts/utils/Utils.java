@@ -1,7 +1,7 @@
 package edu.indiana.soic.ts.utils;
 
 import edu.indiana.soic.ts.pviz.Plotviz;
-import org.apache.commons.cli.Option;
+import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +24,19 @@ public class Utils {
         Option symbolListOption = new Option(opt, hasArg, description);
         symbolListOption.setRequired(required);
         return symbolListOption;
+    }
+
+    public static String getConfigurationFile(String []args) {
+        Options options = new Options();
+        options.addOption(Utils.createOption("c", true, "Configuration file", true));
+        CommandLineParser commandLineParser = new BasicParser();
+        CommandLine cmd;
+        try {
+            cmd = commandLineParser.parse(options, args);
+            return cmd.getOptionValue("c");
+        } catch (org.apache.commons.cli.ParseException e) {
+            throw new RuntimeException("Invalid command line arguments");
+        }
     }
 
     public static VectorPoint parseVector(String line) {
