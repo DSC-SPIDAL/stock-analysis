@@ -58,10 +58,6 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
 
-/**
- * @author Thilina Gunarathne (tgunarat@cs.indiana.edu)
- */
-
 public class SWGWritable implements Writable {
 
 	private long rowBlock, columnBlock, blockSize;

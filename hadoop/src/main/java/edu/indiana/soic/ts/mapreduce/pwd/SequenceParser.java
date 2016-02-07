@@ -85,8 +85,7 @@ public class SequenceParser {
 		return null;
 	}
 
-	public static List<VectorPoint> ParseFile(InputStream inStream) throws IOException
-			 {
+	public static List<VectorPoint> ParseFile(InputStream inStream) throws IOException {
 		ArrayList<VectorPoint> sequences = new ArrayList<VectorPoint>();
 		BufferedReader bufferedReader = new BufferedReader(
 				new InputStreamReader(inStream));
