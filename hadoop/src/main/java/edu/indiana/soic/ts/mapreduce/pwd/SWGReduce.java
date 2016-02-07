@@ -63,12 +63,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 
-/**
- * @author Thilina Gunarathne (tgunarat@cs.indiana.edu)
- */
-
-public class SWGReduce extends
-		Reducer<LongWritable, SWGWritable, LongWritable, SWGWritable> {
+public class SWGReduce extends Reducer<LongWritable, SWGWritable, LongWritable, SWGWritable> {
 
 	public void reduce(LongWritable key, Iterable<SWGWritable> values,
 			Context context) throws IOException {

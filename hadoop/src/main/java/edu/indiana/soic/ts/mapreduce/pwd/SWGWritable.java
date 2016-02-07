@@ -70,6 +70,9 @@ public class SWGWritable implements Writable {
 
 	public SWGWritable() {}
 
+	// we need to keep track of the max
+	private double max;
+
 	public SWGWritable(long rowBlock, long columnBlock, long blockSize,
 			boolean isInverse) {
 		this.rowBlock = rowBlock;
@@ -86,7 +89,6 @@ public class SWGWritable implements Writable {
 	}
 
 	public void write(DataOutput out) throws IOException {
-//		System.out.println("serialized");
 		out.writeLong(rowBlock);
 		out.writeLong(columnBlock);
 		out.writeLong(blockSize);
@@ -99,10 +101,8 @@ public class SWGWritable implements Writable {
 
 	private void serializeArray(DataOutput out) throws IOException {
 		for (int i = 0; i < alignments.length; i++) {
-			//out.write(alignments[i]);
 			for (int j = 0; j < alignments[0].length; j++) {
 				out.writeShort(alignments[i][j]);
-//				out.writeBytes(alignments[i][j]+""); //debug
 			}
 		}
 	}
@@ -122,6 +122,14 @@ public class SWGWritable implements Writable {
 			row[i] = dataInput.readShort();
 		}
 		return row;
+	}
+
+	public double getMax() {
+		return max;
+	}
+
+	public void setMax(double max) {
+		this.max = max;
 	}
 
 	public long getRowBlock() {

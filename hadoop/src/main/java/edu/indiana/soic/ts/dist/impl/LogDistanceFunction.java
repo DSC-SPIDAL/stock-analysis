@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class LogDistance implements DistanceFunction {
-    private static Logger LOG = LoggerFactory.getLogger(LogDistance.class);
+public class LogDistanceFunction implements DistanceFunction {
+    private static Logger LOG = LoggerFactory.getLogger(LogDistanceFunction.class);
 
     private int type;
 

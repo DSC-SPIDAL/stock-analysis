@@ -52,7 +52,6 @@
 
 package edu.indiana.soic.ts.mapreduce.pwd;
 
-
 import edu.indiana.soic.ts.utils.VectorPoint;
 
 import java.io.BufferedReader;
@@ -61,10 +60,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * @author Thilina Gunarathne (tgunarat@cs.indiana.edu)
- */
 
 public class SequenceParser {
 	public static VectorPoint parseVectorLine(String line) {
@@ -113,57 +108,5 @@ public class SequenceParser {
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to parse", e);
 		}
-	}
-
-	private static String prepare(String sequence)
-			 {
-		StringBuffer buffer = new StringBuffer();
-		String copy = sequence.trim().toUpperCase();
-
-		for (int i = 0, n = copy.length(); i < n; i++) {
-			switch (copy.charAt(i)) {
-			// skip whitespaces
-			case 9:
-			case 10:
-			case 13:
-			case 32:
-				break;
-
-			// add a valid character
-			case 'A':
-			case 'B':
-			case 'C':
-			case 'D':
-			case 'E':
-			case 'F':
-			case 'G':
-			case 'H':
-			case 'I':
-			case 'K':
-			case 'L':
-			case 'M':
-			case 'N':
-			case 'P':
-			case 'Q':
-			case 'R':
-			case 'S':
-			case 'T':
-			case 'U':
-			case 'V':
-			case 'W':
-			case 'Y':
-			case 'Z':
-			case 'X':
-
-			case '-':
-			case '*':
-				buffer.append(copy.charAt(i));
-				break;
-
-			// throw an exception for anything else
-			default:
-			}
-		}
-		return buffer.toString();
 	}
 }

@@ -79,18 +79,20 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PairWiseAlignment extends Configured implements Tool {
+	private static final Logger LOG = LoggerFactory.getLogger(PairWiseAlignment.class);
+
 	public static void main(String[] args) throws Exception {
-		int res = ToolRunner.run(new Configuration(), new PairWiseAlignment(),
-				args);
+		int res = ToolRunner.run(new Configuration(), new PairWiseAlignment(), args);
 		System.exit(res);
 	}
 
 	public int run(String[] args) throws Exception {
 		if (args.length < 2) {
-			System.err
-					.println("Usage:  <sequence_file> <sequence_count> <block_size> <weight>");
+			LOG.info("Usage:  <sequence_file> <sequence_count> <block_size> <weight>");
 			System.exit(2);
 		}
 
@@ -120,7 +122,7 @@ public class PairWiseAlignment extends Configured implements Tool {
 
 		int noOfDivisions = (int) Math.ceil(noOfSequences / (double) blockSize);
 		int noOfBlocks = (noOfDivisions * (noOfDivisions + 1)) / 2;
-		System.out.println("No of divisions :" + noOfDivisions
+		LOG.info("No of divisions :" + noOfDivisions
 				+ "\nNo of blocks :" + noOfBlocks + "\nBlock size :"
 				+ blockSize);
 
@@ -143,7 +145,7 @@ public class PairWiseAlignment extends Configured implements Tool {
 		distributeData(blockSize, conf, fs, hdInputDir, noOfDivisions);
 
 		long dataPartTime = (System.nanoTime() - dataPartitionStartTime) / 1000000;
-		System.out.println("Data Partition & Scatter Completed in (ms):"
+		LOG.info("Data Partition & Scatter Completed in (ms):"
 				+ dataPartTime);
 
 		// Output dir in HDFS
@@ -168,7 +170,7 @@ public class PairWiseAlignment extends Configured implements Tool {
 		long startTime = System.currentTimeMillis();
 		int exitStatus = job.waitForCompletion(true) ? 0 : 1;
 		double executionTime = (System.currentTimeMillis() - startTime) / 1000.0;
-		System.out.println("Job Finished in " + executionTime + " seconds");
+		LOG.info("Job Finished in " + executionTime + " seconds");
 		
 		if (args.length == 5) {
 			FileWriter writer = new FileWriter(args[4]);
@@ -229,8 +231,8 @@ public class PairWiseAlignment extends Configured implements Tool {
         Path path = new Path(sequenceFile);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fs.open(path)));
 
-        System.out.println("noOfDivisions : " + noOfDivisions);
-        System.out.println("blockSize : " + blockSize);
+		LOG.info("noOfDivisions : " + noOfDivisions);
+		LOG.info("blockSize : " + blockSize);
 		for (int partNo = 0; partNo < noOfDivisions; partNo++) {
 			//
 			String filePartName = Constants.HDFS_SEQ_FILENAME + "_" + partNo;

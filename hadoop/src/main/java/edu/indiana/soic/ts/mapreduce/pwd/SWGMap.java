@@ -64,14 +64,30 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper;
-
-/**
- * @author Thilina Gunarathne (tgunarat@cs.indiana.edu)
- */
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SWGMap extends Mapper<LongWritable, Text, LongWritable, SWGWritable> {
+	private static final Logger LOG = LoggerFactory.getLogger(SWGMap.class);
+    long blockSize;
+    long noOfSequences;
+    long noOfDivisions;
+    boolean weightEnabled;
 
-	public void map(LongWritable blockIndex, Text value, Context context)
+    @Override
+    protected void setup(Context context) throws IOException, InterruptedException {
+        super.setup(context);
+        Configuration conf = context.getConfiguration();
+
+        this.blockSize = conf.getLong(Constants.BLOCK_SIZE, 1000);
+        this.noOfSequences = conf.getLong(Constants.NO_OF_SEQUENCES,
+                blockSize * 10);
+        this.noOfDivisions = conf.getLong(Constants.NO_OF_DIVISIONS,
+                noOfSequences / blockSize);
+        this.weightEnabled = conf.getBoolean(Constants.WEIGHT_ENABLED, false);
+    }
+
+    public void map(LongWritable blockIndex, Text value, Context context)
 			throws IOException, InterruptedException {
 		long startTime = System.nanoTime();
 		Configuration conf = context.getConfiguration();
@@ -83,15 +99,7 @@ public class SWGMap extends Mapper<LongWritable, Text, LongWritable, SWGWritable
 		long rowBlock = Long.parseLong(valArgs[0]);
 		long columnBlock = Long.parseLong(valArgs[1]);
 		boolean isDiagonal = Boolean.parseBoolean(valArgs[2]);
-		System.out.println("row column" + rowBlock + "  " + columnBlock + "  "
-				+ isDiagonal + "  " + valArgs[2]);
-
-		long blockSize = conf.getLong(Constants.BLOCK_SIZE, 1000);
-		long noOfSequences = conf.getLong(Constants.NO_OF_SEQUENCES,
-				blockSize * 10);
-		long noOfDivisions = conf.getLong(Constants.NO_OF_DIVISIONS,
-				noOfSequences / blockSize);
-        boolean weightEnabled = conf.getBoolean(Constants.WEIGHT_ENABLED, false);
+		LOG.info("row column" + rowBlock + "  " + columnBlock + "  " + isDiagonal + "  " + valArgs[2]);
 
 		long row = rowBlock * blockSize;
 		long column = columnBlock * blockSize;
@@ -101,8 +109,7 @@ public class SWGMap extends Mapper<LongWritable, Text, LongWritable, SWGWritable
 		// parse the inputFilePart for row
 		Path rowPath = new Path(Constants.HDFS_SEQ_FILENAME + "_" + rowBlock);
 		FSDataInputStream rowInStream = fs.open(rowPath);
-		List<VectorPoint> rowSequences;
-		rowSequences = SequenceParser.ParseFile(rowInStream);
+		List<VectorPoint> rowSequences = SequenceParser.ParseFile(rowInStream);
 		// parse the inputFilePart for column if this is not a diagonal block
 		List<VectorPoint> colSequences;
 		if (isDiagonal) {
@@ -114,41 +121,50 @@ public class SWGMap extends Mapper<LongWritable, Text, LongWritable, SWGWritable
 			FSDataInputStream colInStream = fs.open(colPath);
 			colSequences = SequenceParser.ParseFile(colInStream);
 		}
-		System.out.println("Parsing time : "
-				+ ((System.nanoTime() - parseStartTime) / 1000000) + "ms");
+		LOG.info("Parsing time : " + ((System.nanoTime() - parseStartTime) / 1000000) + "ms");
 
 		short[][] alignments = new short[(int) blockSize][(int) blockSize];
+        double [][]doubleDistances = new double[(int)blockSize][(int)blockSize];
+        double max = Double.MIN_VALUE;
 		for (int rowIndex = 0; ((rowIndex < blockSize) & ((row + rowIndex) < noOfSequences)); rowIndex++) {
 			int columnIndex = 0;
 			for (; ((columnIndex < blockSize) & ((column + columnIndex) < noOfSequences)); columnIndex++) {
-                double alignment = 0;
+                double alignment;
                 if (weightEnabled){
                     alignment = rowSequences.get(rowIndex).weight(colSequences.get(columnIndex));
                 }else {
                     alignment = rowSequences.get(rowIndex).corr(colSequences.get(columnIndex));
                 }
-
+                if (alignment > max) {
+                    max = alignment;
+                }
                 // Get the identity and make it percent identity
-                short scaledScore = (short) (alignment * Short.MAX_VALUE);
-                alignments[rowIndex][columnIndex] = scaledScore;
+
+                doubleDistances[rowIndex][columnIndex] = alignment;
             }
 			alignmentCounter.increment(columnIndex);
 		}
 
-		SWGWritable dataWritable = new SWGWritable(rowBlock, columnBlock,
-				blockSize, false);
+        for (int rowIndex = 0; ((rowIndex < blockSize) & ((row + rowIndex) < noOfSequences)); rowIndex++) {
+            int columnIndex = 0;
+            for (; ((columnIndex < blockSize) & ((column + columnIndex) < noOfSequences)); columnIndex++) {
+                double alignment = doubleDistances[rowIndex][columnIndex] / max;
+                short scaledScore = (short) (alignment * Short.MAX_VALUE);
+                alignments[rowIndex][columnIndex] = scaledScore;
+            }
+        }
+
+		SWGWritable dataWritable = new SWGWritable(rowBlock, columnBlock, blockSize, false);
 		dataWritable.setAlignments(alignments);
 		context.write(new LongWritable(rowBlock), dataWritable);
 
 		if (!isDiagonal) {
 			// Create the transpose matrix of (rowBlock, colBlock) block to fill the
 			// (colBlock, rowBlock) block.
-			SWGWritable inverseDataWritable = new SWGWritable(columnBlock,
-					rowBlock, blockSize, true);
+			SWGWritable inverseDataWritable = new SWGWritable(columnBlock, rowBlock, blockSize, true);
 			inverseDataWritable.setAlignments(alignments);
 			context.write(new LongWritable(columnBlock), inverseDataWritable);
 		}
-		System.out.println("Map time : "
-				+ ((System.nanoTime() - startTime) / 1000000) + "ms");
+		LOG.info("Map time : " + ((System.nanoTime() - startTime) / 1000000) + "ms");
 	}
 }
