@@ -69,30 +69,21 @@ public class StockBulkDataLoader {
             // Execute the table through admin
             if (!admin.tableExists(stockTableDesc.getTableName())){
                 admin.createTable(stockTableDesc);
-                System.out.println("Stock table created !!!");
+                log.info("Stock table created: {}", Constants.STOCK_TABLE_CF);
             }
 
             // Load hbase-site.xml
             HBaseConfiguration.addHbaseResources(configuration);
             Job job = configureInsertAllJob(configuration);
             job.waitForCompletion(true);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ClassNotFoundException | IOException | ServiceException e) {
             log.error(e.getMessage(), e);
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            log.error(e.getMessage(), e);
-            e.printStackTrace();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            e.printStackTrace();
-        } catch (ServiceException e) {
-            log.error(e.getMessage(), e);
-            e.printStackTrace();
+            throw new RuntimeException("Failed to create job", e);
         }
     }
 
     public static Job configureInsertAllJob(Configuration configuration) throws IOException {
-        Job job = new Job(configuration, "HBase Bulk Import Example");
+        Job job = new Job(configuration, "Bulk Import data");
         job.setJarByClass(StockInsertAllMapper.class);
 
         job.setMapperClass(StockInsertAllMapper.class);

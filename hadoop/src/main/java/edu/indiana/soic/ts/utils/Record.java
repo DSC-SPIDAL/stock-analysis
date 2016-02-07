@@ -12,8 +12,8 @@ public class Record {
     private double factorToAdjPrice = 0;
     private double factorToAdjVolume = 0;
 
-    public Record(double price, int symbol, Date date, String dateString, String symbolString, int volume, double factorToAdjPrice, double factorToAdjVolume) {
-        setValues(price, symbol, date, dateString, symbolString, volume, factorToAdjPrice, factorToAdjVolume);
+    public Record(double price, int key, Date date, String dateString, String symbolString, int volume, double factorToAdjPrice, double factorToAdjVolume) {
+        setValues(price, key, date, dateString, symbolString, volume, factorToAdjPrice, factorToAdjVolume);
     }
 
     private void setValues(double price, int symbol, Date date, String dateString, String symbolString, int volume, double factorToAdjPrice, double factorToAdjVolume) {

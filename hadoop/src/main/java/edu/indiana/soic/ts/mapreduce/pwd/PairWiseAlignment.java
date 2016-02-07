@@ -99,13 +99,12 @@ public class PairWiseAlignment extends Configured implements Tool {
 		/* input parameters */
 		String sequenceFile = args[1];
         System.out.println(sequenceFile);
-        // we are limited to int's as java loops supports only them
 		int noOfSequences = Integer.parseInt(args[2]);
 		int blockSize = Integer.parseInt(args[3]);
         boolean weightCalculate = Boolean.parseBoolean(args[4]);
 
 		Configuration conf = new Configuration();
-		Job job = new Job(conf, "Pairwise-analysis");
+		Job job = new Job(conf, "Pairwise-calc");
 
 		/* create the base dir for this job. Delete and recreates if it exists */
 		Path hdMainDir = new Path(edu.indiana.soic.ts.utils.Constants.HDFS_HOME_PATH + "swg-hadoop");
@@ -161,7 +160,7 @@ public class PairWiseAlignment extends Configured implements Tool {
 		FileOutputFormat.setOutputPath(job, hdOutDir);
 		job.setInputFormatClass(SequenceFileInputFormat.class);
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
-		job.setNumReduceTasks((int) noOfDivisions);
+		job.setNumReduceTasks(noOfDivisions);
 
 		long startTime = System.currentTimeMillis();
 		int exitStatus = job.waitForCompletion(true) ? 0 : 1;

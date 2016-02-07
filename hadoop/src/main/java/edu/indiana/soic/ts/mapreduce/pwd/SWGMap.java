@@ -146,6 +146,7 @@ public class SWGMap extends Mapper<LongWritable, Text, LongWritable, SWGWritable
 			alignmentCounter.increment(columnIndex);
 		}
 
+        // divide by max to get the range to 0 to 1 and then convert to short and output
         for (int rowIndex = 0; ((rowIndex < blockSize) & ((row + rowIndex) < noOfSequences)); rowIndex++) {
             int columnIndex = 0;
             for (; ((columnIndex < blockSize) & ((column + columnIndex) < noOfSequences)); columnIndex++) {

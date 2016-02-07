@@ -7,7 +7,7 @@ time.start: "2004-01-01"
 time.end: "2015-01-01"
 
 # distance calculation
-distance.function: "edu.indiana.soic.ts.dist.imple.LogDistance"
+distance.function: "edu.indiana.soic.ts.dist.imple.LogDistanceFunction"
 distance.type: 1
 distance.props:
   log: true

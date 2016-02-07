@@ -52,7 +52,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class StockVectorCalculator {
-    private static final Logger LOG = LoggerFactory.getLogger(StockDataReader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StockVectorCalculator.class);
 
     private String startDate;
     private String endDate;
@@ -92,7 +92,7 @@ public class StockVectorCalculator {
                     scan.addColumn(Constants.STOCK_TABLE_CF_BYTES, date.getBytes());
                 }
                 Job job = new Job(config,"ExampleSummaryToFile");
-                job.setJarByClass(StockDataReaderMapper.class);
+                job.setJarByClass(StockVectorCalculator.class);
                 TableMapReduceUtil.initTableMapperJob(
                         Constants.STOCK_TABLE_NAME,        // input HBase table name
                         scan,             // Scan instance to control CF and attribute selection

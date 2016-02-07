@@ -78,18 +78,9 @@ public class StockDateLoader {
             HBaseConfiguration.addHbaseResources(configuration);
             Job job = configureInsertAllJob(configuration);
             job.waitForCompletion(true);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ClassNotFoundException | IOException | ServiceException e) {
             log.error(e.getMessage(), e);
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            log.error(e.getMessage(), e);
-            e.printStackTrace();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            e.printStackTrace();
-        } catch (ServiceException e) {
-            log.error(e.getMessage(), e);
-            e.printStackTrace();
+            throw new RuntimeException("Failed to create job", e);
         }
     }
 

@@ -9,11 +9,16 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Utils {
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
+
+    public static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
     public static Option createOption(String opt, boolean hasArg, String description, boolean required) {
         Option symbolListOption = new Option(opt, hasArg, description);
@@ -110,5 +115,48 @@ public class Utils {
             LOG.error(s, e);
             throw new RuntimeException(s, e);
         }
+    }
+
+    public static Record parseRecordLine(String line, CleanMetric metric, boolean convert) throws ParseException {
+        String[] array = line.trim().split(",");
+        if (array.length >= 3) {
+            int permNo = Integer.parseInt(array[0]);
+            Date date = Utils.formatter.parse(array[1]);
+            String stringSymbol = array[2];
+            if (array.length >= 7) {
+                double price = -1;
+                if (!array[5].equals("")) {
+                    price = Double.parseDouble(array[5]);
+                    if (convert) {
+                        if (price < 0) {
+                            price *= -1;
+                            if (metric != null) {
+                                metric.negativeCount++;
+                            }
+                        }
+                    }
+                }
+
+                double factorToAdjPrice = 0;
+                if (!"".equals(array[4].trim())) {
+                    factorToAdjPrice = Double.parseDouble(array[4]);
+                }
+
+                double factorToAdjVolume = 0;
+                if (!"".equals(array[3].trim())) {
+                    factorToAdjVolume = Double.parseDouble(array[3]);
+                }
+
+                int volume = 0;
+                if (!array[6].equals("")) {
+                    volume = Integer.parseInt(array[6]);
+                }
+
+                return new Record(price, permNo, date, array[1], stringSymbol, volume, factorToAdjPrice, factorToAdjVolume);
+            } else {
+                return new Record(-1, permNo, date, array[1], stringSymbol, 0, 0, 0);
+            }
+        }
+        return null;
     }
 }

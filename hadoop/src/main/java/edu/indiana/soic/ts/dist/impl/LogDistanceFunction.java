@@ -12,7 +12,7 @@ import java.util.Map;
 public class LogDistanceFunction implements DistanceFunction {
     private static Logger LOG = LoggerFactory.getLogger(LogDistanceFunction.class);
 
-    private int type;
+    private int type = 5;
 
     public void prepare(Map conf) {
 
@@ -35,7 +35,7 @@ public class LogDistanceFunction implements DistanceFunction {
     public static double vectorLength(int type, VectorPoint vp) {
         if (vp.getKey() == 0) return 0;
 
-        double change = vp.change();
+        double change = change(vp);
         if (type == 1) {
             return 10 * Math.abs(Math.log(change));
         } else if (type == 2) {
@@ -50,7 +50,21 @@ public class LogDistanceFunction implements DistanceFunction {
         return 0;
     }
 
-    public double corr(VectorPoint v1, VectorPoint v2) {
+    public static double change(VectorPoint vp) {
+        int elements = vp.getElements();
+        if (elements >= 2) {
+            double numbers[] = vp.getNumbers();
+            if (numbers[0] > 0) {
+                double v = numbers[elements - 1] / numbers[0];
+                if (v > 10) v = 10;
+                if (v < .1) v = .1;
+                return v;
+            }
+        }
+        return 1;
+    }
+
+    public static double corr(VectorPoint v1, VectorPoint v2) {
         final int start = 1;
         double []xs;
         double []ys;
