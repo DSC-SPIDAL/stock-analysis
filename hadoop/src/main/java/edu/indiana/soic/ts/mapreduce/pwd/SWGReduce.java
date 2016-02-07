@@ -62,8 +62,11 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SWGReduce extends Reducer<LongWritable, SWGWritable, LongWritable, SWGWritable> {
+	private static final Logger LOG = LoggerFactory.getLogger(SWGReduce.class);
 
 	public void reduce(LongWritable key, Iterable<SWGWritable> values,
 			Context context) throws IOException {
@@ -75,7 +78,7 @@ public class SWGReduce extends Reducer<LongWritable, SWGWritable, LongWritable, 
 				blockSize * 10);
 		long noOfDivisions = conf.getLong(Constants.NO_OF_DIVISIONS,
 				noOfSequences / blockSize);
-        boolean weightEnabled = conf.getBoolean(Constants.WEIGHT_ENABLED, false);
+        boolean weightEnabled = conf.getBoolean(Constants.DIST_FUNC, false);
 
 		// to handle the edge blocks with lesser number of sequences
 		int row = (int)(key.get() * blockSize);
@@ -84,11 +87,9 @@ public class SWGReduce extends Reducer<LongWritable, SWGWritable, LongWritable, 
 			currentRowBlockSize = (int) (noOfSequences - row);
 		}
 		
-		// TODO do this in the byte level
 		short[][] alignments = new short[(int) currentRowBlockSize][(int) noOfSequences];
-		
 		for (SWGWritable alignmentWritable : values) {
-			System.out.println("key " + key.get() + " col "
+			LOG.info("key " + key.get() + " col "
 					+ alignmentWritable.getColumnBlock() + " row "
 					+ alignmentWritable.getRowBlock() + " blocksize "
 					+ blockSize);
@@ -129,7 +130,7 @@ public class SWGReduce extends Reducer<LongWritable, SWGWritable, LongWritable, 
         }
 		Path outFilePart = new Path(outDir, childName);
 		writeOutFile(alignments, fs, outFilePart);
-		System.out.println("Reduce Processing Time: "+((System.nanoTime()-startTime)/1000000));
+		LOG.info("Reduce Processing Time: " + ((System.nanoTime() - startTime) / 1000000));
 	}
 
 	private void writeOutFile(short[][] alignments, FileSystem fs,

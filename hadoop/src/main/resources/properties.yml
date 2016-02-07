@@ -9,6 +9,11 @@ time.end: "2015-01-01"
 # distance calculation
 distance.function: "edu.indiana.soic.ts.dist.imple.LogDistance"
 distance.type: 1
+distance.props:
+  log: true
+
+weight.function: "edu.indiana.soic.ts.dist.imple.WeightFunction"
+
 
 # time shifts
 time.window: 1

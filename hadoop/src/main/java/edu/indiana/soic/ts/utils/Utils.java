@@ -98,5 +98,17 @@ public class Utils {
         }
     }
 
+    public static Object loadObject(String className) {
+        ClassLoader classLoader = Utils.class.getClassLoader();
 
+        try {
+            Class aClass = classLoader.loadClass(className);
+            LOG.info("aClass.getName() = " + aClass.getName());
+            return aClass.newInstance();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            String s = "Failed to load class";
+            LOG.error(s, e);
+            throw new RuntimeException(s, e);
+        }
+    }
 }

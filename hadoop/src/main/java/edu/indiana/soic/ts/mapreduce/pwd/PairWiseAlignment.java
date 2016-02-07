@@ -101,11 +101,8 @@ public class PairWiseAlignment extends Configured implements Tool {
         System.out.println(sequenceFile);
         // we are limited to int's as java loops supports only them
 		int noOfSequences = Integer.parseInt(args[2]);
-//		int noOfSequences = 7322;
 		int blockSize = Integer.parseInt(args[3]);
-
         boolean weightCalculate = Boolean.parseBoolean(args[4]);
-//		int blockSize = 7322;
 
 		Configuration conf = new Configuration();
 		Job job = new Job(conf, "Pairwise-analysis");
@@ -116,8 +113,7 @@ public class PairWiseAlignment extends Configured implements Tool {
 		fs.delete(hdMainDir, true);
 		Path hdInputDir = new Path(hdMainDir, "data");
 		if (!fs.mkdirs(hdInputDir)) {
-			throw new IOException("Mkdirs failed to create"
-					+ "/swg-hadoop/data");
+			throw new IOException("Mkdirs failed to create" + "/swg-hadoop/data");
 		}
 
 		int noOfDivisions = (int) Math.ceil(noOfSequences / (double) blockSize);
@@ -154,7 +150,7 @@ public class PairWiseAlignment extends Configured implements Tool {
 		jobConf.setInt(Constants.BLOCK_SIZE, blockSize);
 		jobConf.setInt(Constants.NO_OF_DIVISIONS, noOfDivisions);
 		jobConf.setInt(Constants.NO_OF_SEQUENCES, noOfSequences);
-        jobConf.setBoolean(Constants.WEIGHT_ENABLED, weightCalculate);
+        jobConf.setBoolean(Constants.DIST_FUNC, weightCalculate);
 
 		job.setJarByClass(PairWiseAlignment.class);
 		job.setMapperClass(SWGMap.class);

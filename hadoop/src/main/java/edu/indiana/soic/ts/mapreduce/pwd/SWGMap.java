@@ -53,8 +53,11 @@
 package edu.indiana.soic.ts.mapreduce.pwd;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
+import edu.indiana.soic.ts.dist.DistanceFunction;
+import edu.indiana.soic.ts.utils.Utils;
 import edu.indiana.soic.ts.utils.VectorPoint;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -69,10 +72,11 @@ import org.slf4j.LoggerFactory;
 
 public class SWGMap extends Mapper<LongWritable, Text, LongWritable, SWGWritable> {
 	private static final Logger LOG = LoggerFactory.getLogger(SWGMap.class);
-    long blockSize;
-    long noOfSequences;
-    long noOfDivisions;
-    boolean weightEnabled;
+    private long blockSize;
+    private long noOfSequences;
+    private long noOfDivisions;
+
+    private DistanceFunction distFunc;
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
@@ -84,7 +88,9 @@ public class SWGMap extends Mapper<LongWritable, Text, LongWritable, SWGWritable
                 blockSize * 10);
         this.noOfDivisions = conf.getLong(Constants.NO_OF_DIVISIONS,
                 noOfSequences / blockSize);
-        this.weightEnabled = conf.getBoolean(Constants.WEIGHT_ENABLED, false);
+        String distFuncName = conf.get(Constants.DIST_FUNC);
+        this.distFunc = (DistanceFunction) Utils.loadObject(distFuncName);
+        this.distFunc.prepare(new HashMap<>());
     }
 
     public void map(LongWritable blockIndex, Text value, Context context)
@@ -130,16 +136,11 @@ public class SWGMap extends Mapper<LongWritable, Text, LongWritable, SWGWritable
 			int columnIndex = 0;
 			for (; ((columnIndex < blockSize) & ((column + columnIndex) < noOfSequences)); columnIndex++) {
                 double alignment;
-                if (weightEnabled){
-                    alignment = rowSequences.get(rowIndex).weight(colSequences.get(columnIndex));
-                }else {
-                    alignment = rowSequences.get(rowIndex).corr(colSequences.get(columnIndex));
-                }
+                alignment = distFunc.calc(rowSequences.get(rowIndex), colSequences.get(columnIndex));
                 if (alignment > max) {
                     max = alignment;
                 }
                 // Get the identity and make it percent identity
-
                 doubleDistances[rowIndex][columnIndex] = alignment;
             }
 			alignmentCounter.increment(columnIndex);
@@ -155,6 +156,7 @@ public class SWGMap extends Mapper<LongWritable, Text, LongWritable, SWGWritable
         }
 
 		SWGWritable dataWritable = new SWGWritable(rowBlock, columnBlock, blockSize, false);
+        dataWritable.setMax(max);
 		dataWritable.setAlignments(alignments);
 		context.write(new LongWritable(rowBlock), dataWritable);
 

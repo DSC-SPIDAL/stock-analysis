@@ -85,6 +85,7 @@ public class SWGWritable implements Writable {
 		rowBlock = in.readLong();
 		columnBlock = in.readLong();
 		blockSize = in.readLong();
+		max = in.readDouble();
 		dataInput = in;
 	}
 
@@ -92,6 +93,7 @@ public class SWGWritable implements Writable {
 		out.writeLong(rowBlock);
 		out.writeLong(columnBlock);
 		out.writeLong(blockSize);
+		out.writeDouble(max);
 		if (isInverse) {
 			serializeArrayInverse(out);
 		} else {
