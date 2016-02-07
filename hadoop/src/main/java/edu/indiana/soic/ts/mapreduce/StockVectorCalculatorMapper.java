@@ -14,21 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
 public class StockVectorCalculatorMapper extends TableMapper<IntWritable, Text> {
     private static final Logger LOG = LoggerFactory.getLogger(StockVectorCalculatorMapper.class);
-    /**
-     * The start date we are interested in
-     */
-    private String startDate;
-    /**
-     * The end  date we are interested in
-     */
-    private String endDate;
 
     private int noOfDays;
 
@@ -36,8 +26,6 @@ public class StockVectorCalculatorMapper extends TableMapper<IntWritable, Text> 
     protected void setup(Context context) throws IOException, InterruptedException {
         super.setup(context);
         Configuration conf = context.getConfiguration();
-        startDate = conf.get(Constants.Job.START_DATE);
-        endDate = conf.get(Constants.Job.END_DATE);
         noOfDays = Integer.valueOf(conf.get(Constants.Job.NO_OF_DAYS));
     }
 
@@ -52,8 +40,6 @@ public class StockVectorCalculatorMapper extends TableMapper<IntWritable, Text> 
     public void map(ImmutableBytesWritable row, Result value, Context context) throws InterruptedException, IOException {
         // go through the column family
         for (Map.Entry<byte[], NavigableMap<byte[], NavigableMap<Long, byte[]>>> columnFamilyMap : value.getMap().entrySet()) {
-            List<Double> priceList = new ArrayList<Double>();
-            int count = 1;
             // go through the column
             double totalCap = 0;
             String rowKey = Bytes.toString(value.getRow());
@@ -84,16 +70,15 @@ public class StockVectorCalculatorMapper extends TableMapper<IntWritable, Text> 
                         }
                     }
                 }
-                count++;
             }
             vectorPoint.setTotalCap(totalCap);
-            String serialize = null;
+            String serialize;
             if(vectorPoint.cleanVector(new CleanMetric())){
                 serialize = vectorPoint.serialize();
-                System.out.println(serialize);
-            }
-            if (serialize != null){
-                context.write(new IntWritable(id), new Text(serialize));
+                LOG.debug(serialize);
+                if (serialize != null){
+                    context.write(new IntWritable(id), new Text(serialize));
+                }
             }
         }
     }

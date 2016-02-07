@@ -61,22 +61,21 @@ public class StockVectorCalculator {
     public void configure(Map conf) {
         startDate = (String) conf.get(TSConfiguration.START_DATE);
         endDate = (String) conf.get(TSConfiguration.END_DATE);
+        LOG.info("Start Date : " + startDate);
+        LOG.info("End Date : " + endDate);
+        if (startDate == null || startDate.isEmpty()) {
+            throw new RuntimeException("Start date should be specified");
+        }
+        if (endDate == null || endDate.isEmpty()) {
+            throw new RuntimeException("End date should be specified");
+        }
+        if (mode == 0){
+            mode = 1;
+        }
     }
 
     public void submitJob() {
         try {
-            System.out.println("Start Date : " + startDate);
-            System.out.println("End Date : " + endDate);
-            if (startDate == null || startDate.isEmpty()) {
-                // set 1st starting date
-                startDate = "20040102";
-            }
-            if (endDate == null || endDate.isEmpty()) {
-                endDate = "20141231";
-            }
-            if (mode == 0){
-                mode = 1;
-            }
             Configuration config = HBaseConfiguration.create();
             config.set("mapreduce.output.textoutputformat.separator", ",");
             TreeMap<String, List<Date>> genDates = TableUtils.genDates(TableUtils.getDate(startDate), TableUtils.getDate(endDate), mode);
