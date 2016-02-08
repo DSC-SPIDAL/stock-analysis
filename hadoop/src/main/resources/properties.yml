@@ -1,7 +1,9 @@
-base.dir: "/home/supun"
+base.dir: "/user/supun/stock"
 input.dir: "input"
 
 preproc.dir: "preproc"
+vector.dir: "vector"
+distance.dir: "distance"
 
 # dates
 time.start: "2004-01-01"

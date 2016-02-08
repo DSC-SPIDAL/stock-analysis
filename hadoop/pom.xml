@@ -84,9 +84,6 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifest>
-                            <mainClass>edu.indiana.soic.ts.crunch.CrunchStockVectorCalculater</mainClass>
-                        </manifest>
                         <manifestEntries>
                             <Class-Path>./resources/</Class-Path>
                         </manifestEntries>
