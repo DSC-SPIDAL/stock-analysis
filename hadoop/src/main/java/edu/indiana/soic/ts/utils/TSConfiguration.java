@@ -10,6 +10,9 @@ public class TSConfiguration {
     public static final String BASE_PATH = "base.dir";
     public static final String INPUT_DIR = "input.dir";
 
+    public static final String PREPROC_DIR = "preproc";
+    public static final String VECTOR_DIR = "vector";
+
     public static final String START_DATE = "time.start";
     public static final String END_DATE = "time.end";
     public static final String TIME_SHIFT_HEAD = "time.shift.head";
@@ -35,6 +38,10 @@ public class TSConfiguration {
         }
     }
 
+    public Map getConf() {
+        return conf;
+    }
+
     public Integer getInt(String key) {
         return (Integer) conf.get(key);
     }
@@ -45,5 +52,12 @@ public class TSConfiguration {
 
     public String getAggregatedPath(String path) {
         return basePath + "/" + getString(path);
+    }
+
+    public String getVectorDir() {
+        String preprocDir = getString(PREPROC_DIR);
+        String vector = getString(VECTOR_DIR);
+
+        return getAggregatedPath(preprocDir) + "/" + vector;
     }
 }

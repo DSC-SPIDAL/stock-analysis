@@ -34,12 +34,9 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.ho.yaml.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
@@ -56,8 +53,11 @@ public class VectorCalculator {
     private int window;
     private int headShift;
     private int tailShift;
+    private TSConfiguration tsConfiguration;
 
-    public void configure(Map conf) {
+    public void configure(TSConfiguration tsConfiguration) {
+        Map conf = tsConfiguration.getConf();
+        this.tsConfiguration = tsConfiguration;
         startDate = (String) conf.get(TSConfiguration.START_DATE);
         endDate = (String) conf.get(TSConfiguration.END_DATE);
         this.window = (int) conf.get(TSConfiguration.TIME_WINDOW);
@@ -92,7 +92,7 @@ public class VectorCalculator {
                 for (String date : suitableDateList){
                     scan.addColumn(Constants.STOCK_TABLE_CF_BYTES, date.getBytes());
                 }
-                Job job = new Job(config,"ExampleSummaryToFile");
+                Job job = new Job(config,"Vector calculation: " + id);
                 job.setJarByClass(VectorCalculator.class);
                 TableMapReduceUtil.initTableMapperJob(
                         Constants.STOCK_TABLE_NAME,        // input HBase table name
@@ -101,7 +101,8 @@ public class VectorCalculator {
                         IntWritable.class,             // mapper output key
                         Text.class,             // mapper output value
                         job);
-                FileOutputFormat.setOutputPath(job, new Path(Constants.HDFS_OUTPUT_PATH + id));  // adjust directories as required
+                // adjust directories as required
+                FileOutputFormat.setOutputPath(job, new Path(tsConfiguration.getVectorDir() + "/" + id));
                 boolean b = job.waitForCompletion(true);
                 if (!b) {
                     LOG.error("Error with job for vector calculation");
@@ -118,16 +119,10 @@ public class VectorCalculator {
     }
 
     public static void main(String[] args) {
-        try {
-            String  configFile = Utils.getConfigurationFile(args);
-            Map conf = (Map) Yaml.load(new File(configFile));
-            VectorCalculator vectorCalculator = new VectorCalculator();
-            vectorCalculator.configure(conf);
-            vectorCalculator.submitJob();
-        } catch (FileNotFoundException e) {
-            String s = "Failed read the configuration";
-            LOG.error(s, e);
-            throw new RuntimeException(s, e);
-        }
+        String  configFile = Utils.getConfigurationFile(args);
+        TSConfiguration tsConfiguration = new TSConfiguration(configFile);
+        VectorCalculator vectorCalculator = new VectorCalculator();
+        vectorCalculator.configure(tsConfiguration);
+        vectorCalculator.submitJob();
     }
 }
