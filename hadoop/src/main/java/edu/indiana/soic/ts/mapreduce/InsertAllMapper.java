@@ -49,7 +49,7 @@ public class InsertAllMapper extends Mapper<LongWritable, Text, Text, Text   > {
 
         try {
             Record record = Utils.parseRecordLine(value.toString(), cleanMetric, false);
-            if (record != null && record.getSymbol() != -1 && record.getSymbolString() != null){
+            if (record != null && record.getSymbol() != -1 && record.getSymbolString() != null && !record.getSymbolString().trim().equals("")){
                 String rowKey = record.getSymbol() + "_" + record.getSymbolString();
                 String rowVal = record.getDateString() + "_" + record.getPrice() + "_" + record.getVolume() + "_" + record.getFactorToAdjPrice() + "_" + record.getFactorToAdjVolume();
                 context.write(new Text(rowKey), new Text(rowVal));

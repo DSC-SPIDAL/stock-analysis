@@ -12,7 +12,7 @@ Steps :
             data structure : row key : id_symbol, row val : col family key : date col family val : price_cap
 
         Command:
-        ./bin/hadoop jar ~/dev/projects/dsspidal/stock-analysis/hadoop/target/timeseries-1.0.0-jar-with-dependencies.jar edu.indiana.soic.ts.mapreduce.StockBulkDataLoader -c ~/dev/projects/dsspidal/stock-analysis/hadoop/src/main/resources/properties.yml
+        ./bin/hadoop jar ~/dev/projects/dsspidal/stock-analysis/hadoop/target/timeseries-1.0.0-jar-with-dependencies.jar edu.indiana.soic.ts.mapreduce.BulkDataLoader -c ~/dev/projects/dsspidal/stock-analysis/hadoop/src/main/resources/properties.yml
 
         1.2 Create table (StockDatesTable), CF - StockDatesCF to store dates
             main class : StockDateLoader

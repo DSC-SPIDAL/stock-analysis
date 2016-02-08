@@ -26,6 +26,7 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
     protected void setup(Context context) throws IOException, InterruptedException {
         super.setup(context);
         Configuration conf = context.getConfiguration();
+
         noOfDays = Integer.valueOf(conf.get(Constants.Job.NO_OF_DAYS));
     }
 
@@ -44,6 +45,11 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
             double totalCap = 0;
             String rowKey = Bytes.toString(value.getRow());
             String[] idKey = rowKey.split("_");
+            if (idKey.length != 2) {
+                LOG.error("The table should have two parts in the key: {}", rowKey);
+                return;
+                //throw new RuntimeException("The table should have two parts in the key: " + rowKey);
+            }
             int id = Integer.valueOf(idKey[0]);
             String symbol = idKey[1];
             int index = 0;
@@ -54,7 +60,7 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
                     String column = Bytes.toString(entryVersion.getKey());
                     byte[] val = entry.getValue();
                     String valOfColumn = new String(val);
-                    LOG.info("RowKey : " + rowKey + " Column Key : " + column + " Column Val : " + valOfColumn);
+                    // LOG.info("RowKey : " + rowKey + " Column Key : " + column + " Column Val : " + valOfColumn);
                     if (!valOfColumn.isEmpty()) {
                         String[] priceAndCap = valOfColumn.split("_");
                         if (priceAndCap.length > 1) {
@@ -64,7 +70,6 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
                                 double price = Double.valueOf(pr);
                                 vectorPoint.add(price, index);
                                 index++;
-                                LOG.info("Index: {}", index);
                             }
                             if (cap != null && !cap.equals("null")){
                                 totalCap += Double.valueOf(cap);

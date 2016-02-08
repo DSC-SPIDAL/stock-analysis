@@ -10,8 +10,8 @@ postproc.dir: "postproc"
 mds.dir: "mds"
 
 # dates
-time.start: "2004-01-01"
-time.end: "2015-01-01"
+time.start: "20040101"
+time.end: "20150101"
 
 # distance calculation
 distance.function: "edu.indiana.soic.ts.dist.imple.LogDistanceFunction"
@@ -22,7 +22,7 @@ distance.props:
 weight.function: "edu.indiana.soic.ts.dist.imple.WeightFunction"
 
 # time shifts
-time.window: 1
+time.window: 365
 time.shift.head: 7
 time.shift.tail: 7
 

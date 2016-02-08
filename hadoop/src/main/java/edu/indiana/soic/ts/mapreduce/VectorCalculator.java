@@ -47,7 +47,6 @@ import java.util.concurrent.TimeUnit;
 
 public class VectorCalculator {
     private static final Logger LOG = LoggerFactory.getLogger(VectorCalculator.class);
-
     private String startDate;
     private String endDate;
     private int window;
@@ -63,9 +62,6 @@ public class VectorCalculator {
         this.window = (int) conf.get(TSConfiguration.TIME_WINDOW);
         this.headShift = (int) conf.get(TSConfiguration.TIME_SHIFT_HEAD);
         this.tailShift = (int) conf.get(TSConfiguration.TIME_SHIFT_TAIL);
-
-        LOG.info("Start Date : " + startDate);
-        LOG.info("End Date : " + endDate);
         if (startDate == null || startDate.isEmpty()) {
             throw new RuntimeException("Start date should be specified");
         }
@@ -80,8 +76,9 @@ public class VectorCalculator {
             config.set("mapreduce.output.textoutputformat.separator", ",");
             TreeMap<String, List<Date>> genDates = TableUtils.genDates(TableUtils.getDate(startDate),
                     TableUtils.getDate(endDate), this.window, TimeUnit.DAYS, this.headShift, this.tailShift, TimeUnit.DAYS);
-            for (String id : genDates.keySet()){
-                LOG.info("Vector calculator for start: {}, end: {} time window: {}, shift: {}", startDate, endDate, window, headShift);
+            LOG.info("Start Date : {} End Date : {}, Gen dates size: {}", startDate, endDate, genDates.size());
+            for (String id : genDates.keySet()) {
+                LOG.info("Vector calculation for: {}", id);
                 Scan scan = new Scan();
                 scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
                 scan.setCacheBlocks(false);  // don't set to true for MR jobs
@@ -90,6 +87,8 @@ public class VectorCalculator {
                 String end  = TableUtils.convertDateToString(dates.get(1));
                 List<String> suitableDateList = TableUtils.getDates(start, end);
                 config.set(Constants.Job.NO_OF_DAYS, String.valueOf(suitableDateList.size()));
+                LOG.info("Vector calculator for start: {}, end: {} time window: {}, shift: {}, days: {}",
+                        startDate, endDate, window, headShift, suitableDateList.size());
                 for (String date : suitableDateList){
                     scan.addColumn(Constants.STOCK_TABLE_CF_BYTES, date.getBytes());
                 }
