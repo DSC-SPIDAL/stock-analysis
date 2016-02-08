@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.NavigableMap;
 
-public class StockVectorCalculatorMapper extends TableMapper<IntWritable, Text> {
-    private static final Logger LOG = LoggerFactory.getLogger(StockVectorCalculatorMapper.class);
+public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
+    private static final Logger LOG = LoggerFactory.getLogger(VectorCalculatorMapper.class);
 
     private int noOfDays;
 

@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class StockInsertDateReducer extends TableReducer<Text, Text, ImmutableBytesWritable> {
-    private static final Logger log = LoggerFactory.getLogger(StockInsertDateReducer.class);
+public class InsertReducer extends TableReducer<Text, Text, ImmutableBytesWritable> {
+    private static final Logger log = LoggerFactory.getLogger(InsertReducer.class);
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
         Configuration c = context.getConfiguration();
@@ -48,7 +48,14 @@ public class StockInsertDateReducer extends TableReducer<Text, Text, ImmutableBy
         for (Text val : values) {
             if (val != null){
                 String value = val.toString();
-                row.add(Constants.STOCK_DATES_CF_BYTES, Bytes.toBytes(Constants.DATE_COLUMN), Bytes.toBytes(value));
+                String[] split = value.split("_");
+                if (split.length > 4){
+                    row.addColumn(Constants.STOCK_TABLE_CF_BYTES, Bytes.toBytes(split[0]), Bytes.toBytes(split[1] + "_" + split[2] + "_" + split[3] + "_" + split[4]));
+                } else if (split.length > 1 && split.length < 2){
+                    row.addColumn(Constants.STOCK_TABLE_CF_BYTES, Bytes.toBytes(split[0]), Bytes.toBytes(split[1] + "_NAN"));
+                } else if (split.length > 0 && split.length <1){
+                    row.addColumn(Constants.STOCK_TABLE_CF_BYTES, Bytes.toBytes(split[0]), Bytes.toBytes("NAN_NAN"));
+                }
             }
         }
         context.write(new ImmutableBytesWritable(rowKey), row);

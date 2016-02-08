@@ -25,10 +25,6 @@ import edu.indiana.soic.ts.utils.TSConfiguration;
 import edu.indiana.soic.ts.utils.TableUtils;
 import edu.indiana.soic.ts.utils.Constants;
 import edu.indiana.soic.ts.utils.Utils;
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -50,17 +46,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
-public class StockVectorCalculator {
-    private static final Logger LOG = LoggerFactory.getLogger(StockVectorCalculator.class);
+public class VectorCalculator {
+    private static final Logger LOG = LoggerFactory.getLogger(VectorCalculator.class);
 
     private String startDate;
     private String endDate;
-    private int mode;
+    private int window;
+    private int headShift;
+    private int tailShift;
 
     public void configure(Map conf) {
         startDate = (String) conf.get(TSConfiguration.START_DATE);
         endDate = (String) conf.get(TSConfiguration.END_DATE);
+        this.window = (int) conf.get(TSConfiguration.TIME_WINDOW);
+        this.headShift = (int) conf.get(TSConfiguration.TIME_SHIFT_HEAD);
+        this.tailShift = (int) conf.get(TSConfiguration.TIME_SHIFT_TAIL);
+
         LOG.info("Start Date : " + startDate);
         LOG.info("End Date : " + endDate);
         if (startDate == null || startDate.isEmpty()) {
@@ -69,16 +72,14 @@ public class StockVectorCalculator {
         if (endDate == null || endDate.isEmpty()) {
             throw new RuntimeException("End date should be specified");
         }
-        if (mode == 0){
-            mode = 1;
-        }
     }
 
     public void submitJob() {
         try {
             Configuration config = HBaseConfiguration.create();
             config.set("mapreduce.output.textoutputformat.separator", ",");
-            TreeMap<String, List<Date>> genDates = TableUtils.genDates(TableUtils.getDate(startDate), TableUtils.getDate(endDate), mode);
+            TreeMap<String, List<Date>> genDates = TableUtils.genDates(TableUtils.getDate(startDate),
+                    TableUtils.getDate(endDate), this.window, TimeUnit.DAYS, this.headShift, this.tailShift, TimeUnit.DAYS);
             for (String id : genDates.keySet()){
                 Scan scan = new Scan();
                 scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
@@ -92,22 +93,21 @@ public class StockVectorCalculator {
                     scan.addColumn(Constants.STOCK_TABLE_CF_BYTES, date.getBytes());
                 }
                 Job job = new Job(config,"ExampleSummaryToFile");
-                job.setJarByClass(StockVectorCalculator.class);
+                job.setJarByClass(VectorCalculator.class);
                 TableMapReduceUtil.initTableMapperJob(
                         Constants.STOCK_TABLE_NAME,        // input HBase table name
                         scan,             // Scan instance to control CF and attribute selection
-                        StockVectorCalculatorMapper.class,   // mapper
+                        VectorCalculatorMapper.class,   // mapper
                         IntWritable.class,             // mapper output key
                         Text.class,             // mapper output value
                         job);
                 FileOutputFormat.setOutputPath(job, new Path(Constants.HDFS_OUTPUT_PATH + id));  // adjust directories as required
                 boolean b = job.waitForCompletion(true);
                 if (!b) {
-                    LOG.error("Error with job...!!!");
-                    throw new IOException("Error with job...!!!");
+                    LOG.error("Error with job for vector calculation");
+                    throw new RuntimeException("Error with job for vector calculation");
                 }
             }
-
         } catch (ParseException e) {
             LOG.error("Error while parsing date", e);
             throw new RuntimeException("Error while parsing date", e);
@@ -118,12 +118,10 @@ public class StockVectorCalculator {
     }
 
     public static void main(String[] args) {
-
         try {
             String  configFile = Utils.getConfigurationFile(args);
             Map conf = (Map) Yaml.load(new File(configFile));
-
-            StockVectorCalculator vectorCalculator = new StockVectorCalculator();
+            VectorCalculator vectorCalculator = new VectorCalculator();
             vectorCalculator.configure(conf);
             vectorCalculator.submitJob();
         } catch (FileNotFoundException e) {

@@ -23,12 +23,11 @@ package edu.indiana.soic.ts.mapreduce;
 
 import com.google.protobuf.ServiceException;
 import edu.indiana.soic.ts.utils.Constants;
+import edu.indiana.soic.ts.utils.TSConfiguration;
+import edu.indiana.soic.ts.utils.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
@@ -45,17 +44,18 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * This is the main class to create table which insert all the available dates for the data set. This class creates
- * StockDatesTable and StockDatesCF in Hbase.
- * mapper class : StockInsertDateMapper
- * reducer class : StockInsertDateReducer
- * data structure : row key : date, row val : date
+ * This is the main class to create table Stock2004_2014Table and column family Stock2004_2014CF in HBase
+ * mapper class : InsertAllMapper
+ * reducer class : InsertReducer
+ * data structure : row key : id_symbol, row val : date_price_cap
  */
-public class StockDateLoader {
-    private static final Logger log = LoggerFactory.getLogger(StockDateLoader.class);
+public class BulkDataLoader {
+    private static final Logger log = LoggerFactory.getLogger(BulkDataLoader.class);
 
     public static void main(String[] args) {
         try {
+            TSConfiguration tsConfiguration = new TSConfiguration(Utils.getConfigurationFile(args));
+
             Configuration configuration =  HBaseConfiguration.create();
             HBaseAdmin.checkHBaseAvailable(configuration);
             Connection connection = ConnectionFactory.createConnection(configuration);
@@ -64,19 +64,21 @@ public class StockDateLoader {
             Admin admin = connection.getAdmin();
 
             // Instantiating table descriptor class
-            HTableDescriptor stockDatesDesc = new HTableDescriptor(TableName.valueOf(Constants.STOCK_DATES_TABLE));
+            HTableDescriptor stockTableDesc = new HTableDescriptor(TableName.valueOf(Constants.STOCK_TABLE_NAME));
 
             // Adding column families to table descriptor
-            HColumnDescriptor stock_Dates = new HColumnDescriptor(Constants.STOCK_DATES_CF);
-            stockDatesDesc.addFamily(stock_Dates);
+            HColumnDescriptor stock_0414 = new HColumnDescriptor(Constants.STOCK_TABLE_CF);
+            stockTableDesc.addFamily(stock_0414);
 
-            if (!admin.tableExists(stockDatesDesc.getTableName())){
-                admin.createTable(stockDatesDesc);
-                System.out.println("Stock dates table created !!!");
+            // Execute the table through admin
+            if (!admin.tableExists(stockTableDesc.getTableName())){
+                admin.createTable(stockTableDesc);
+                log.info("Stock table created: {}", Constants.STOCK_TABLE_CF);
             }
+
             // Load hbase-site.xml
             HBaseConfiguration.addHbaseResources(configuration);
-            Job job = configureInsertAllJob(configuration);
+            Job job = configureInsertAllJob(configuration, tsConfiguration);
             job.waitForCompletion(true);
         } catch (InterruptedException | ClassNotFoundException | IOException | ServiceException e) {
             log.error(e.getMessage(), e);
@@ -84,20 +86,18 @@ public class StockDateLoader {
         }
     }
 
-    public static Job configureInsertAllJob(Configuration configuration) throws IOException {
-        Job job = new Job(configuration, "HBase Date Table");
-        job.setJarByClass(StockInsertDateMapper.class);
+    public static Job configureInsertAllJob(Configuration configuration, TSConfiguration tsConfiguration) throws IOException {
+        Job job = new Job(configuration, "Bulk Import data");
+        job.setJarByClass(InsertAllMapper.class);
 
-        job.setMapperClass(StockInsertDateMapper.class);
-        TableMapReduceUtil.initTableReducerJob(Constants.STOCK_DATES_TABLE, StockInsertDateReducer.class, job);
-        //job.setReducerClass(StockInsertReducer.class);
+        job.setMapperClass(InsertAllMapper.class);
+        TableMapReduceUtil.initTableReducerJob(Constants.STOCK_TABLE_NAME, InsertReducer.class, job);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
 
         job.setInputFormatClass(TextInputFormat.class);
-        FileInputFormat.addInputPath(job, new Path(Constants.HDFS_INPUT_PATH));
+        FileInputFormat.addInputPath(job, new Path(tsConfiguration.getAggregatedPath(TSConfiguration.INPUT_DIR)));
         FileOutputFormat.setOutputPath(job, new Path(Constants.HDFS_OUTPUT_PATH));
-//        job.setNumReduceTasks(0);
         return job;
     }
 }

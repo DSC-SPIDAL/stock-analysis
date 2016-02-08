@@ -45,8 +45,8 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
 
-public class CrunchStockVectorCalculater extends Configured implements Tool, Serializable {
-    private static final Logger log = LoggerFactory.getLogger(CrunchStockVectorCalculater.class);
+public class CrunchVectorCalculater extends Configured implements Tool, Serializable {
+    private static final Logger log = LoggerFactory.getLogger(CrunchVectorCalculater.class);
     private static String startDate;
     private static String endDate;
     private static int mode;
@@ -54,7 +54,7 @@ public class CrunchStockVectorCalculater extends Configured implements Tool, Ser
     public static void main(final String[] args) throws Exception {
         Configuration conf = new Configuration();
         conf.set("mapreduce.output.textoutputformat.separator", ",");
-        final int res = ToolRunner.run(conf, new CrunchStockVectorCalculater(), args);
+        final int res = ToolRunner.run(conf, new CrunchVectorCalculater(), args);
         System.exit(res);
     }
 
@@ -81,7 +81,7 @@ public class CrunchStockVectorCalculater extends Configured implements Tool, Ser
             TreeMap<String, List<Date>> genDates = TableUtils.genDates(TableUtils.getDate(startDate), TableUtils.getDate(endDate), mode);
             PipelineResult result = null;
             hbaseConfig.set("mapreduce.output.textoutputformat.separator", ",");
-            Pipeline pipeline = new MRPipeline(CrunchStockVectorCalculater.class, hbaseConfig);
+            Pipeline pipeline = new MRPipeline(CrunchVectorCalculater.class, hbaseConfig);
             for (String id : genDates.keySet()){
                 Scan scan = new Scan();
                 scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs

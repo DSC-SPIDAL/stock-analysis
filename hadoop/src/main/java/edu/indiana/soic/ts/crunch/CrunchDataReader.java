@@ -49,13 +49,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class CrunchStockDataReader extends Configured implements Tool, Serializable {
-    private static final Logger log = LoggerFactory.getLogger(CrunchStockDataReader.class);
+public class CrunchDataReader extends Configured implements Tool, Serializable {
+    private static final Logger log = LoggerFactory.getLogger(CrunchDataReader.class);
     private static String startDate;
     private static String endDate;
 
     public static void main(final String[] args) throws Exception {
-        final int res = ToolRunner.run(new Configuration(), new CrunchStockDataReader(), args);
+        final int res = ToolRunner.run(new Configuration(), new CrunchDataReader(), args);
         System.exit(res);
     }
 
@@ -74,7 +74,7 @@ public class CrunchStockDataReader extends Configured implements Tool, Serializa
                 endDate = "20141231";
             }
             Configuration config = HBaseConfiguration.create();
-            Pipeline pipeline = new MRPipeline(CrunchStockDataReader.class, config);
+            Pipeline pipeline = new MRPipeline(CrunchDataReader.class, config);
 
             Scan scan = new Scan();
             scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
@@ -191,8 +191,8 @@ public class CrunchStockDataReader extends Configured implements Tool, Serializa
 
     public static List<String> getDates() throws ParseException {
         List<String> allDates = new ArrayList<String>();
-        Date startDate = getDate(CrunchStockDataReader.startDate);
-        Date endDate = getDate(CrunchStockDataReader.endDate);
+        Date startDate = getDate(CrunchDataReader.startDate);
+        Date endDate = getDate(CrunchDataReader.endDate);
         ResultScanner scannerForDateTable = getScannerForDateTable();
         for (Result aResultScanner : scannerForDateTable) {
             String date = new String(aResultScanner.getRow());

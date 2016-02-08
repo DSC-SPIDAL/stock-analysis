@@ -21,10 +21,10 @@ distance.props:
 
 weight.function: "edu.indiana.soic.ts.dist.imple.WeightFunction"
 
-
 # time shifts
 time.window: 1
-time.shift: 7
+time.shift.head: 7
+time.shift.tail: 7
 
 # weather accumulating
 accumulating: false

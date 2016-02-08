@@ -43,17 +43,17 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
-public class CrunchStockAllDataInserter extends Configured implements Tool, Serializable {
-    private static final Logger log = LoggerFactory.getLogger(CrunchStockAllDataInserter.class);
+public class CrunchAllDataInserter extends Configured implements Tool, Serializable {
+    private static final Logger log = LoggerFactory.getLogger(CrunchAllDataInserter.class);
     public static void main(final String[] args) throws Exception {
-        final int res = ToolRunner.run(new Configuration(), new CrunchStockAllDataInserter(), args);
+        final int res = ToolRunner.run(new Configuration(), new CrunchAllDataInserter(), args);
         System.exit(res);
     }
 
     public int run(final String[] args) throws Exception {
         createTable();
         final Configuration config = getConf();
-        final Pipeline pipeline = new MRPipeline(CrunchStockAllDataInserter.class,
+        final Pipeline pipeline = new MRPipeline(CrunchAllDataInserter.class,
                 "PipelineWithFilterFn", config);
         PCollection<String> lines = pipeline.readTextFile(Constants.HDFS_INPUT_PATH + "/2004_2014.csv");
         PCollection<Put> resultPut = CrunchUtils.returnRows(lines);

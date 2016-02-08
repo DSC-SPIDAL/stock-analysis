@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 
-public class StockInsertDateMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class InsertDateMapper extends Mapper<LongWritable, Text, Text, Text> {
 
-    private static final Logger log = LoggerFactory.getLogger(StockBulkDataLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(BulkDataLoader.class);
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {

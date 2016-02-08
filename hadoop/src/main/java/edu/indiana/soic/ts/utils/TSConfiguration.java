@@ -12,6 +12,10 @@ public class TSConfiguration {
 
     public static final String START_DATE = "time.start";
     public static final String END_DATE = "time.end";
+    public static final String TIME_SHIFT_HEAD = "time.shift.head";
+    public static final String TIME_SHIFT_TAIL = "time.shift.tail";
+    public static final String TIME_WINDOW = "time.window";
+
     public static final String DISTANCE_FUNCTION = "distance.function";
 
     private final Map conf;

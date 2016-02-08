@@ -34,8 +34,8 @@ import java.io.IOException;
 import java.text.ParseException;
 
 
-public class StockInsertAllMapper extends Mapper<LongWritable, Text, Text, Text   > {
-    private static final Logger log = LoggerFactory.getLogger(StockBulkDataLoader.class);
+public class InsertAllMapper extends Mapper<LongWritable, Text, Text, Text   > {
+    private static final Logger log = LoggerFactory.getLogger(BulkDataLoader.class);
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
