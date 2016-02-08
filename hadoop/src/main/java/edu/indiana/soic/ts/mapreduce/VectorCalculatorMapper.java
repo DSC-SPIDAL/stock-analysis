@@ -47,6 +47,7 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
             int id = Integer.valueOf(idKey[0]);
             String symbol = idKey[1];
             int index = 0;
+            LOG.info("No of days: {}", noOfDays);
             VectorPoint vectorPoint = new VectorPoint(id, symbol, noOfDays, true);
             for (Map.Entry<byte[], NavigableMap<Long, byte[]>> entryVersion : columnFamilyMap.getValue().entrySet()) {
                 for (Map.Entry<Long, byte[]> entry : entryVersion.getValue().entrySet()) {
@@ -63,6 +64,7 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
                                 double price = Double.valueOf(pr);
                                 vectorPoint.add(price, index);
                                 index++;
+                                LOG.info("Index: {}", index);
                             }
                             if (cap != null && !cap.equals("null")){
                                 totalCap += Double.valueOf(cap);

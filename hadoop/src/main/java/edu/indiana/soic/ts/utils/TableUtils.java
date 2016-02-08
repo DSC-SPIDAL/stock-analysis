@@ -134,8 +134,8 @@ public class TableUtils {
             list.add(currentEndDate);
             dates.put(start + "_" + end, list);
 
-            shiftDates(currentStartDate, tailShift, shiftUnit);
-            shiftDates(currentEndDate, frontShit, shiftUnit);
+            currentStartDate = shiftDates(currentStartDate, tailShift, shiftUnit);
+            currentEndDate = shiftDates(currentEndDate, frontShit, shiftUnit);
         } while (currentEndDate.before(endDate));
 
         return dates;

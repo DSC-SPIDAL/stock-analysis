@@ -23,6 +23,8 @@ package edu.indiana.soic.ts.mapreduce;
 
 import com.google.protobuf.ServiceException;
 import edu.indiana.soic.ts.utils.Constants;
+import edu.indiana.soic.ts.utils.TSConfiguration;
+import edu.indiana.soic.ts.utils.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -56,6 +58,7 @@ public class DateLoader {
 
     public static void main(String[] args) {
         try {
+            TSConfiguration tsConfiguration = new TSConfiguration(Utils.getConfigurationFile(args));
             Configuration configuration =  HBaseConfiguration.create();
             HBaseAdmin.checkHBaseAvailable(configuration);
             Connection connection = ConnectionFactory.createConnection(configuration);
@@ -76,7 +79,7 @@ public class DateLoader {
             }
             // Load hbase-site.xml
             HBaseConfiguration.addHbaseResources(configuration);
-            Job job = configureInsertAllJob(configuration);
+            Job job = configureInsertAllJob(configuration, tsConfiguration);
             job.waitForCompletion(true);
         } catch (InterruptedException | ClassNotFoundException | IOException | ServiceException e) {
             log.error(e.getMessage(), e);
@@ -84,7 +87,7 @@ public class DateLoader {
         }
     }
 
-    public static Job configureInsertAllJob(Configuration configuration) throws IOException {
+    public static Job configureInsertAllJob(Configuration configuration, TSConfiguration tsConfiguration) throws IOException {
         Job job = new Job(configuration, "HBase Date Table");
         job.setJarByClass(InsertDateMapper.class);
 
@@ -95,7 +98,7 @@ public class DateLoader {
         job.setMapOutputValueClass(Text.class);
 
         job.setInputFormatClass(TextInputFormat.class);
-        FileInputFormat.addInputPath(job, new Path(Constants.HDFS_INPUT_PATH));
+        FileInputFormat.addInputPath(job, new Path(tsConfiguration.getAggregatedPath(TSConfiguration.INPUT_DIR)));
         FileOutputFormat.setOutputPath(job, new Path(Constants.HDFS_OUTPUT_PATH));
 //        job.setNumReduceTasks(0);
         return job;

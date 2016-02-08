@@ -81,6 +81,7 @@ public class VectorCalculator {
             TreeMap<String, List<Date>> genDates = TableUtils.genDates(TableUtils.getDate(startDate),
                     TableUtils.getDate(endDate), this.window, TimeUnit.DAYS, this.headShift, this.tailShift, TimeUnit.DAYS);
             for (String id : genDates.keySet()){
+                LOG.info("Vector calculator for start: {}, end: {} time window: {}, shift: {}", startDate, endDate, window, headShift);
                 Scan scan = new Scan();
                 scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
                 scan.setCacheBlocks(false);  // don't set to true for MR jobs

@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class CrunchVectorCalculater extends Configured implements Tool, Serializable {
     private static final Logger log = LoggerFactory.getLogger(CrunchVectorCalculater.class);
@@ -78,7 +79,7 @@ public class CrunchVectorCalculater extends Configured implements Tool, Serializ
                 mode = 5;
             }
             Configuration hbaseConfig = HBaseConfiguration.create();
-            TreeMap<String, List<Date>> genDates = TableUtils.genDates(TableUtils.getDate(startDate), TableUtils.getDate(endDate), mode);
+            TreeMap<String, List<Date>> genDates = TableUtils.genDates(TableUtils.getDate(startDate), TableUtils.getDate(endDate), 365, TimeUnit.DAYS, 7, 7, TimeUnit.DAYS);
             PipelineResult result = null;
             hbaseConfig.set("mapreduce.output.textoutputformat.separator", ",");
             Pipeline pipeline = new MRPipeline(CrunchVectorCalculater.class, hbaseConfig);

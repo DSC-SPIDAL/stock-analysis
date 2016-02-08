@@ -11,11 +11,16 @@ Steps :
             reducer class : StockInsertReducer
             data structure : row key : id_symbol, row val : col family key : date col family val : price_cap
 
+        Command:
+        ./bin/hadoop jar ~/dev/projects/dsspidal/stock-analysis/hadoop/target/timeseries-1.0.0-jar-with-dependencies.jar edu.indiana.soic.ts.mapreduce.StockBulkDataLoader -c ~/dev/projects/dsspidal/stock-analysis/hadoop/src/main/resources/properties.yml
+
         1.2 Create table (StockDatesTable), CF - StockDatesCF to store dates
             main class : StockDateLoader
             mapper class : StockInsertDateMapper
             reducer class : StockInsertDateReducer
             data structure : row key : date, row val : date
+        Command:
+
 
     2. Read Data from HBase
         Read Stock2004_2014Table content during a period and find regression (intercept, slope and error)
