@@ -4,6 +4,10 @@ input.dir: "input"
 preproc.dir: "preproc"
 vector.dir: "vector"
 distance.dir: "distance"
+weight.dir: "weight"
+
+postproc.dir: "postproc"
+mds.dir: "mds"
 
 # dates
 time.start: "2004-01-01"
