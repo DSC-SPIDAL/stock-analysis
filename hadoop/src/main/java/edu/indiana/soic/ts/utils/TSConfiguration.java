@@ -15,6 +15,7 @@ public class TSConfiguration {
     public static final String DISTANCE_DIR = "distance.dir";
     public static final String INTERMEDIATE_DIR = "intermediate.dir";
     public static final String DIST_TEMP_DIR = "distance.tmp.dir";
+    public static final String HIST_DIR = "histogram.dir";
 
     public static final String START_DATE = "time.start";
     public static final String END_DATE = "time.end";
@@ -93,5 +94,18 @@ public class TSConfiguration {
         String intermediate = getString(INTERMEDIATE_DIR);
 
         return getAggregatedPath(preprocDir) + "/" + intermediate + "/" + vector;
+    }
+
+    public String getIntemediateHistDir() {
+        String preprocDir = getString(PREPROC_DIR);
+        String hist = getString(HIST_DIR);
+        String intermediate = getString(INTERMEDIATE_DIR);
+        return getAggregatedPath(preprocDir) + "/" + intermediate + "/" + hist;
+    }
+
+    public String getHistDir() {
+        String preprocDir = getString(PREPROC_DIR);
+        String hist = getString(HIST_DIR);
+        return getAggregatedPath(preprocDir) + "/" + hist;
     }
 }

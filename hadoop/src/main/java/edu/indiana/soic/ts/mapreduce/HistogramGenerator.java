@@ -1,11 +1,6 @@
-package edu.indiana.soic.ts.mapreduce.postproc;
+package edu.indiana.soic.ts.mapreduce;
 
-import edu.indiana.soic.ts.mapreduce.pwd.SWGWritable;
 import edu.indiana.soic.ts.utils.*;
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -16,6 +11,10 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,35 +29,63 @@ public class HistogramGenerator {
     private int bins;
     private String vectDir;
     private String interHistDir;
+    private String histDir;
 
     public void configure(String []args) {
         String  configFile = Utils.getConfigurationFile(args);
         TSConfiguration tsConfiguration = new TSConfiguration(configFile);
         Map tsConf = tsConfiguration.getConf();
+
+        min = (double) tsConf.get(TSConfiguration.Histogram.MIN);
+        max = (double) tsConf.get(TSConfiguration.Histogram.MAX);
+        bins = (int) tsConf.get(TSConfiguration.Histogram.NO_OF_BINS);
+
+        this.interHistDir = tsConfiguration.getIntemediateHistDir();
+        this.histDir = tsConfiguration.getDistDir();
+        this.vectDir = tsConfiguration.getVectorDir();
     }
 
-    public void execJob(Configuration conf, String vectorFileFullPath, String vectorFile, String interHistDir) throws Exception {
+    public int execJob(Configuration conf, String vectorFileFullPath, String vectorFile, String interHistDir) throws Exception {
         LOG.info(vectorFileFullPath);
         Job job = new Job(conf, "Pairwise-calc-" + vectorFile);
 
-		/* create the base dir for this job. Delete and recreates if it exists */
-        Path hdMainDir = new Path(interHistDir + "/" + vectorFile);
+		/* create the out dir for this job. Delete and recreates if it exists */
+        Path hdOutDir = new Path(interHistDir + "/" + vectorFile);
         FileSystem fs = FileSystem.get(conf);
-        fs.delete(hdMainDir, true);
-        Path hdInputDir = new Path(hdMainDir, "data");
-        if (!fs.mkdirs(hdInputDir)) {
-            throw new IOException("Mkdirs failed to create " + hdInputDir.toString());
-        }
+        fs.delete(hdOutDir, true);
+
+        Path hdInputDir = new Path(this.vectDir + "/" + vectorFile);
+
+        job.setJarByClass(HistogramGenerator.class);
+        job.setMapperClass(HistogramMapper.class);
+        job.setReducerClass(HistogramReducer.class);
+        job.setOutputKeyClass(IntWritable.class);
+        job.setOutputValueClass(Text.class);
+        FileInputFormat.setInputPaths(job, hdInputDir);
+        FileOutputFormat.setOutputPath(job, hdOutDir);
+
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+
+        job.getConfiguration().setDouble(TSConfiguration.Histogram.MIN, min);
+        job.getConfiguration().setDouble(TSConfiguration.Histogram.MAX, max);
+        job.getConfiguration().setInt(TSConfiguration.Histogram.NO_OF_BINS, bins);
+
+        long startTime = System.currentTimeMillis();
+        int exitStatus = job.waitForCompletion(true) ? 0 : 1;
+        double executionTime = (System.currentTimeMillis() - startTime) / 1000.0;
+        LOG.info("Job Finished in " + executionTime + " seconds");
+        return exitStatus;
     }
 
     public void submitJob() {
         Configuration conf = new Configuration();
-        FileSystem fs = null;
+        FileSystem fs;
         try {
             fs = FileSystem.get(conf);
             FileStatus[] status = fs.listStatus(new Path(vectDir));
-            for (int i = 0; i < status.length; i++) {
-                String sequenceFile = status[i].getPath().getName();
+            for (FileStatus statu : status) {
+                String sequenceFile = statu.getPath().getName();
                 String sequenceFileFullPath = vectDir + "/" + sequenceFile;
                 try {
                     execJob(conf, sequenceFileFullPath, sequenceFile, interHistDir);
@@ -73,7 +100,7 @@ public class HistogramGenerator {
         }
     }
 
-    public class HistogramMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
+    public static class HistogramMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
         private Bin[] bins;
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
@@ -98,7 +125,7 @@ public class HistogramGenerator {
         }
     }
 
-    public class HistogramReducer extends Reducer<IntWritable, Text, IntWritable, Text> {
+    public static class HistogramReducer extends Reducer<IntWritable, Text, IntWritable, Text> {
         private Bin[] bins;
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {

@@ -109,12 +109,6 @@ public class SWGReduce extends Reducer<LongWritable, SWGWritable, LongWritable, 
 //					System.out.print(readShort+" ");
 					alignments[i][column+j] = readShort;
 				}
-//				System.out.println();
-				//TODO try to do the above using byte[] copy 
-				// in.readFully(b);
-				// System.out.println(new String(b));
-				// System.arraycopy(b, 0, alignments[i], (column /* * 2*/),
-				// currentBlockSize);
 			}
 		}
 
