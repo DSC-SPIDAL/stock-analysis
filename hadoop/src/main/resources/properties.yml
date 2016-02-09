@@ -5,6 +5,7 @@ preproc.dir: "preproc"
 vector.dir: "vector"
 distance.dir: "distance"
 weight.dir: "weight"
+intermediate.dir: "intermediate"
 
 postproc.dir: "postproc"
 mds.dir: "mds"
@@ -14,10 +15,12 @@ time.start: "20040101"
 time.end: "20150101"
 
 # distance calculation
-distance.function: "edu.indiana.soic.ts.dist.imple.LogDistanceFunction"
+distance.function: "edu.indiana.soic.ts.dist.impl.LogDistanceFunction"
 distance.type: 1
 distance.props:
   log: true
+
+matrix.block.size: 3000
 
 weight.function: "edu.indiana.soic.ts.dist.imple.WeightFunction"
 
@@ -28,12 +31,6 @@ time.shift.tail: 7
 
 # weather accumulating
 accumulating: false
-
-# vector properties
-vector.dir: "vectors"
-
-# distance properties
-distance.dir: "distance"
 
 # histogram properties
 histogram.bins: 50

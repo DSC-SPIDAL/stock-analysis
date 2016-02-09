@@ -41,18 +41,18 @@ public class Utils {
 
     public static VectorPoint parseVector(String line) {
         // process the line.
-        String parts[] = line.trim().split(" ");
+        String parts[] = line.trim().split(",");
         if (parts.length > 0 && !(parts.length == 1 && parts[0].equals(""))) {
             int key = Integer.parseInt(parts[0]);
-            double cap = Double.parseDouble(parts[1]);
+            String symbol = parts[1];
+            double cap = Double.parseDouble(parts[2]);
 
-            int vectorLength = parts.length - 2;
+            int vectorLength = parts.length - 3;
             double[] numbers = new double[vectorLength];
-            for (int i = 2; i < parts.length; i++) {
-                numbers[i - 2] = Double.parseDouble(parts[i]);
+            for (int i = 3; i < parts.length; i++) {
+                numbers[i - 3] = Double.parseDouble(parts[i]);
             }
-            VectorPoint p = new VectorPoint(key, numbers);
-            p.addCap(cap);
+            VectorPoint p = new VectorPoint(key, symbol, numbers, cap);
             return p;
         }
         return null;

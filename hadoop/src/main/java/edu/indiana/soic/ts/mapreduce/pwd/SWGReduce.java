@@ -123,7 +123,7 @@ public class SWGReduce extends Reducer<LongWritable, SWGWritable, LongWritable, 
 
 		FileSystem fs = FileSystem.get(conf);
 		// out dir is created in the main driver.
-        String childName = "rowblock_cor_" + key.get() + "_blockSize_" + blockSize;
+        String childName = "row_" + key.get() + "_" + blockSize;
 		Path outFilePart = new Path(outDir, childName);
 		writeOutFile(alignments, fs, outFilePart);
 		LOG.info("Reduce Processing Time: " + ((System.nanoTime() - startTime) / 1000000));

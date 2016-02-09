@@ -25,8 +25,9 @@ import edu.indiana.soic.ts.utils.TSConfiguration;
 import edu.indiana.soic.ts.utils.TableUtils;
 import edu.indiana.soic.ts.utils.Constants;
 import edu.indiana.soic.ts.utils.Utils;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
@@ -39,10 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class VectorCalculator {
@@ -102,12 +100,14 @@ public class VectorCalculator {
                         Text.class,             // mapper output value
                         job);
                 // adjust directories as required
-                FileOutputFormat.setOutputPath(job, new Path(tsConfiguration.getVectorDir() + "/" + id));
+                String outPutDir = tsConfiguration.getInterMediateVectorDir() + "/" + id;
+                FileOutputFormat.setOutputPath(job, new Path(outPutDir));
                 boolean b = job.waitForCompletion(true);
                 if (!b) {
                     LOG.error("Error with job for vector calculation");
                     throw new RuntimeException("Error with job for vector calculation");
                 }
+                concatOutput(config, id, outPutDir, tsConfiguration.getVectorDir());
             }
         } catch (ParseException e) {
             LOG.error("Error while parsing date", e);
@@ -116,6 +116,32 @@ public class VectorCalculator {
             LOG.error("Error while creating the job", e);
             throw new RuntimeException("Error while creating the job", e);
         }
+    }
+
+    public void concatOutput(Configuration conf, String sequenceFile, String distDirIntermediate, String distDir) throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path outDir = new Path(distDirIntermediate);
+        FileStatus[] status = fs.listStatus(outDir);
+
+        String destFile = distDir + "/" + sequenceFile;
+        Path hdInputDir = new Path(distDir);
+        if (!fs.mkdirs(hdInputDir)) {
+            throw new RuntimeException("Failed to create dir: " + hdInputDir.getName());
+        }
+        Path outFile = new Path(destFile);
+        FSDataOutputStream outputStream = fs.create(outFile);
+        for (int i = 0; i < status.length; i++) {
+            String name = status[i].getPath().getName();
+            String split[] = name.split("-");
+            if (split.length > 2 && split[0].equals("part")) {
+                Path inFile = new Path(distDirIntermediate, name);
+                FSDataInputStream inputStream = fs.open(inFile);
+                IOUtils.copy(inputStream, outputStream);
+                inputStream.close();
+            }
+        }
+        outputStream.flush();
+        outputStream.close();
     }
 
     public static void main(String[] args) {

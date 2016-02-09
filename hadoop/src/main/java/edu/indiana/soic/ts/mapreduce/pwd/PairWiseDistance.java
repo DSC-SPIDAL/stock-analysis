@@ -52,22 +52,17 @@
 
 package edu.indiana.soic.ts.mapreduce.pwd;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.*;
 
+import edu.indiana.soic.ts.utils.TSConfiguration;
+import edu.indiana.soic.ts.utils.Utils;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
@@ -77,49 +72,44 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
+import org.apache.jasper.tagplugins.jstl.core.Out;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.nio.ch.IOUtil;
 
-public class PairWiseAlignment extends Configured implements Tool {
-	private static final Logger LOG = LoggerFactory.getLogger(PairWiseAlignment.class);
+public class PairWiseDistance {
+	private static final Logger LOG = LoggerFactory.getLogger(PairWiseDistance.class);
+	private int blockSize;
+	private String distFunc;
+	private String interDistDir;
+	private String distDir;
+	private String vectDir;
 
 	public static void main(String[] args) throws Exception {
-		int res = ToolRunner.run(new Configuration(), new PairWiseAlignment(), args);
-		System.exit(res);
+		PairWiseDistance pwd = new PairWiseDistance();
+		pwd.configure(args);
+		pwd.submitJob();
 	}
 
-	public int run(String[] args) throws Exception {
-		if (args.length < 2) {
-			LOG.info("Usage:  <sequence_file> <sequence_count> <block_size> <weight>");
-			System.exit(2);
-		}
-
+	public int execJob(Configuration conf, String sequenceFileFullPath, String sequenceFile, String distDir) throws Exception {
 		/* input parameters */
-		String sequenceFile = args[1];
-        System.out.println(sequenceFile);
-		int noOfSequences = Integer.parseInt(args[2]);
-		int blockSize = Integer.parseInt(args[3]);
-        boolean weightCalculate = Boolean.parseBoolean(args[4]);
-
-		Configuration conf = new Configuration();
-		Job job = new Job(conf, "Pairwise-calc");
+        System.out.println(sequenceFileFullPath);
+		Job job = new Job(conf, "Pairwise-calc-" + sequenceFile);
 
 		/* create the base dir for this job. Delete and recreates if it exists */
-		Path hdMainDir = new Path(edu.indiana.soic.ts.utils.Constants.HDFS_HOME_PATH + "swg-hadoop");
+		Path hdMainDir = new Path(distDir + "/" + sequenceFile);
         FileSystem fs = FileSystem.get(conf);
 		fs.delete(hdMainDir, true);
 		Path hdInputDir = new Path(hdMainDir, "data");
 		if (!fs.mkdirs(hdInputDir)) {
-			throw new IOException("Mkdirs failed to create" + "/swg-hadoop/data");
+			throw new IOException("Mkdirs failed to create " + hdInputDir.toString());
 		}
 
+		int noOfSequences = getNoOfSequences(sequenceFileFullPath, fs);
 		int noOfDivisions = (int) Math.ceil(noOfSequences / (double) blockSize);
 		int noOfBlocks = (noOfDivisions * (noOfDivisions + 1)) / 2;
-		LOG.info("No of divisions :" + noOfDivisions
-				+ "\nNo of blocks :" + noOfBlocks + "\nBlock size :"
-				+ blockSize);
+		LOG.info("No of divisions :" + noOfDivisions + "\nNo of blocks :" +
+				noOfBlocks + "\nBlock size :" + blockSize);
 
 		// Retrieving the configuration form the job to set the properties
 		// Setting properties to the original conf does not work (possible
@@ -134,7 +124,7 @@ public class PairWiseAlignment extends Configured implements Tool {
 		}
 
 		Long dataPartitionStartTime = System.nanoTime();
-		partitionData(sequenceFile, noOfSequences, blockSize, fs,
+		partitionData(sequenceFileFullPath, noOfSequences, blockSize, fs,
 				noOfDivisions, jobConf, inputDir);
 
 		distributeData(blockSize, conf, fs, hdInputDir, noOfDivisions);
@@ -149,9 +139,9 @@ public class PairWiseAlignment extends Configured implements Tool {
 		jobConf.setInt(Constants.BLOCK_SIZE, blockSize);
 		jobConf.setInt(Constants.NO_OF_DIVISIONS, noOfDivisions);
 		jobConf.setInt(Constants.NO_OF_SEQUENCES, noOfSequences);
-        jobConf.setBoolean(Constants.DIST_FUNC, weightCalculate);
+        jobConf.set(Constants.DIST_FUNC, distFunc);
 
-		job.setJarByClass(PairWiseAlignment.class);
+		job.setJarByClass(PairWiseDistance.class);
 		job.setMapperClass(SWGMap.class);
 		job.setReducerClass(SWGReduce.class);
 		job.setOutputKeyClass(LongWritable.class);
@@ -166,19 +156,84 @@ public class PairWiseAlignment extends Configured implements Tool {
 		int exitStatus = job.waitForCompletion(true) ? 0 : 1;
 		double executionTime = (System.currentTimeMillis() - startTime) / 1000.0;
 		LOG.info("Job Finished in " + executionTime + " seconds");
-		
-		if (args.length == 5) {
-			FileWriter writer = new FileWriter(args[4]);
-			writer.write("# #seq\t#blockS\tTtime\tinput\tdataDistTime\toutput");
-			writer.write("\n");
-			writer.write(noOfSequences + "\t" + noOfBlocks + "\t"
-					+ executionTime + "\t" + sequenceFile + "\t" + dataPartTime
-					+ "\t" + hdMainDir);
-			writer.write("\n");
-			writer.flush();
-			writer.close();
-		}
+		LOG.info("# #seq\t#blockS\tTtime\tinput\tdataDistTime\toutput" + noOfSequences + "\t" + noOfBlocks + "\t"
+				+ executionTime + "\t" + sequenceFileFullPath + "\t" + dataPartTime
+				+ "\t" + hdMainDir);
+
 		return exitStatus;
+	}
+
+	public void configure(String[] args) {
+		String  configFile = Utils.getConfigurationFile(args);
+		TSConfiguration tsConfiguration = new TSConfiguration(configFile);
+		Map tsConf = tsConfiguration.getConf();
+
+		this.blockSize = (int) tsConf.get(TSConfiguration.MATRIX_BLOCK_SIZE);
+		this.distFunc = (String) tsConf.get(TSConfiguration.DISTANCE_FUNCTION);
+		this.interDistDir = tsConfiguration.getInterMediateDistanceDir();
+		this.distDir = tsConfiguration.getDistDir();
+		this.vectDir = tsConfiguration.getVectorDir();
+	}
+
+	public void submitJob() throws IOException {
+		Configuration conf = new Configuration();
+		FileSystem fs = FileSystem.get(conf);
+		FileStatus[] status = fs.listStatus(new Path(vectDir));
+		for (int i = 0; i < status.length; i++) {
+			String sequenceFile = status[i].getPath().getName();
+			String sequenceFileFullPath = vectDir + "/" + sequenceFile;
+			try {
+				execJob(conf, sequenceFileFullPath, sequenceFile, interDistDir);
+				concatOutput(conf, sequenceFile, interDistDir, distDir);
+			} catch (Exception e) {
+				String message = "Failed to executed PWD calculation:" + sequenceFileFullPath + " " + interDistDir;
+				LOG.info(message, e);
+				throw new RuntimeException(message);
+			}
+		}
+	}
+
+	private class OutFile implements Comparable<OutFile> {
+		int no;
+		String file;
+
+		public OutFile(int no, String file) {
+			this.no = no;
+			this.file = file;
+		}
+
+		@Override
+		public int compareTo(OutFile o) {
+			return o.no - this.no;
+		}
+	}
+
+	public void concatOutput(Configuration conf, String sequenceFile, String distDirIntermediate, String distDir) throws IOException {
+		FileSystem fs = FileSystem.get(conf);
+		Path outDir = new Path(distDirIntermediate + "/" + sequenceFile + "/out");
+		FileStatus[] status = fs.listStatus(outDir);
+		List<OutFile> outFiles = new ArrayList<OutFile>();
+		for (int i = 0; i < status.length; i++) {
+			String name = status[i].getPath().getName();
+			String split[] = name.split("_");
+			if (split.length > 2 && split[0].equals("row")) {
+				OutFile o = new OutFile(Integer.parseInt(split[1]), name);
+				outFiles.add(o);
+			}
+		}
+
+		Collections.sort(outFiles);
+		String destFile = distDir + "/" + sequenceFile;
+		Path outFile = new Path(destFile);
+		FSDataOutputStream outputStream = fs.create(outFile);
+		for (OutFile o : outFiles) {
+			Path inFile = new Path(outDir, o.file);
+			FSDataInputStream inputStream = fs.open(inFile);
+			IOUtils.copy(inputStream, outputStream);
+			inputStream.close();
+		}
+		outputStream.flush();
+		outputStream.close();
 	}
 
 	private void distributeData(int blockSize, Configuration conf,
@@ -215,6 +270,18 @@ public class PairWiseAlignment extends Configured implements Tool {
 				}
 			}
 		}
+	}
+
+	private int getNoOfSequences(String sequenceFile, FileSystem fs) throws FileNotFoundException,
+			IOException, URISyntaxException {
+		Path path = new Path(sequenceFile);
+		int count = 0;
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fs.open(path)));
+		while ((bufferedReader.readLine()) != null) {
+			count++;
+		}
+		bufferedReader.close();
+		return count;
 	}
 
 	private void partitionData(String sequenceFile, int noOfSequences,

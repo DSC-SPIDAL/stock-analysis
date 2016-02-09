@@ -52,6 +52,7 @@
 
 package edu.indiana.soic.ts.mapreduce.pwd;
 
+import edu.indiana.soic.ts.utils.Utils;
 import edu.indiana.soic.ts.utils.VectorPoint;
 
 import java.io.BufferedReader;
@@ -60,26 +61,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SequenceParser {
-	public static VectorPoint parseVectorLine(String line) {
-		String parts[] = line.trim().split(",");
-		if (parts.length > 0 && !(parts.length == 1 && parts[0].equals(""))) {
-			int key = Integer.parseInt(parts[0]);
-			double cap = Double.parseDouble(parts[2]);
-
-			int vectorLength = parts.length - 3;
-			double[] numbers = new double[vectorLength];
-			for (int i = 3; i < parts.length; i++) {
-				numbers[i - 3] = Double.parseDouble(parts[i]);
-			}
-			VectorPoint p = new VectorPoint(key, numbers);
-			p.addCap(cap);
-			return p;
-		}
-		return null;
-	}
-
 	public static List<VectorPoint> ParseFile(InputStream inStream) throws IOException {
 		ArrayList<VectorPoint> sequences = new ArrayList<VectorPoint>();
 		BufferedReader bufferedReader = new BufferedReader(
@@ -93,18 +77,13 @@ public class SequenceParser {
 	}
 
 	public static VectorPoint parse(BufferedReader reader) {
-		String sequenceName = null;
-		String sequenceDescription = null;
 		try {
-			StringBuffer buffer = new StringBuffer();
-
 			// Read & parse the first line
 			String line = reader.readLine();
-			if (line == null || line == "") {
+			if (line == null || Objects.equals(line, "")) {
 				return null;
 			}
-
-			return parseVectorLine(line);
+			return Utils.parseVector(line);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to parse", e);
 		}
