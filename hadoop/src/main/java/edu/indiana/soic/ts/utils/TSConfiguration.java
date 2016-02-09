@@ -26,6 +26,12 @@ public class TSConfiguration {
 
     public static final String MATRIX_BLOCK_SIZE = "matrix.block.size";
 
+    public class Histogram {
+        public static final String MIN = "histogram.min";
+        public static final String MAX = "histogram.max";
+        public static final String NO_OF_BINS = "histogram.bins";
+    }
+
     private final Map conf;
 
     private String basePath;

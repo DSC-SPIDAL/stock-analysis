@@ -1,25 +1,66 @@
 package edu.indiana.soic.ts.mapreduce.postproc;
 
-import edu.indiana.soic.ts.utils.Bin;
-import edu.indiana.soic.ts.utils.Constants;
-import edu.indiana.soic.ts.utils.Utils;
-import edu.indiana.soic.ts.utils.VectorPoint;
+import edu.indiana.soic.ts.mapreduce.pwd.SWGWritable;
+import edu.indiana.soic.ts.utils.*;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class HistogramGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(HistogramGenerator.class);
+
+    private double min;
+    private double max;
+    private int bins;
+    private String vectDir;
+    private String interHistDir;
+
+    public void configure(String []args) {
+        String  configFile = Utils.getConfigurationFile(args);
+        TSConfiguration tsConfiguration = new TSConfiguration(configFile);
+        Map tsConf = tsConfiguration.getConf();
+    }
+
+    public void execJob(Configuration conf, String vectorFileFullPath, String vectorFile, String interHistDir) throws Exception {
+
+    }
+
+    public void submitJob() {
+        Configuration conf = new Configuration();
+        FileSystem fs = null;
+        try {
+            fs = FileSystem.get(conf);
+            FileStatus[] status = fs.listStatus(new Path(vectDir));
+            for (int i = 0; i < status.length; i++) {
+                String sequenceFile = status[i].getPath().getName();
+                String sequenceFileFullPath = vectDir + "/" + sequenceFile;
+                try {
+                    execJob(conf, sequenceFileFullPath, sequenceFile, interHistDir);
+                } catch (Exception e) {
+                    String message = "Failed to executed PWD calculation:" + sequenceFileFullPath + " " + interHistDir;
+                    LOG.info(message, e);
+                    throw new RuntimeException(message);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public class HistogramMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
         private Bin[] bins;
@@ -28,10 +69,9 @@ public class HistogramGenerator {
             super.setup(context);
 
             Configuration conf = context.getConfiguration();
-            double min = conf.getDouble(Constants.Histogram.MIN, -1);
-            double max = conf.getDouble(Constants.Histogram.MAX, 1);
-            int noOfBins = conf.getInt(Constants.Histogram.NO_OF_BINS, 50);
-
+            double min = conf.getDouble(TSConfiguration.Histogram.MIN, -1);
+            double max = conf.getDouble(TSConfiguration.Histogram.MAX, 1);
+            int noOfBins = conf.getInt(TSConfiguration.Histogram.NO_OF_BINS, 50);
             this.bins = getBins(noOfBins, max, min);
         }
 
@@ -44,6 +84,32 @@ public class HistogramGenerator {
                 int binIndex = getBinIndex(d, this.bins);
                 context.write(new IntWritable(binIndex), new Text(p.getSymbol()));
             }
+        }
+    }
+
+    public class HistogramReducer extends Reducer<IntWritable, Text, IntWritable, Text> {
+        private Bin[] bins;
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException {
+            super.setup(context);
+
+            Configuration conf = context.getConfiguration();
+            double min = conf.getDouble(TSConfiguration.Histogram.MIN, -1);
+            double max = conf.getDouble(TSConfiguration.Histogram.MAX, 1);
+            int noOfBins = conf.getInt(TSConfiguration.Histogram.NO_OF_BINS, 50);
+
+            this.bins = getBins(noOfBins, max, min);
+        }
+
+        public void reduce(IntWritable key, Iterable<Text> values,
+                           Context context) throws IOException, InterruptedException {
+            StringBuilder sb = new StringBuilder();
+            Bin bin = this.bins[key.get()];
+            sb.append(bin.start).append(",").append(bin.end).append(",");
+            for (Text t : values) {
+                sb.append(t.toString()).append(",");
+            }
+            context.write(key, new Text(sb.toString()));
         }
     }
 
@@ -87,28 +153,8 @@ public class HistogramGenerator {
 
 
     public static void main(String[] args) {
-        Options options = new Options();
-        options.addOption("v", true, "Input Vector folder");
-        options.addOption("d", true, "Destination folder"); // Destination folder
-        options.addOption("b", true, "Number of bins");
-        options.addOption("s", true, "Stock file");         // Original global file
-
-        options.addOption(Utils.createOption("g", false, "Use global bins", false));
-
-        CommandLineParser commandLineParser = new BasicParser();
-        try {
-            CommandLine cmd = commandLineParser.parse(options, args);
-            String  _vectorFile = cmd.getOptionValue("v");
-            String _distFile = cmd.getOptionValue("d");
-            int bins = Integer.parseInt(cmd.getOptionValue("b"));
-            String stockFile = cmd.getOptionValue("s");
-            boolean globalBins = cmd.hasOption("g");
-
-
-        } catch (org.apache.commons.cli.ParseException e) {
-            String s = "Failed to read the command line options";
-            LOG.error(s, e);
-            throw new RuntimeException(s, e);
-        }
+        HistogramGenerator hist = new HistogramGenerator();
+        hist.configure(args);
+        hist.submitJob();
     }
 }

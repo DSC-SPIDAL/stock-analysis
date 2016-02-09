@@ -55,11 +55,7 @@ public class Constants {
         public static final String NO_OF_DAYS = "no_of_days";
     }
 
-    public class Histogram {
-        public static final String MIN = "histogram.min";
-        public static final String MAX = "histogram.max";
-        public static final String NO_OF_BINS = "histogram.bins";
-    }
+
 
     public class Distance {
         public static final String FUNCTION = "distance.func";
