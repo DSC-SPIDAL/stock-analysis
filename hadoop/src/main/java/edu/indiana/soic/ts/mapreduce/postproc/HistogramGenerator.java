@@ -13,6 +13,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.slf4j.Logger;
@@ -37,7 +38,17 @@ public class HistogramGenerator {
     }
 
     public void execJob(Configuration conf, String vectorFileFullPath, String vectorFile, String interHistDir) throws Exception {
+        LOG.info(vectorFileFullPath);
+        Job job = new Job(conf, "Pairwise-calc-" + vectorFile);
 
+		/* create the base dir for this job. Delete and recreates if it exists */
+        Path hdMainDir = new Path(interHistDir + "/" + vectorFile);
+        FileSystem fs = FileSystem.get(conf);
+        fs.delete(hdMainDir, true);
+        Path hdInputDir = new Path(hdMainDir, "data");
+        if (!fs.mkdirs(hdInputDir)) {
+            throw new IOException("Mkdirs failed to create " + hdInputDir.toString());
+        }
     }
 
     public void submitJob() {

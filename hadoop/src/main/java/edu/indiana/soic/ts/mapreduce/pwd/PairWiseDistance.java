@@ -93,7 +93,7 @@ public class PairWiseDistance {
 
 	public int execJob(Configuration conf, String sequenceFileFullPath, String sequenceFile, String distDir) throws Exception {
 		/* input parameters */
-        System.out.println(sequenceFileFullPath);
+        LOG.info(sequenceFileFullPath);
 		Job job = new Job(conf, "Pairwise-calc-" + sequenceFile);
 
 		/* create the base dir for this job. Delete and recreates if it exists */
