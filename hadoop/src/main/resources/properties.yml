@@ -6,7 +6,7 @@ vector.dir: "vector"
 distance.dir: "distance"
 weight.dir: "weight"
 intermediate.dir: "intermediate"
-hist.dir: "histogram"
+histogram.dir: "histogram"
 
 postproc.dir: "postproc"
 mds.dir: "mds"
@@ -34,7 +34,7 @@ time.shift.tail: 7
 accumulating: false
 
 # histogram properties
-histogram.bins: 50
+histogram.bins: 10
 histogram.min: -1.0
 histogram.max: 1.0
 

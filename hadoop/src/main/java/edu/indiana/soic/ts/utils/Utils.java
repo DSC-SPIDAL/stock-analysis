@@ -2,6 +2,10 @@ package edu.indiana.soic.ts.utils;
 
 import edu.indiana.soic.ts.pviz.Plotviz;
 import org.apache.commons.cli.*;
+import org.apache.commons.cli.Options;
+import org.apache.commons.io.IOUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,5 +175,31 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    public static void concatOutput(Configuration conf, String fileName, String sourceDir, String destDir) throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path outDir = new Path(sourceDir);
+        FileStatus[] status = fs.listStatus(outDir);
+
+        String destFile = destDir + "/" + fileName;
+        Path hdInputDir = new Path(destDir);
+        if (!fs.mkdirs(hdInputDir)) {
+            throw new RuntimeException("Failed to create dir: " + hdInputDir.getName());
+        }
+        Path outFile = new Path(destFile);
+        FSDataOutputStream outputStream = fs.create(outFile);
+        for (int i = 0; i < status.length; i++) {
+            String name = status[i].getPath().getName();
+            String split[] = name.split("-");
+            if (split.length > 2 && split[0].equals("part")) {
+                Path inFile = new Path(sourceDir, name);
+                FSDataInputStream inputStream = fs.open(inFile);
+                IOUtils.copy(inputStream, outputStream);
+                inputStream.close();
+            }
+        }
+        outputStream.flush();
+        outputStream.close();
     }
 }

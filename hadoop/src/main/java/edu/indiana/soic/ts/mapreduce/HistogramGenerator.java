@@ -29,11 +29,11 @@ public class HistogramGenerator {
     private int bins;
     private String vectDir;
     private String interHistDir;
-    private String histDir;
+    private TSConfiguration tsConfiguration;
 
     public void configure(String []args) {
         String  configFile = Utils.getConfigurationFile(args);
-        TSConfiguration tsConfiguration = new TSConfiguration(configFile);
+        this.tsConfiguration = new TSConfiguration(configFile);
         Map tsConf = tsConfiguration.getConf();
 
         min = (double) tsConf.get(TSConfiguration.Histogram.MIN);
@@ -41,7 +41,6 @@ public class HistogramGenerator {
         bins = (int) tsConf.get(TSConfiguration.Histogram.NO_OF_BINS);
 
         this.interHistDir = tsConfiguration.getIntemediateHistDir();
-        this.histDir = tsConfiguration.getDistDir();
         this.vectDir = tsConfiguration.getVectorDir();
     }
 
@@ -53,7 +52,7 @@ public class HistogramGenerator {
         Path hdOutDir = new Path(interHistDir + "/" + vectorFile);
         FileSystem fs = FileSystem.get(conf);
         fs.delete(hdOutDir, true);
-
+        conf.set("mapreduce.output.textoutputformat.separator", ",");
         Path hdInputDir = new Path(this.vectDir + "/" + vectorFile);
 
         job.setJarByClass(HistogramGenerator.class);
@@ -89,6 +88,7 @@ public class HistogramGenerator {
                 String sequenceFileFullPath = vectDir + "/" + sequenceFile;
                 try {
                     execJob(conf, sequenceFileFullPath, sequenceFile, interHistDir);
+                    Utils.concatOutput(conf, sequenceFile, interHistDir + "/" + sequenceFile, tsConfiguration.getHistDir());
                 } catch (Exception e) {
                     String message = "Failed to executed PWD calculation:" + sequenceFileFullPath + " " + interHistDir;
                     LOG.info(message, e);
@@ -109,7 +109,7 @@ public class HistogramGenerator {
             Configuration conf = context.getConfiguration();
             double min = conf.getDouble(TSConfiguration.Histogram.MIN, -1);
             double max = conf.getDouble(TSConfiguration.Histogram.MAX, 1);
-            int noOfBins = conf.getInt(TSConfiguration.Histogram.NO_OF_BINS, 50);
+            int noOfBins = conf.getInt(TSConfiguration.Histogram.NO_OF_BINS, 10);
             this.bins = getBins(noOfBins, max, min);
         }
 
@@ -119,6 +119,7 @@ public class HistogramGenerator {
             VectorPoint p = Utils.parseVector(value.toString());
             if (p != null) {
                 double d = vectorDelta(p.getNumbers());
+                // LOG.info("delta: {}", d);
                 int binIndex = getBinIndex(d, this.bins);
                 context.write(new IntWritable(binIndex), new Text(p.getSymbol()));
             }
@@ -134,7 +135,7 @@ public class HistogramGenerator {
             Configuration conf = context.getConfiguration();
             double min = conf.getDouble(TSConfiguration.Histogram.MIN, -1);
             double max = conf.getDouble(TSConfiguration.Histogram.MAX, 1);
-            int noOfBins = conf.getInt(TSConfiguration.Histogram.NO_OF_BINS, 50);
+            int noOfBins = conf.getInt(TSConfiguration.Histogram.NO_OF_BINS, 10);
 
             this.bins = getBins(noOfBins, max, min);
         }

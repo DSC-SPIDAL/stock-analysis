@@ -186,7 +186,6 @@ public class VectorPoint {
         for (int i = 0; i < elements-1; i++) {
             sb.append(Double.toString(numbers[i])).append(",");
         }
-        sb.append(Double.toString(numbers.length-1));
         return sb.toString();
     }
 

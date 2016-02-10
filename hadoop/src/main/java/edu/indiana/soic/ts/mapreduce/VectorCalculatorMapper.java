@@ -54,6 +54,7 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
             String symbol = idKey[1];
             int index = 0;
             LOG.info("No of days: {}", noOfDays);
+            String serialize;
             VectorPoint vectorPoint = new VectorPoint(id, symbol, noOfDays, true);
             for (Map.Entry<byte[], NavigableMap<Long, byte[]>> entryVersion : columnFamilyMap.getValue().entrySet()) {
                 for (Map.Entry<Long, byte[]> entry : entryVersion.getValue().entrySet()) {
@@ -66,12 +67,12 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
                         if (priceAndCap.length > 1) {
                             String pr = priceAndCap[0];
                             String cap = priceAndCap[1];
-                            if (pr != null && !pr.equals("null")){
+                            if (pr != null && !pr.equals("null")) {
                                 double price = Double.valueOf(pr);
                                 vectorPoint.add(price, index);
                                 index++;
                             }
-                            if (cap != null && !cap.equals("null")){
+                            if (cap != null && !cap.equals("null")) {
                                 totalCap += Double.valueOf(cap);
                             }
                         }
@@ -79,11 +80,10 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
                 }
             }
             vectorPoint.setTotalCap(totalCap);
-            String serialize;
-            if(vectorPoint.cleanVector(new CleanMetric())){
+            if (vectorPoint.cleanVector(new CleanMetric())) {
                 serialize = vectorPoint.serialize();
                 LOG.debug(serialize);
-                if (serialize != null){
+                if (serialize != null) {
                     context.write(new IntWritable(id), new Text(serialize));
                 }
             }

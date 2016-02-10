@@ -107,7 +107,7 @@ public class VectorCalculator {
                     LOG.error("Error with job for vector calculation");
                     throw new RuntimeException("Error with job for vector calculation");
                 }
-                concatOutput(config, id, outPutDir, tsConfiguration.getVectorDir());
+                Utils.concatOutput(config, id, outPutDir, tsConfiguration.getVectorDir());
             }
         } catch (ParseException e) {
             LOG.error("Error while parsing date", e);
@@ -118,31 +118,7 @@ public class VectorCalculator {
         }
     }
 
-    public void concatOutput(Configuration conf, String sequenceFile, String distDirIntermediate, String distDir) throws IOException {
-        FileSystem fs = FileSystem.get(conf);
-        Path outDir = new Path(distDirIntermediate);
-        FileStatus[] status = fs.listStatus(outDir);
 
-        String destFile = distDir + "/" + sequenceFile;
-        Path hdInputDir = new Path(distDir);
-        if (!fs.mkdirs(hdInputDir)) {
-            throw new RuntimeException("Failed to create dir: " + hdInputDir.getName());
-        }
-        Path outFile = new Path(destFile);
-        FSDataOutputStream outputStream = fs.create(outFile);
-        for (int i = 0; i < status.length; i++) {
-            String name = status[i].getPath().getName();
-            String split[] = name.split("-");
-            if (split.length > 2 && split[0].equals("part")) {
-                Path inFile = new Path(distDirIntermediate, name);
-                FSDataInputStream inputStream = fs.open(inFile);
-                IOUtils.copy(inputStream, outputStream);
-                inputStream.close();
-            }
-        }
-        outputStream.flush();
-        outputStream.close();
-    }
 
     public static void main(String[] args) {
         String  configFile = Utils.getConfigurationFile(args);
