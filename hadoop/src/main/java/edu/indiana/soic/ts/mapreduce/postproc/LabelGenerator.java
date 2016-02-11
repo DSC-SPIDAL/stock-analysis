@@ -23,6 +23,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.Map;
 
 public class LabelGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(LabelGenerator.class);
+    private NumberFormat intgerFormaterr = new DecimalFormat("#00");
 
     private String vectDir;
     private String interHistDir;
@@ -250,20 +253,7 @@ public class LabelGenerator {
             int index = 0;
             while ((inputLine = bufRead.readLine()) != null && index < symbols.size())  {
                 Point p = Utils.readPoint(inputLine);
-                String symbol = symbols.get(index);
                 int clazz = 0;
-//                if (this.invertedFixedClases.containsKey(symbol)) {
-//                    clazz = this.invertedFixedClases.get(symbol);
-//                } else {
-//                    // get the corresponding symbol
-//                    // get the class for this one
-//                    String sector = invertedSectors.get(symbol);
-//                    if (sector != null) {
-//                        clazz = sectorToClazz.get(sector);
-//                    } else {
-////                    System.out.println("No sector: " + symbol);
-//                    }
-//                }
                 p.setClazz(clazz);
                 String s = p.serialize();
                 bufWriter.write(s);
