@@ -7,6 +7,7 @@ distance.dir: "distance"
 weight.dir: "weight"
 intermediate.dir: "intermediate"
 histogram.dir: "histogram"
+clusterfile: "cluster.xml"
 
 postproc.dir: "postproc"
 mds.dir: "mds"

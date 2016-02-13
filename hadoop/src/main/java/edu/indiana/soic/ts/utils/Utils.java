@@ -62,11 +62,11 @@ public class Utils {
         return null;
     }
 
-    public static List<VectorPoint> readVectors(File file) {
+    public static List<VectorPoint> readVectors(InputStream file) {
         List<VectorPoint> vecs = new ArrayList<VectorPoint>();
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(file));
+            br = new BufferedReader(new InputStreamReader(file));
             String line;
             while ((line = br.readLine()) != null) {
                 // process the line.
@@ -86,18 +86,16 @@ public class Utils {
         return vecs;
     }
 
-    public static void savePlotViz(String outFileName, Plotviz plotviz) throws FileNotFoundException, JAXBException {
-        FileOutputStream fileOutputStream = null;
+    public static void savePlotViz(OutputStream outFileName, Plotviz plotviz) throws FileNotFoundException, JAXBException {
         try {
-            fileOutputStream = new FileOutputStream(outFileName);
             JAXBContext ctx = JAXBContext.newInstance(Plotviz.class);
             Marshaller ma = ctx.createMarshaller();
             ma.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            ma.marshal(plotviz, fileOutputStream);
+            ma.marshal(plotviz, outFileName);
         } finally {
-            if (fileOutputStream != null) {
+            if (outFileName != null) {
                 try {
-                    fileOutputStream.close();
+                    outFileName.close();
                 } catch (IOException ignore) {
                 }
             }

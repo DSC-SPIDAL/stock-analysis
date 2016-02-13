@@ -237,8 +237,7 @@ public class PairWiseDistance {
 	}
 
 	private void distributeData(int blockSize, Configuration conf,
-			FileSystem fs, Path hdInputDir, int noOfDivisions)
-			throws IOException {
+			FileSystem fs, Path hdInputDir, int noOfDivisions) throws IOException {
 		// Writing block meta data to for each block in a separate file so that
 		// Hadoop will create separate Map tasks for each block..
 		// Key : block number
