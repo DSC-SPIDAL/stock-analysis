@@ -8,15 +8,16 @@ public class Point {
     int index;
     double x, y, z;
     int clazz;
-
+    String symbol;
     DecimalFormat four = new DecimalFormat("#0.0000");
 
-    public Point(int index, double x, double y, double z, int clazz) {
+    public Point(int index, double x, double y, double z, int clazz, String symbol) {
         this.index = index;
         this.x = x;
         this.y = y;
         this.z = z;
         this.clazz = clazz;
+        this.symbol = symbol;
     }
 
     public double distance(Point p) {
@@ -42,6 +43,10 @@ public class Point {
 
     public int getClazz() {
         return clazz;
+    }
+
+    public String getSymbol() {
+        return symbol;
     }
 
     public String serialize() {

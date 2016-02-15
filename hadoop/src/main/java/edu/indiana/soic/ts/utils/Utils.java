@@ -118,14 +118,14 @@ public class Utils {
     public static Point readPoint(String line) throws Exception {
         try {
             String[] splits = line.split("\t");
+            String symbol = splits[0];
+            int i = Integer.parseInt(splits[1]);
+            double x = Double.parseDouble(splits[2]);
+            double y = Double.parseDouble(splits[3]);
+            double z = Double.parseDouble(splits[4]);
+            int clazz = Integer.parseInt(splits[5]);
 
-            int i = Integer.parseInt(splits[0]);
-            double x = Double.parseDouble(splits[1]);
-            double y = Double.parseDouble(splits[2]);
-            double z = Double.parseDouble(splits[3]);
-            int clazz = Integer.parseInt(splits[4]);
-
-            return new Point(i, x, y, z, clazz);
+            return new Point(i, x, y, z, clazz, symbol);
         } catch (NumberFormatException e) {
             throw new Exception(e);
         }

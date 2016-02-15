@@ -4,7 +4,6 @@ import edu.indiana.soic.ts.pviz.*;
 import edu.indiana.soic.ts.utils.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
@@ -48,61 +47,30 @@ public class PVizGenerator {
         }
     }
 
-    public static class LabelReadMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
-        private String clusterFile;
-        private String pointsFolder;
-        private String destFolder;
-        private String vectorFile;
-        private String originalFile;
-        private String labelFilesDir;
-
-        @Override
-        protected void setup(Context context) throws IOException, InterruptedException {
-            super.setup(context);
-        }
-
+    public static class LabelReadMapper extends Mapper<LongWritable, Text, Text, Text> {
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            Configuration conf = context.getConfiguration();
-            FileSystem fs = FileSystem.get(conf);
-
-            // read the file
-            String fileName = value.toString();
-            Path path = new Path(labelFilesDir);
-
-
-
-            // now load the vectors
-            Path vectorFilePath = new Path(vectorFile);
-            List<String> symbols = loadSymbols(fs, vectorFilePath);
-
-            // now load the point file with the labels
-
-        }
-    }
-
-    public static class VectorReadMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
-        @Override
-        protected void setup(Context context) throws IOException, InterruptedException {
-            super.setup(context);
-        }
-
-        @Override
-        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            super.map(key, value, context);
+            try {
+                Point p = Utils.readPoint(value.toString());
+                context.write(new Text(p.getSymbol()), new Text(p.serialize()));
+            } catch (Exception e) {
+                String msg = "Failed to read the point";
+                LOG.error(msg, e);
+                throw new RuntimeException(msg, e);
+            }
         }
     }
 
     public static class PVizReducer extends Reducer<LongWritable, Text, Text, Text> {
         private String clusterFile;
         private String pvizDir;
+        private Clusters clusters;
+        private List<Point> points;
 
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
             super.setup(context);
             Configuration conf = context.getConfiguration();
-
-
 
             FileSystem fs = FileSystem.get(conf);
             // lets load the cluster file first
@@ -112,12 +80,23 @@ public class PVizGenerator {
 
         @Override
         protected void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            super.reduce(key, values, context);
+            for (Text t : values) {
+                try {
+                    Point p = Utils.readPoint(t.toString());
+                } catch (Exception e) {
+
+                }
+            }
         }
 
         @Override
         protected void cleanup(Context context) throws IOException, InterruptedException {
             super.cleanup(context);
+
+            Configuration conf = context.getConfiguration();
+            FileSystem fs = FileSystem.get(conf);
+
+            createPvizFile(fs, clusters, );
         }
     }
 
@@ -146,9 +125,7 @@ public class PVizGenerator {
     /**
      * Process a stock file and generate vectors for a month or year period
      */
-    private static void processFile(FileSystem fs, Path labelFile, List<String> symbols, Clusters clusters, Path pvizFile) {
-        int size = -1;
-        InputStreamReader input = null;
+    private static void createPvizFile(FileSystem fs, Clusters clusters, List<Point> points, Path pvizFile) {
         // create the XML
         Plotviz plotviz = new Plotviz();
         Glyph glyph = new Glyph(1, 1);
@@ -159,19 +136,10 @@ public class PVizGenerator {
         plotviz.setPlot(plot);
         plotviz.setClusters(clusters.getCluster());
         List<PVizPoint> pVizPoints = new ArrayList<PVizPoint>();
-        int index = 0;
         try {
-            input = new InputStreamReader(fs.open(labelFile));
-            BufferedReader bufRead = new BufferedReader(input);
-            String inputLine;
-            while ((inputLine = bufRead.readLine()) != null) {
-                if (index >= symbols.size()) {
-                    throw new RuntimeException("Index cannot be greater than symbols: index =" + index + " symbols ="  + symbols);
-                }
-                Point p = Utils.readPoint(inputLine);
-                PVizPoint pVizPoint = new PVizPoint(p.getIndex(), p.getClazz(), symbols.get(index), new Location(p.getX(), p.getY(), p.getZ()));
+            for (Point p : points) {
+                PVizPoint pVizPoint = new PVizPoint(p.getIndex(), p.getClazz(), p.getSymbol(), new Location(p.getX(), p.getY(), p.getZ()));
                 pVizPoints.add(pVizPoint);
-                index++;
             }
             plotviz.setPoints(pVizPoints);
 
