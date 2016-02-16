@@ -82,7 +82,6 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
             vectorPoint.setTotalCap(totalCap);
             if (vectorPoint.cleanVector(new CleanMetric())) {
                 serialize = vectorPoint.serialize();
-                LOG.debug(serialize);
                 if (serialize != null) {
                     context.write(new IntWritable(id), new Text(serialize));
                 }

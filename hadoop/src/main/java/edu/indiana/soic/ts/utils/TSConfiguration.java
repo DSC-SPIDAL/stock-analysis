@@ -28,6 +28,10 @@ public class TSConfiguration {
 
     public static final String MATRIX_BLOCK_SIZE = "matrix.block.size";
 
+    public class Input {
+        public static final String FIXED_DIR = "fixed.file";
+    }
+
     public class Histogram {
         public static final String MIN = "histogram.min";
         public static final String MAX = "histogram.max";
@@ -163,5 +167,12 @@ public class TSConfiguration {
         String clusterFile = getString(PViz.CLUSTER_FILE);
 
         return getAggregatedPath(postProcDir + "/" + clusterFile);
+    }
+
+    public String getFixedClassFile() {
+        String input = getString(INPUT_DIR);
+        String fixedFile = getString(Input.FIXED_DIR);
+
+        return getAggregatedPath(input + "/" + fixedFile);
     }
 }

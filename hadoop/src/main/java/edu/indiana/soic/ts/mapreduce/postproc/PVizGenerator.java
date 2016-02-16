@@ -30,8 +30,6 @@ public class PVizGenerator {
     private String clusterFile;
     private String intermediatePvizDir;
 
-    private TSConfiguration tsConfiguration;
-
     public static void main(String[] args) throws Exception {
         String  configFile = Utils.getConfigurationFile(args);
         TSConfiguration tsConfiguration = new TSConfiguration(configFile);
@@ -41,7 +39,6 @@ public class PVizGenerator {
     }
 
     public void configure(TSConfiguration tsConfiguration) {
-        this.tsConfiguration = tsConfiguration;
         this.labelDir = tsConfiguration.getLabelDir();
         this.pvizDir = tsConfiguration.getPVizDir();
         this.clusterFile = tsConfiguration.getClusterFile();

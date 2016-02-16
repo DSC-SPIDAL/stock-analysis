@@ -88,7 +88,8 @@ public class HistogramGenerator {
                 String sequenceFileFullPath = vectDir + "/" + sequenceFile;
                 try {
                     execJob(conf, sequenceFileFullPath, sequenceFile, interHistDir);
-                    Utils.concatOutput(conf, sequenceFile, interHistDir + "/" + sequenceFile, tsConfiguration.getHistDir());
+                    Utils.concatOutput2(conf, sequenceFile, interHistDir + "/" + sequenceFile,
+                            tsConfiguration.getHistDir(), tsConfiguration.getFixedClassFile());
                 } catch (Exception e) {
                     String message = "Failed to executed PWD calculation:" + sequenceFileFullPath + " " + interHistDir;
                     LOG.info(message, e);

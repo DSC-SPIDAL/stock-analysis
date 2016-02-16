@@ -230,4 +230,34 @@ public class Utils {
         outputStream.flush();
         outputStream.close();
     }
+
+    public static void concatOutput2(Configuration conf, String fileName, String sourceDir, String destDir, String secondSourceFile) throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path outDir = new Path(sourceDir);
+        FileStatus[] status = fs.listStatus(outDir);
+
+        String destFile = destDir + "/" + fileName;
+        Path hdInputDir = new Path(destDir);
+        if (!fs.mkdirs(hdInputDir)) {
+            throw new RuntimeException("Failed to create dir: " + hdInputDir.getName());
+        }
+        Path outFile = new Path(destFile);
+        FSDataOutputStream outputStream = fs.create(outFile);
+        for (int i = 0; i < status.length; i++) {
+            String name = status[i].getPath().getName();
+            String split[] = name.split("-");
+            if (split.length > 2 && split[0].equals("part")) {
+                Path inFile = new Path(sourceDir, name);
+                FSDataInputStream inputStream = fs.open(inFile);
+                IOUtils.copy(inputStream, outputStream);
+                inputStream.close();
+            }
+        }
+        FSDataInputStream additionalStrem = fs.open(new Path(secondSourceFile));
+        IOUtils.copy(additionalStrem, outputStream);
+        additionalStrem.close();
+
+        outputStream.flush();
+        outputStream.close();
+    }
 }

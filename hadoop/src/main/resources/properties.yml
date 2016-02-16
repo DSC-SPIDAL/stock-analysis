@@ -17,6 +17,8 @@ fixed.classes.file: "fixed.txt"
 
 label.dir: "label"
 
+fixed.file: "fixed.csv"
+
 # dates
 time.start: "20040101"
 time.end: "20150101"
