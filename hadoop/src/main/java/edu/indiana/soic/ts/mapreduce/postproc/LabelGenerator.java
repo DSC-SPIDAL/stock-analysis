@@ -3,7 +3,6 @@ package edu.indiana.soic.ts.mapreduce.postproc;
 import edu.indiana.soic.ts.pviz.Cluster;
 import edu.indiana.soic.ts.pviz.Clusters;
 import edu.indiana.soic.ts.utils.*;
-import org.apache.avro.generic.GenericData;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.IntWritable;
@@ -11,6 +10,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -36,6 +36,9 @@ public class LabelGenerator {
 
     private String vectDir;
     private String interHistDir;
+    private String fixedClassesFile;
+    private String pointFileDir;
+
     private TSConfiguration tsConfiguration;
 
     public void configure(String []args) {
@@ -98,7 +101,7 @@ public class LabelGenerator {
         }
     }
 
-    public class LabelGeneratorMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
+    public class VectorReadMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
         private String clusterFile;
         private String pointsFolder;
         private String destFolder;
@@ -113,6 +116,23 @@ public class LabelGenerator {
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             super.map(key, value, context);
+        }
+    }
+
+    public class PointReadMaper extends Mapper<LongWritable, Text, Text, Text> {
+        
+    }
+
+
+    public class LabelGeneratorReducer extends Reducer<LongWritable, Text, Text, Text> {
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException {
+            super.setup(context);
+        }
+
+        @Override
+        protected void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            super.reduce(key, values, context);
         }
     }
 

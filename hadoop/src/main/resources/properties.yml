@@ -9,12 +9,11 @@ weight.dir: "weight"
 intermediate.dir: "intermediate"
 histogram.dir: "histogram"
 
-
-pviz.dir: "
+pviz.dir: "pviz"
 pviz.cluster.file: "cluster.xml"
 
-postproc.dir: "postproc"
-mds.dir: "mds"
+point.file.dir: "points"
+fixed.classes.file: "fixed.txt"
 
 # dates
 time.start: "20040101"
