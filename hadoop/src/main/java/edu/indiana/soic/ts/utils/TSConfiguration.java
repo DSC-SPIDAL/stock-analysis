@@ -11,10 +11,11 @@ public class TSConfiguration {
     public static final String INPUT_DIR = "input.dir";
 
     public static final String PREPROC_DIR = "preproc.dir";
+    public static final String POSTPROC_DIR = "postproc.dir";
+
     public static final String VECTOR_DIR = "vector.dir";
     public static final String DISTANCE_DIR = "distance.dir";
     public static final String INTERMEDIATE_DIR = "intermediate.dir";
-    public static final String DIST_TEMP_DIR = "distance.tmp.dir";
     public static final String HIST_DIR = "histogram.dir";
 
     public static final String START_DATE = "time.start";
@@ -31,6 +32,16 @@ public class TSConfiguration {
         public static final String MIN = "histogram.min";
         public static final String MAX = "histogram.max";
         public static final String NO_OF_BINS = "histogram.bins";
+    }
+
+    public class PViz {
+        public static final String DIR = "pviz.dir";
+        public static final String CLUSTER_FILE = "pviz.cluster.file";
+        public static final String PVIZ_FILE = "pviz.file";
+    }
+
+    public class Label {
+        public static final String DIR = "label.dir";
     }
 
     private final Map conf;
@@ -107,5 +118,26 @@ public class TSConfiguration {
         String preprocDir = getString(PREPROC_DIR);
         String hist = getString(HIST_DIR);
         return getAggregatedPath(preprocDir) + "/" + hist;
+    }
+
+    public String getLabelDir() {
+        String labelDir = getString(Label.DIR);
+        String postProcDir = getString(POSTPROC_DIR);
+
+        return getAggregatedPath(postProcDir + "/" + labelDir);
+    }
+
+    public String getPVizDir() {
+        String postProcDir = getString(POSTPROC_DIR);
+        String pvizDir = getString(PViz.DIR);
+
+        return getAggregatedPath(postProcDir + "/" + pvizDir);
+    }
+
+    public String getClusterFile() {
+        String postProcDir = getString(POSTPROC_DIR);
+        String clusterFile = getString(PViz.CLUSTER_FILE);
+
+        return getAggregatedPath(postProcDir + "/" + clusterFile);
     }
 }

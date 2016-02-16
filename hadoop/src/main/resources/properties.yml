@@ -2,12 +2,16 @@ base.dir: "/user/supun/stock"
 input.dir: "input"
 
 preproc.dir: "preproc"
+postproc.dir: "postproc"
 vector.dir: "vector"
 distance.dir: "distance"
 weight.dir: "weight"
 intermediate.dir: "intermediate"
 histogram.dir: "histogram"
-clusterfile: "cluster.xml"
+
+
+pviz.dir: "
+pviz.cluster.file: "cluster.xml"
 
 postproc.dir: "postproc"
 mds.dir: "mds"

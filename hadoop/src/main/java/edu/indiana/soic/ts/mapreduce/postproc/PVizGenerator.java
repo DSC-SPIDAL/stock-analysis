@@ -1,14 +1,19 @@
 package edu.indiana.soic.ts.mapreduce.postproc;
 
+import edu.indiana.soic.ts.mapreduce.pwd.*;
 import edu.indiana.soic.ts.pviz.*;
 import edu.indiana.soic.ts.utils.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,35 +21,84 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
-import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class PVizGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(PVizGenerator.class);
-    private String startDate;
-    private String endDate;
-    private int window;
-    private int headShift;
-    private int tailShift;
+    private String labelDir;
+    private String pvizDir;
+    private String clusterFile;
+
     private TSConfiguration tsConfiguration;
 
+    public static void main(String[] args) throws Exception {
+        String  configFile = Utils.getConfigurationFile(args);
+        TSConfiguration tsConfiguration = new TSConfiguration(configFile);
+        PVizGenerator vectorCalculator = new PVizGenerator();
+        vectorCalculator.configure(tsConfiguration);
+        vectorCalculator.submitJob();
+    }
+
     public void configure(TSConfiguration tsConfiguration) {
-        Map conf = tsConfiguration.getConf();
         this.tsConfiguration = tsConfiguration;
-        this.startDate = (String) conf.get(TSConfiguration.START_DATE);
-        this.endDate = (String) conf.get(TSConfiguration.END_DATE);
-        this.window = (int) conf.get(TSConfiguration.TIME_WINDOW);
-        this.headShift = (int) conf.get(TSConfiguration.TIME_SHIFT_HEAD);
-        this.tailShift = (int) conf.get(TSConfiguration.TIME_SHIFT_TAIL);
+        this.labelDir = tsConfiguration.getLabelDir();
+        this.pvizDir = tsConfiguration.getPVizDir();
+        this.clusterFile = tsConfiguration.getClusterFile();
+    }
 
-        if (startDate == null || startDate.isEmpty()) {
-            throw new RuntimeException("Start date should be specified");
+    public void submitJob() throws IOException {
+        Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(conf);
+        FileStatus[] status = fs.listStatus(new Path(labelDir));
+        for (int i = 0; i < status.length; i++) {
+            String labelFile = status[i].getPath().getName();
+            try {
+                execJob(conf, labelFile);
+            } catch (Exception e) {
+                String message = "Failed to execute pviz gen:" + labelFile;
+                LOG.info(message, e);
+                throw new RuntimeException(message);
+            }
+        }
+    }
+
+    public int execJob(Configuration conf, String fileName) throws Exception {
+        Job job = new Job(conf, "PvizGeneration-" + fileName);
+
+		/* create the base dir for this job. Delete and recreates if it exists */
+        Path hdOutDir = new Path(this.pvizDir);
+        FileSystem fs = FileSystem.get(conf);
+        fs.delete(hdOutDir, true);
+        if (!fs.mkdirs(hdOutDir)) {
+            throw new IOException("Mkdirs failed to create " + hdOutDir.toString());
         }
 
-        if (endDate == null || endDate.isEmpty()) {
-            throw new RuntimeException("End date should be specified");
-        }
+        Path inputFilePath = new Path(labelDir + "/" + fileName);
+        Path outputFilePath = new Path(hdOutDir, fileName);
+
+        Configuration jobConf = job.getConfiguration();
+        jobConf.set(TSConfiguration.PViz.PVIZ_FILE, fileName);
+        jobConf.set(TSConfiguration.PViz.DIR, this.pvizDir);
+        jobConf.set(TSConfiguration.Label.DIR, this.labelDir);
+        jobConf.set(TSConfiguration.PViz.CLUSTER_FILE, this.clusterFile);
+
+        job.setJarByClass(PVizGenerator.class);
+        job.setMapperClass(LabelReadMapper.class);
+        job.setReducerClass(PVizReducer.class);
+        job.setOutputKeyClass(LongWritable.class);
+        job.setOutputValueClass(SWGWritable.class);
+        FileInputFormat.setInputPaths(job, inputFilePath);
+        FileOutputFormat.setOutputPath(job, outputFilePath);
+
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+        job.setNumReduceTasks(1);
+
+        long startTime = System.currentTimeMillis();
+        int exitStatus = job.waitForCompletion(true) ? 0 : 1;
+        double executionTime = (System.currentTimeMillis() - startTime) / 1000.0;
+        LOG.info("Job Finished in " + executionTime + " seconds");
+        return exitStatus;
     }
 
     public static class LabelReadMapper extends Mapper<LongWritable, Text, Text, Text> {
@@ -65,17 +119,21 @@ public class PVizGenerator {
         private String clusterFile;
         private String pvizDir;
         private Clusters clusters;
-        private List<Point> points;
+        private List<Point> points = new ArrayList<Point>();
 
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
             super.setup(context);
+
             Configuration conf = context.getConfiguration();
+            pvizDir = conf.get(TSConfiguration.PViz.DIR);
+            clusterFile = conf.get(TSConfiguration.PViz.CLUSTER_FILE);
 
             FileSystem fs = FileSystem.get(conf);
             // lets load the cluster file first
             Path clusterFilePath = new Path(clusterFile);
-            Clusters clusters = loadClusters(fs, clusterFilePath);
+            clusters = loadClusters(fs, clusterFilePath);
+
         }
 
         @Override
@@ -83,8 +141,11 @@ public class PVizGenerator {
             for (Text t : values) {
                 try {
                     Point p = Utils.readPoint(t.toString());
+                    points.add(p);
                 } catch (Exception e) {
-
+                    String msg = "Failed to read the point: " + t.toString();
+                    LOG.error(msg, e);
+                    throw new RuntimeException(msg, e);
                 }
             }
         }
@@ -95,8 +156,8 @@ public class PVizGenerator {
 
             Configuration conf = context.getConfiguration();
             FileSystem fs = FileSystem.get(conf);
-
-            createPvizFile(fs, clusters, );
+            Path pvizPath = new Path(pvizDir);
+            createPvizFile(fs, clusters, points, pvizPath);
         }
     }
 
@@ -148,52 +209,6 @@ public class PVizGenerator {
         } catch (Exception e) {
             String s = "Failed to write the XML file";
             LOG.error(s, e);
-            throw new RuntimeException(s, e);
-        }
-    }
-
-    // load symbols for each point in file
-    private static List<String> loadSymbols( FileSystem fs, Path vectorFile) {
-        LOG.info("Loading symbols from vector file: " + vectorFile);
-        List<VectorPoint> vectorPoints = null;
-        try {
-            vectorPoints = Utils.readVectors(fs.open(vectorFile));
-            List<String> symbols = new ArrayList<String>();
-            for (int i = 0; i < vectorPoints.size(); i++) {
-                VectorPoint v = vectorPoints.get(i);
-                String symbol =  v.getSymbol();
-                symbols.add(symbol);
-            }
-            return symbols;
-        } catch (IOException e) {
-            String msg = "Failed to load symbols from vector file: " + vectorFile;
-            LOG.error(msg, e);
-            throw new RuntimeException(msg, e);
-        }
-    }
-
-    private void createFiles(Configuration conf, FileSystem fs, String outDir) {
-        try {
-            TreeMap<String, List<Date>> genDates = TableUtils.genDates(TableUtils.getDate(startDate),
-                    TableUtils.getDate(endDate), this.window, TimeUnit.DAYS, this.headShift, this.tailShift, TimeUnit.DAYS);
-            Path dirPath = new Path(outDir);
-            for (String s : genDates.keySet()) {
-                Path vFile = new Path(dirPath, s);
-                SequenceFile.Writer vWriter = SequenceFile.createWriter(fs,
-                        conf, vFile, LongWritable.class, Text.class,
-                        SequenceFile.CompressionType.NONE);
-
-                vWriter.append(new LongWritable(0),
-                        new Text(s));
-                vWriter.close();
-            }
-        } catch (ParseException e) {
-            String s = "Failed to create the data list";
-            LOG.error(s);
-            throw new RuntimeException(s, e);
-        } catch (IOException e) {
-            String s = "Failed to create the data list file";
-            LOG.error(s);
             throw new RuntimeException(s, e);
         }
     }
