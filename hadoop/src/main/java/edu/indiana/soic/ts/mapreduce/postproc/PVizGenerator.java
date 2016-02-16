@@ -28,6 +28,7 @@ public class PVizGenerator {
     private String labelDir;
     private String pvizDir;
     private String clusterFile;
+    private String intermediatePvizDir;
 
     private TSConfiguration tsConfiguration;
 
@@ -44,6 +45,7 @@ public class PVizGenerator {
         this.labelDir = tsConfiguration.getLabelDir();
         this.pvizDir = tsConfiguration.getPVizDir();
         this.clusterFile = tsConfiguration.getClusterFile();
+        this.intermediatePvizDir = tsConfiguration.getIntermediatePvizDir();
     }
 
     public void submitJob() throws IOException {
@@ -66,15 +68,15 @@ public class PVizGenerator {
         Job job = new Job(conf, "PvizGeneration-" + fileName);
 
 		/* create the base dir for this job. Delete and recreates if it exists */
-        Path hdOutDir = new Path(this.pvizDir);
+        Path hdOutDir = new Path(this.intermediatePvizDir);
         FileSystem fs = FileSystem.get(conf);
         fs.delete(hdOutDir, true);
         if (!fs.mkdirs(hdOutDir)) {
             throw new IOException("Mkdirs failed to create " + hdOutDir.toString());
         }
 
-        Path inputFilePath = new Path(labelDir + "/" + fileName);
-        Path outputFilePath = new Path(hdOutDir, fileName);
+        Path inputFilePath = new Path(this.labelDir + "/" + fileName);
+        Path outputFilePath = new Path(this.intermediatePvizDir + "/" + fileName);
 
         Configuration jobConf = job.getConfiguration();
         jobConf.set(TSConfiguration.PViz.PVIZ_FILE, fileName);

@@ -119,6 +119,13 @@ public class TSConfiguration {
         return getAggregatedPath(preprocDir) + "/" + intermediate + "/" + hist;
     }
 
+    public String getIntermediatePvizDir() {
+        String preprocDir = getString(PREPROC_DIR);
+        String pviz = getString(PViz.DIR);
+        String intermediate = getString(INTERMEDIATE_DIR);
+        return getAggregatedPath(preprocDir) + "/" + intermediate + "/" + pviz;
+    }
+
     public String getIntermediateLabelDir() {
         String preprocDir = getString(PREPROC_DIR);
         String label = getString(Label.DIR);
