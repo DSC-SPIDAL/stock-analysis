@@ -105,7 +105,7 @@ public class PVizGenerator {
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             try {
-                Point p = Utils.readPoint(value.toString());
+                Point p = Utils.readPointWithSymbol(value.toString());
                 context.write(new Text(p.getSymbol()), new Text(p.serialize()));
             } catch (Exception e) {
                 String msg = "Failed to read the point";
@@ -140,7 +140,7 @@ public class PVizGenerator {
         protected void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             for (Text t : values) {
                 try {
-                    Point p = Utils.readPoint(t.toString());
+                    Point p = Utils.readPointWithSymbol(t.toString());
                     points.add(p);
                 } catch (Exception e) {
                     String msg = "Failed to read the point: " + t.toString();

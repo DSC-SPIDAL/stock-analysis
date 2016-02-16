@@ -5,6 +5,7 @@ import edu.indiana.soic.ts.pviz.Clusters;
 import edu.indiana.soic.ts.utils.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
+import org.apache.hadoop.fs.shell.Display;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -62,7 +63,7 @@ public class LabelGenerator {
         Path hdInputDir = new Path(this.vectDir + "/" + vectorFile);
 
         job.setJarByClass(LabelGenerator.class);
-        job.setMapperClass(LabelGeneratorMapper.class);
+        job.setMapperClass(VectorReadMapper.class);
         job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(Text.class);
         FileInputFormat.setInputPaths(job, hdInputDir);
@@ -101,12 +102,26 @@ public class LabelGenerator {
         }
     }
 
-    public class VectorReadMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
-        private String clusterFile;
-        private String pointsFolder;
-        private String destFolder;
-        private String vectorFile;
-        private String originalFile;
+    public class VectorReadMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException {
+            super.setup(context);
+        }
+
+        @Override
+        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            VectorPoint p = Utils.parseVector(value.toString());
+            if (p != null && p.getSymbol() != null) {
+                context.write(key, new Text("#" + p.getSymbol()));
+            } else {
+                String msg = "Invalid vector point";
+                LOG.error(msg);
+                throw new RuntimeException(msg);
+            }
+        }
+    }
+
+    public class PointReadMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
 
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
@@ -115,16 +130,23 @@ public class LabelGenerator {
 
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            super.map(key, value, context);
+            try {
+                Point p = Utils.readPointWithoutSymbol(value.toString());
+
+                context.write(key, value);
+            } catch (Exception e) {
+                String msg = "Failed to read the point";
+                LOG.error(msg, e);
+                throw new RuntimeException(msg, e);
+            }
         }
     }
 
-    public class PointReadMaper extends Mapper<LongWritable, Text, Text, Text> {
-        
-    }
-
-
     public class LabelGeneratorReducer extends Reducer<LongWritable, Text, Text, Text> {
+        private Map<String, Integer> symbolsToClass = new HashMap<String, Integer>();
+        private String histoFile;
+        private String fixedClassFile;
+
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
             super.setup(context);
@@ -132,7 +154,28 @@ public class LabelGenerator {
 
         @Override
         protected void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            super.reduce(key, values, context);
+            String symbol = null;
+            String pointValue = null;
+            for (Text t : values) {
+                String ts = t.toString();
+                if (ts.startsWith("#")) {
+                    symbol = ts.substring(1);
+                } else {
+                    pointValue = ts;
+                }
+            }
+
+            if (symbol != null && pointValue != null) {
+                try {
+                    Point p = Utils.readPointWithoutSymbol(pointValue);
+                    p.setClazz(symbolsToClass.get(symbol));
+                    context.write(new Text(symbol), new Text(p.serialize()));
+                } catch (Exception e) {
+                    String msg = "Failed to read point: " + pointValue;
+                    LOG.error(msg, e);
+                    throw new RuntimeException(msg, e);
+                }
+            }
         }
     }
 
@@ -272,7 +315,7 @@ public class LabelGenerator {
             String inputLine;
             int index = 0;
             while ((inputLine = bufRead.readLine()) != null && index < symbols.size())  {
-                Point p = Utils.readPoint(inputLine);
+                Point p = Utils.readPointWithSymbol(inputLine);
                 int clazz = 0;
                 p.setClazz(clazz);
                 String s = p.serialize();

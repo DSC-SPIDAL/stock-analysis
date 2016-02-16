@@ -51,6 +51,9 @@ public class Point {
 
     public String serialize() {
         StringBuilder sb = new StringBuilder();
+        if (symbol != null) {
+            sb.append(symbol).append("\t");
+        }
         sb.append(Integer.toString(index)).append("\t");
         sb.append(four.format(x)).append("\t").append(four.format(y)).append("\t").append(four.format(z)).append("\t");
         sb.append(Integer.toString(clazz));

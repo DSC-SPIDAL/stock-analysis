@@ -17,10 +17,6 @@ public class VectorPoint {
         this.totalCap = totalCap;
     }
 
-    public VectorPoint(int key, int size) {
-        this(key, null, size, false);
-    }
-
     public VectorPoint(int key, String symbol, int size, boolean indexed) {
         this.key = key;
         this.symbol = symbol;
