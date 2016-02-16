@@ -40,7 +40,7 @@ public class HistogramGenerator {
         max = (double) tsConf.get(TSConfiguration.Histogram.MAX);
         bins = (int) tsConf.get(TSConfiguration.Histogram.NO_OF_BINS);
 
-        this.interHistDir = tsConfiguration.getIntemediateHistDir();
+        this.interHistDir = tsConfiguration.getIntermediateHistDir();
         this.vectDir = tsConfiguration.getVectorDir();
     }
 

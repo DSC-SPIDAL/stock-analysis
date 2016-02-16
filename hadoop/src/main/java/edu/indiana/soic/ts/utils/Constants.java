@@ -55,8 +55,6 @@ public class Constants {
         public static final String NO_OF_DAYS = "no_of_days";
     }
 
-
-
     public class Distance {
         public static final String FUNCTION = "distance.func";
         public static final String TYPE = "distance.type";

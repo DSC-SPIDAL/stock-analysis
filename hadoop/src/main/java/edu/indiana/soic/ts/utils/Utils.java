@@ -104,6 +104,7 @@ public class Utils {
 
     public static Bin readBin(String line) {
         String []parts = line.split(",");
+        int index = Integer.parseInt(parts[0]);
         double start = Double.parseDouble(parts[1]);
         double end = Double.parseDouble(parts[2]);
         Bin bin = new Bin();

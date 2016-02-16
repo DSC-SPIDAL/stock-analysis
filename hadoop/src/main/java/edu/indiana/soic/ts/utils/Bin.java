@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bin {
+    public int index;
     public double start;
     public double end;
     public List<Integer> permNos = new ArrayList<Integer>();

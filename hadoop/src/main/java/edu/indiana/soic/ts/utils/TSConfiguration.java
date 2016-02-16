@@ -32,6 +32,7 @@ public class TSConfiguration {
         public static final String MIN = "histogram.min";
         public static final String MAX = "histogram.max";
         public static final String NO_OF_BINS = "histogram.bins";
+        public static final String HISTO_FILE = "histogram.file";
     }
 
     public class PViz {
@@ -42,6 +43,10 @@ public class TSConfiguration {
 
     public class Label {
         public static final String DIR = "label.dir";
+    }
+
+    public class Point {
+        public static final String DIR = "point.file.dir";
     }
 
     private final Map conf;
@@ -107,17 +112,29 @@ public class TSConfiguration {
         return getAggregatedPath(preprocDir) + "/" + intermediate + "/" + vector;
     }
 
-    public String getIntemediateHistDir() {
+    public String getIntermediateHistDir() {
         String preprocDir = getString(PREPROC_DIR);
         String hist = getString(HIST_DIR);
         String intermediate = getString(INTERMEDIATE_DIR);
         return getAggregatedPath(preprocDir) + "/" + intermediate + "/" + hist;
     }
 
+    public String getIntermediateLabelDir() {
+        String preprocDir = getString(PREPROC_DIR);
+        String label = getString(Label.DIR);
+        String intermediate = getString(INTERMEDIATE_DIR);
+        return getAggregatedPath(preprocDir) + "/" + intermediate + "/" + label;
+    }
+
     public String getHistDir() {
         String preprocDir = getString(PREPROC_DIR);
         String hist = getString(HIST_DIR);
         return getAggregatedPath(preprocDir) + "/" + hist;
+    }
+
+    public String getPointDir() {
+        String pointDir = getString(Point.DIR);
+        return getAggregatedPath(pointDir);
     }
 
     public String getLabelDir() {
