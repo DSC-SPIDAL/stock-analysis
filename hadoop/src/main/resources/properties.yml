@@ -31,8 +31,6 @@ distance.props:
 
 matrix.block.size: 3000
 
-weight.function: "edu.indiana.soic.ts.dist.imple.WeightFunction"
-
 # time shifts
 time.window: 365
 time.shift.head: 7

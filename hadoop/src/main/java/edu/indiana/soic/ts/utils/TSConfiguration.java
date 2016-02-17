@@ -79,7 +79,12 @@ public class TSConfiguration {
     }
 
     public String getString(String key) {
-        return (String) conf.get(key);
+        String sysProp = System.getProperty(key);
+        if (sysProp != null && !"".equals(key)) {
+            return sysProp;
+        } else {
+            return (String) conf.get(key);
+        }
     }
 
     public String getAggregatedPath(String path) {

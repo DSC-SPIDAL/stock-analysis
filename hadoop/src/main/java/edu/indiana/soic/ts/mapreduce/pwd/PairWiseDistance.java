@@ -72,10 +72,8 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
-import org.apache.jasper.tagplugins.jstl.core.Out;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.nio.ch.IOUtil;
 
 public class PairWiseDistance {
 	private static final Logger LOG = LoggerFactory.getLogger(PairWiseDistance.class);
