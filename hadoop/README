@@ -12,7 +12,7 @@ Steps :
             data structure : row key : id_symbol, row val : col family key : date col family val : price_cap
 
         Command:
-        ./bin/hadoop jar ~/dev/projects/dsspidal/stock-analysis/hadoop/target/timeseries-1.0.0-jar-with-dependencies.jar edu.indiana.soic.ts.mapreduce.BulkDataLoader -c ~/dev/projects/dsspidal/stock-analysis/hadoop/src/main/resources/properties.yml
+
 
         1.2 Create table (StockDatesTable), CF - StockDatesCF to store dates
             main class : StockDateLoader
@@ -31,6 +31,27 @@ Steps :
         command : ./bin/hadoop jar ~/chathuri/hadoop/hadoop-2.7.1/stock-kmeans-1.0.0-jar-with-dependencies.jar msc.fall2015.stock.kmeans.hbase.StockVectorCalculator 20100719 20110719 5
     5. Read vector file and calculate distance and write the distance file to HDFS
         command : ./bin/hadoop jar ~/chathuri/hadoop/hadoop-2.7.1/stock-kmeans-1.0.0-jar-with-dependencies.jar msc.fall2015.stock.kmeans.hbase.hbase.pwd.PairWiseAlignment hdfs://156.56.179.122:9000/output/20100719_20110719/part-r-00000 6031 6031
+
+
+Commands
+--------
+
+Load data
+./bin/hadoop jar ~/dev/projects/dsspidal/stock-analysis/hadoop/target/timeseries-1.0.0-jar-with-dependencies.jar edu.indiana.soic.ts.mapreduce.BulkDataLoader -c ~/dev/projects/dsspidal/stock-analysis/hadoop/src/main/resources/properties.yml
+
+Gen dates
+./bin/hadoop jar ~/dev/projects/dsspidal/stock-analysis/hadoop/target/timeseries-1.0.0-jar-with-dependencies.jar edu.indiana.soic.ts.mapreduce.DateLoader -c ~/dev/projects/dsspidal/stock-analysis/hadoop/src/main/resources/properties.yml
+
+Vector Generation
+./bin/hadoop jar ~/dev/projects/dsspidal/stock-analysis/hadoop/target/timeseries-1.0.0-jar-with-dependencies.jar edu.indiana.soic.ts.mapreduce.VectorCalculator -c ~/dev/projects/dsspidal/stock-analysis/hadoop/src/main/resources/properties.yml
+
+Distance Calculation
+./bin/hadoop jar ~/dev/projects/dsspidal/stock-analysis/hadoop/target/timeseries-1.0.0-jar-with-dependencies.jar edu.indiana.soic.ts.mapreduce.DistanceCalculator -c ~/dev/projects/dsspidal/stock-analysis/hadoop/src/main/resources/properties.yml
+
+Weight Calculation
+./bin/hadoop jar ~/dev/projects/dsspidal/stock-analysis/hadoop/target/timeseries-1.0.0-jar-with-dependencies.jar edu.indiana.soic.ts.mapreduce.DistanceCalculator -c ~/dev/projects/dsspidal/stock-analysis/hadoop/src/main/resources/properties.yml -Ddistance.function="edu.indiana.soic.ts.dist.impl.WeightFunction"
+
+Now we need to run the MPI Programs to generate points and do the rotations
 
 
 Crunch

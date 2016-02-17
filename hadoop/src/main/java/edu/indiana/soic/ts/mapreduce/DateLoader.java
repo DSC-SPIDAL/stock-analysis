@@ -93,14 +93,12 @@ public class DateLoader {
 
         job.setMapperClass(InsertDateMapper.class);
         TableMapReduceUtil.initTableReducerJob(Constants.STOCK_DATES_TABLE, InsertDateReducer.class, job);
-        //job.setReducerClass(InsertReducer.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
 
         job.setInputFormatClass(TextInputFormat.class);
-        FileInputFormat.addInputPath(job, new Path(tsConfiguration.getAggregatedPath(TSConfiguration.INPUT_DIR)));
+        FileInputFormat.addInputPath(job, new Path(tsConfiguration.getInputDir()));
         FileOutputFormat.setOutputPath(job, new Path(Constants.HDFS_OUTPUT_PATH));
-//        job.setNumReduceTasks(0);
         return job;
     }
 }

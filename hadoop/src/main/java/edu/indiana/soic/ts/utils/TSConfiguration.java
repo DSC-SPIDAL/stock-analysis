@@ -91,6 +91,10 @@ public class TSConfiguration {
         return basePath + "/" + path;
     }
 
+    public String getInputDir() {
+        return getAggregatedPath(getString(INPUT_DIR));
+    }
+
     public String getVectorDir() {
         String preprocDir = getString(PREPROC_DIR);
         String vector = getString(VECTOR_DIR);

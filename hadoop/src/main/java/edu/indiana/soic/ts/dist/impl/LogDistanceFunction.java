@@ -19,7 +19,7 @@ public class LogDistanceFunction implements DistanceFunction {
     }
 
     public double calc(VectorPoint v1, VectorPoint v2) {
-        if (type == 5) {
+        if (type == 1) {
             double c = corr(v1, v2);
             double l1 = vectorLength(1, v1);
             double l2 = vectorLength(1, v2);

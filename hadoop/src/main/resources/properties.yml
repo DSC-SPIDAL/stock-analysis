@@ -1,4 +1,4 @@
-base.dir: "/user/supun/stock"
+base.dir: "/stock"
 input.dir: "input"
 
 preproc.dir: "preproc"
@@ -21,7 +21,7 @@ fixed.file: "fixed.csv"
 
 # dates
 time.start: "20040101"
-time.end: "20150101"
+time.end: "20050301"
 
 # distance calculation
 distance.function: "edu.indiana.soic.ts.dist.impl.LogDistanceFunction"

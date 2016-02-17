@@ -13,6 +13,6 @@ public class WeightFunction implements DistanceFunction {
 
     @Override
     public double calc(VectorPoint v1, VectorPoint v2) {
-        return 0;
+        return v1.getTotalCap() * v2.getTotalCap();
     }
 }

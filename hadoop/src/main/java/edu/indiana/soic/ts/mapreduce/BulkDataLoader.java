@@ -96,7 +96,7 @@ public class BulkDataLoader {
         job.setMapOutputValueClass(Text.class);
 
         job.setInputFormatClass(TextInputFormat.class);
-        FileInputFormat.addInputPath(job, new Path(tsConfiguration.getAggregatedPath(TSConfiguration.INPUT_DIR)));
+        FileInputFormat.addInputPath(job, new Path(tsConfiguration.getInputDir()));
         FileOutputFormat.setOutputPath(job, new Path(Constants.HDFS_OUTPUT_PATH));
         return job;
     }

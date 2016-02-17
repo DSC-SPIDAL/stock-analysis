@@ -28,6 +28,7 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
         Configuration conf = context.getConfiguration();
 
         noOfDays = Integer.valueOf(conf.get(Constants.Job.NO_OF_DAYS));
+        LOG.info("No of days: {}", noOfDays);
     }
 
     /**
@@ -53,7 +54,6 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
             int id = Integer.valueOf(idKey[0]);
             String symbol = idKey[1];
             int index = 0;
-            LOG.info("No of days: {}", noOfDays);
             String serialize;
             VectorPoint vectorPoint = new VectorPoint(id, symbol, noOfDays, true);
             for (Map.Entry<byte[], NavigableMap<Long, byte[]>> entryVersion : columnFamilyMap.getValue().entrySet()) {
@@ -89,3 +89,4 @@ public class VectorCalculatorMapper extends TableMapper<IntWritable, Text> {
         }
     }
 }
+
