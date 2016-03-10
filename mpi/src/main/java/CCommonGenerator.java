@@ -14,10 +14,12 @@ public class CCommonGenerator {
     private boolean listGen = false;
     private Date startDate;
     private Date endDate;
+    private String inputFile;
 
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("v", true, "Input Vector folder");
+        options.addOption("i", true, "Input file");
         options.addOption("p", true, "Points folder");
         options.addOption("d", true, "Destination point folder");
         options.addOption(Utils.createOption("r", true, "Rotations folder", true));
@@ -32,6 +34,7 @@ public class CCommonGenerator {
         try {
             CommandLine cmd = commandLineParser.parse(options, args);
             String vectorFolder = cmd.getOptionValue("v");
+            String inputFile = cmd.getOptionValue("i");
             String pointsFolder = cmd.getOptionValue("p");
             String distFolder = cmd.getOptionValue("d");
             String rotateFolder = cmd.getOptionValue("r");
@@ -42,7 +45,7 @@ public class CCommonGenerator {
             String mode = cmd.getOptionValue("md");
             boolean listGen = cmd.hasOption("l");
             CCommonGenerator pointTransformer = new CCommonGenerator(pointsFolder, vectorFolder,
-                    distFolder, rotateFolder, firstFile, secondFile, listGen);
+                    distFolder, rotateFolder, firstFile, secondFile, listGen, inputFile);
             if (listGen) {
                 if (mode != null) {
                     pointTransformer.setMode(Integer.parseInt(mode));
@@ -52,12 +55,14 @@ public class CCommonGenerator {
             pointTransformer.process();
         } catch (ParseException e) {
             e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
     public CCommonGenerator(String pointFolder, String vectorFolder,
                                      String destPointFolder, String rotateFolder,
-                                     String firstFile, String secondFile, boolean listGen) {
+                                     String firstFile, String secondFile, boolean listGen, String inputFile) {
         this.pointFolder = pointFolder;
         this.vectorFolder = vectorFolder;
         this.destFolder = destPointFolder;
@@ -65,6 +70,7 @@ public class CCommonGenerator {
         this.secondFile = secondFile;
         this.rotateFolder = rotateFolder;
         this.listGen = listGen;
+        this.inputFile = inputFile;
     }
 
     public void setMode(int mode) {
@@ -76,12 +82,19 @@ public class CCommonGenerator {
         this.endDate = end;
     }
 
-    public void process() {
+    public void process() throws FileNotFoundException {
         if (!listGen) {
             processPair(firstFile, secondFile);
         } else {
-            List<String> dates = Utils.genDateList(this.startDate, this.endDate, mode);
-            writeList(dates, destFolder + "/list.txt");
+            List<Date> dates;
+            if (mode == 6) {
+                Set<Date> dateSet = DateUtils.retrieveDates(inputFile);
+                dates = DateUtils.sortDates(dateSet);
+            } else {
+                dates = new ArrayList<Date>();
+            }
+            List<String> list = DateUtils.genDateList(startDate, endDate, mode, dates);
+            writeList(list, destFolder + "/list.txt");
         }
     }
 
