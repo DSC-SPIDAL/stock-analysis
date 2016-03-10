@@ -73,6 +73,7 @@ public class DateUtils {
                 Date d = availableDates.get(i);
                 if (d.equals(oneYearAway) || d.after(oneYearAway)) {
                     lastIndex = i;
+                    break;
                 }
             }
             if (lastIndex != 0) {
@@ -96,7 +97,7 @@ public class DateUtils {
         return dates;
     }
 
-    public static List<String> genDateList(Date startDate, Date endDate, int mode, List<Date> availableDates,) {
+    public static List<String> genDateList(Date startDate, Date endDate, int mode, List<Date> availableDates) {
         TreeMap<String, List<Date>> dates = new TreeMap<String, List<Date>>();
         List<String> dateList = new ArrayList<String>();
         Date currentDate = startDate;
@@ -170,6 +171,7 @@ public class DateUtils {
                 Date d = availableDates.get(i);
                 if (d.equals(oneYearAway) || d.after(oneYearAway)) {
                     lastIndex = i;
+                    break;
                 }
             }
             if (lastIndex != 0) {
