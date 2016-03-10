@@ -78,7 +78,11 @@ public class DateUtils {
             }
             if (lastIndex != 0) {
                 for (; lastIndex < availableDates.size(); lastIndex++) {
-                    addTwoDates(availableDates.get(firstIndex++), availableDates.get(lastIndex), dates);
+                    Date lastDate = availableDates.get(lastIndex);
+                    addTwoDates(availableDates.get(firstIndex++), lastDate, dates);
+                    if (lastDate.after(endDate) || lastDate.equals(endDate)) {
+                        break;
+                    }
                 }
             }
         } else if (mode == 7) {
@@ -176,7 +180,11 @@ public class DateUtils {
             }
             if (lastIndex != 0) {
                 for (; lastIndex < availableDates.size(); lastIndex++) {
-                    addTwoDatesKey(availableDates.get(firstIndex++), availableDates.get(lastIndex), dateList);
+                    Date lastDate = availableDates.get(lastIndex);
+                    addTwoDatesKey(availableDates.get(firstIndex++), lastDate, dateList);
+                    if (lastDate.after(endDate) || lastDate.equals(endDate)) {
+                        break;
+                    }
                 }
             }
         } else if (mode == 7) {
