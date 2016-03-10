@@ -34,7 +34,6 @@ import java.util.Map;
 
 public class ConsoleOutputBolt extends BaseRichBolt {
 
-    private static final long serialVersionUID = -8622707506877979035L;
     private final static Logger logger = LoggerFactory.getLogger(ConsoleOutputBolt.class);
 
     private OutputCollector collector;

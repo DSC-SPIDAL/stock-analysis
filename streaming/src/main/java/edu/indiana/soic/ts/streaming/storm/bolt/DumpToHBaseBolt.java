@@ -46,8 +46,6 @@ import java.util.Map;
 
 public class DumpToHBaseBolt extends BaseRichBolt {
 
-    private static final long serialVersionUID = 7642830621960029476L;
-
     private final static Logger logger = LoggerFactory.getLogger(DumpToHBaseBolt.class);
 
     private HBaseDumper hbaseDumper;

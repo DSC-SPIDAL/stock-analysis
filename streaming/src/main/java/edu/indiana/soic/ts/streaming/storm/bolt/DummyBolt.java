@@ -34,7 +34,6 @@ import java.util.Map;
 
 public class DummyBolt implements IRichBolt {
 
-    private static final long serialVersionUID = -8622707506877979035L;
     private final static Logger logger = LoggerFactory.getLogger(DummyBolt.class);
 
     private OutputCollector collector;
