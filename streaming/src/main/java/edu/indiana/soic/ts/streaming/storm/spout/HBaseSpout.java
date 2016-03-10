@@ -27,6 +27,7 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import edu.indiana.soic.ts.streaming.storm.utils.HBaseStream;
+import edu.indiana.soic.ts.streaming.storm.utils.StreamData;
 import edu.indiana.soic.ts.streaming.utils.Constants;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -35,19 +36,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class HBaseSpout extends BaseRichSpout{
 
     private final static Logger logger = LoggerFactory.getLogger(HBaseSpout.class);
 
     /**
-     * queue for tuples
-     */
-    private LinkedBlockingQueue<Values> queue;
-
-    /**
-     * collector for spout
+     * colloctor for spout
      */
     private SpoutOutputCollector collector;
 
@@ -86,70 +81,19 @@ public class HBaseSpout extends BaseRichSpout{
                      TopologyContext context, SpoutOutputCollector collector) {
 
         this.collector = collector;
-        int queueSize = Constants.STORM_SPOUT_DEFAULT_QUEUE_SIZE;
-        this.queue = new LinkedBlockingQueue<>(queueSize);
 
         try {
-            Thread scanThread = new Thread(new HBaseStreamScanner());
-            scanThread.setDaemon(true);
-            scanThread.start();
+            this.hbaseStream = new HBaseStream(Constants.TIME_SORTED_STOCK_TABLE_NAME);
+            rs = hbaseStream.scanTable(Constants.TIME_SORTED_STOCK_TABLE_CF,
+                    startDate, endDate);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
         }
     }
 
     @Override
     public void nextTuple() {
-        Values tuple;
-        try {
-            while ((tuple = queue.take()) != null) {
-                collector.emit(tuple, tuple.get(0));
-            }
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("rowKey", "id", "date", "symbol", "price", "cap"));
-    }
-
-    /**
-     * Put a tuple to queue
-     *
-     * @param tuple
-     * @return
-     */
-    protected void putTuple(Values tuple) {
-        try {
-            queue.put(tuple);
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Scan HBase table and send data
-     *
-     */
-    private class HBaseStreamScanner implements Runnable {
-
-        // HBase stream data generator
-        private HBaseStream hbaseStream;
-
-        public HBaseStreamScanner() throws Exception {
-            this.hbaseStream = new HBaseStream(Constants.TIME_SORTED_STOCK_TABLE_NAME);
-        }
-
-        @Override
-        public void run() {
-            long num = 0L;
-            long startTime = System.currentTimeMillis();
-            ResultScanner rs = hbaseStream.scanTable(Constants.TIME_SORTED_STOCK_TABLE_CF,
-                    startDate, endDate);
+        if(!scanCompleted){
             Result rr = new Result();
             if (rs != null) {
                 byte[] rowKey = null;
@@ -161,38 +105,46 @@ public class HBaseSpout extends BaseRichSpout{
                         logger.error(e.getMessage(), e);
                     }
                     if (rr != null && !rr.isEmpty()) {
-                        num++;
                         rowKey = rr.getRow();
                         Values values = new Values();
-                        values.add(new String(rowKey));
+                        values.add(new StreamData(rowKey));
                         id = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.ID_COLUMN_BYTES);
-                        values.add(new String(id));
+                        values.add(new StreamData(id));
                         date = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.DATE_COLUMN_BYTES);
-                        values.add(new String(date));
+                        values.add(new StreamData(date));
                         symbol = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.SYMBOL_COLUMN_BYTES);
                         if (symbol != null) {
-                            values.add(new String(symbol));
+                            values.add(new StreamData(symbol));
                         } else {
-                            values.add("");
+                            values.add(new StreamData(("").getBytes()));
                         }
                         price = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.PRICE_COLUMN_BYTES);
                         if (price != null) {
-                            values.add(Double.parseDouble(new String(price)));
+                            values.add(new StreamData(price));
                         } else {
-                            values.add(0.0);
+                            values.add(new StreamData(("0.0").getBytes()));
                         }
                         cap = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.CAP_COLUMN_BYTES);
                         if (cap != null) {
-                            values.add(Double.parseDouble(new String(cap)));
+                            values.add(new StreamData(cap));
                         } else {
-                            values.add(0);
+                            values.add(new StreamData(("0.0").getBytes()));
                         }
-                        putTuple(values);
+                        collector.emit(values, values.get(0));
                     }
                 }
-                logger.info("total records: " + num + ", total scan time: " + (System.currentTimeMillis() - startTime) + " ms");
-                rs.close();
             }
+            rs.close();
         }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        declarer.declare(new Fields("rowKey", "id", "date", "symbol", "price", "cap"));
     }
 }

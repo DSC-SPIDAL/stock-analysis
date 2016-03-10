@@ -93,7 +93,6 @@ public class HBaseDumper {
             p.addColumn(columnFamily,columns[i],valuesArray[i]);
         }
         table.put(p);
-        logger.info(new String(rowKey));
     }
 
     /**

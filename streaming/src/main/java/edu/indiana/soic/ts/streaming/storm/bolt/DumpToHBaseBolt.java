@@ -87,7 +87,7 @@ public class DumpToHBaseBolt extends BaseRichBolt {
             // Execute the table through admin
             if (!admin.tableExists(stockTableDesc.getTableName())) {
                 admin.createTable(stockTableDesc);
-                System.out.println("Table " + tableName + " created !!!");
+                logger.info("Table " + tableName + " created !!!");
             }
 
             // Load hbase-site.xml

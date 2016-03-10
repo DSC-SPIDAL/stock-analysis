@@ -42,7 +42,6 @@ public class Constants {
     public static final String HDFS_OUTPUT_PATH = "hdfs://156.56.179.122:9000/output/";
     public static final String HDFS_HOME_PATH = "hdfs://156.56.179.122:9000/";
 
-    public static final int STORM_SPOUT_DEFAULT_QUEUE_SIZE = 1000;
     public static final int STORM_TOPOLOGY_WORKERS = 1;
     public static final int STORM_SPOUT_TASKS = 1;
     public static final int STORM_BOLT_TASKS = 1;
