@@ -30,10 +30,18 @@ public class PSVectorGenerator {
         this.mode = mode;
     }
 
-    public void process() {
+    public void process() throws FileNotFoundException {
         System.out.println("starting vector generator...");
+        List<Date> dates;
+        if (mode == 6) {
+            Set<Date> dateSet = DateUtils.retrieveDates(this.inFolder);
+            dates = DateUtils.sortDates(dateSet);
+        } else {
+            dates = new ArrayList<Date>();
+        }
+
         File inFolder = new File(this.inFolder);
-        TreeMap<String, List<Date>> allDates = Utils.genDates(this.startDate, this.endDate, this.mode);
+        TreeMap<String, List<Date>> allDates = DateUtils.genDates(this.startDate, this.endDate, dates, this.mode);
         for (String dateString : allDates.keySet()) {
             System.out.println(dateString + " ");
         }
@@ -368,6 +376,8 @@ public class PSVectorGenerator {
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (MPIException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
