@@ -35,6 +35,7 @@ public class DistanceCalculator {
         options.addOption("m", false, "mpi");
         options.addOption("t", true, "distance type");
         options.addOption("s", false, "shared input directory");
+        options.addOption(Utils.createOption("f", true, "Single calc", false));
 
         CommandLineParser commandLineParser = new BasicParser();
         try {
@@ -45,19 +46,26 @@ public class DistanceCalculator {
             boolean mpi = cmd.hasOption("m");
             int distanceType = Integer.parseInt(cmd.getOptionValue("t"));
             boolean sharedInput = cmd.hasOption("s");
-            String print = "vector: " + _vectorFile + " ,distance matrix folder: "
-                    + _distFile + " ,normalize: "
-                    + _normalize + " ,mpi: " + mpi
-                    + " ,distance type: " + distanceType
-                    + " ,shared input: " + sharedInput;
-            System.out.println(print);
-            if (mpi) {
-                MPI.Init(args);
-            }
-            DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType, sharedInput);
-            program.process();
-            if (mpi) {
-                MPI.Finalize();
+            String singleFile = cmd.getOptionValue("f");
+
+            if (singleFile == null) {
+                String print = "vector: " + _vectorFile + " ,distance matrix folder: "
+                        + _distFile + " ,normalize: "
+                        + _normalize + " ,mpi: " + mpi
+                        + " ,distance type: " + distanceType
+                        + " ,shared input: " + sharedInput;
+                System.out.println(print);
+                if (mpi) {
+                    MPI.Init(args);
+                }
+                DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType, sharedInput);
+                program.process();
+                if (mpi) {
+                    MPI.Finalize();
+                }
+            } else {
+                DistanceCalculator program = new DistanceCalculator(_vectorFile, _distFile, _normalize, mpi, distanceType, sharedInput);
+                program.processFile(new File(singleFile));
             }
         } catch (MPIException | ParseException e) {
             e.printStackTrace();
