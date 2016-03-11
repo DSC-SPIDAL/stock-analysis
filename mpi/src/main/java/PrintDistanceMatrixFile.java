@@ -20,7 +20,7 @@ public class PrintDistanceMatrixFile {
             int itemRows = Integer.parseInt(cmd.getOptionValue("np"));
             int itemPerRow = Integer.parseInt(cmd.getOptionValue("ni"));
 
-            short [][]a = BinaryReader2D.readRowRange(input, new Range( 0, rows), rows, ByteOrder.LITTLE_ENDIAN, false, null);
+            short [][]a = BinaryReader2D.readRowRange(input, new Range( 0, rows), rows, ByteOrder.BIG_ENDIAN, false, null);
 
             for (int i = 0; i < itemRows; i++) {
                 for (int j = 0; j < itemPerRow; j++) {
