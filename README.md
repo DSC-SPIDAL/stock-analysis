@@ -409,3 +409,8 @@ UTILS
 Print Distance matrix file
 
 java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PrintDistanceMatrixFile -i /N/u/skamburu/data/MAR_09/preproc/yearly/distances/20060525_20070525.csv -r 6269 -np 10 -ni 100
+
+Single distance
+
+java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar DistanceCalculator -v ~/data/MAR_09/preproc/yearly/vectors/ -d ~/data/test/ -n -t 5 -s -f /N/u/skamburu/data/MAR_09/preproc/yearly/vectors/20060603_20070605.csv
+
