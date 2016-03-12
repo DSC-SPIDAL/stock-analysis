@@ -20,6 +20,57 @@ import java.util.List;
 public class Utils {
     public static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
+    public static Record parseLine(String myLine, CleanMetric metric, boolean convert) throws FileNotFoundException {
+        try {
+            String[] array = myLine.trim().split(",");
+            if (array.length >= 3) {
+                int permNo = Integer.parseInt(array[0]);
+                Date date = Utils.formatter.parse(array[1]);
+                if (date == null) {
+                    System.out.println("Date null...............................");
+                }
+                String stringSymbol = array[2];
+
+                if (array.length >= 7) {
+                    double price = -1;
+                    if (!array[5].equals("")) {
+                        price = Double.parseDouble(array[5]);
+                        if (convert) {
+                            if (price < 0) {
+                                price *= -1;
+                                if (metric != null) {
+                                    metric.negativeCount++;
+                                }
+                            }
+                        }
+                    }
+
+                    double factorToAdjPrice = 0;
+                    if (!"".equals(array[4].trim())) {
+                        factorToAdjPrice = Double.parseDouble(array[4]);
+                    }
+
+                    double factorToAdjVolume = 0;
+                    if (!"".equals(array[3].trim())) {
+                        factorToAdjVolume = Double.parseDouble(array[3]);
+                    }
+
+                    int volume = 0;
+                    if (!array[6].equals("")) {
+                        volume = Integer.parseInt(array[6]);
+                    }
+
+                    return new Record(price, permNo, date, array[1], stringSymbol, volume, factorToAdjPrice, factorToAdjVolume);
+                } else {
+                    return new Record(-1, permNo, date, array[1], stringSymbol, 0, 0, 0);
+                }
+            }
+        } catch (ParseException e) {
+            throw new RuntimeException("Failed to read content from file", e);
+        }
+        return null;
+    }
+
     public static Record parseFile(BufferedReader reader) throws FileNotFoundException {
         return parseFile(reader, null, false);
     }
