@@ -225,7 +225,7 @@ public class VectorPoint {
 
     public double change() {
         if (elements >= 2) {
-                double v = lastNonZero(numbers) / firstNonZero(numbers);
+                double v = Utils.lastNonZero(numbers) / Utils.firstNonZero(numbers);
                 if (v > maxChange) {
                     maxChange = v;
                 }
@@ -239,23 +239,6 @@ public class VectorPoint {
         return 1;
     }
 
-    private double firstNonZero(double [] numbers) {
-        for (int i = 0; i < numbers.length; i++) {
-            if (numbers[i] != 0) {
-                return numbers[i];
-            }
-        }
-        throw new RuntimeException("Failed to get a number");
-    }
-
-    private double lastNonZero(double [] numbers) {
-        for (int i = numbers.length - 1; i > 0; i--) {
-            if (numbers[i] != 0) {
-                return numbers[i];
-            }
-        }
-        throw new RuntimeException("Failed to get a number");
-    }
 
     public double modCorrelation(double []xs, double []ys) {
         double sx = 0.0;

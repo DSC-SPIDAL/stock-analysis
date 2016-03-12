@@ -629,4 +629,23 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+    public static double firstNonZero(double [] numbers) {
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] != 0) {
+                return numbers[i];
+            }
+        }
+        throw new RuntimeException("Failed to get a number");
+    }
+
+    public static double lastNonZero(double [] numbers) {
+        for (int i = numbers.length - 1; i > 0; i--) {
+            if (numbers[i] != 0) {
+                return numbers[i];
+            }
+        }
+        throw new RuntimeException("Failed to get a number");
+    }
+
 }

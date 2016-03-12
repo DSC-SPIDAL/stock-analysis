@@ -262,7 +262,7 @@ public class Histogram {
         }
         if (sum == 0) return .1;
 //        double delta = max - min;
-        double delta = n[n.length - 1] - n[0];
+        double delta = Utils.lastNonZero(n) - Utils.firstNonZero(n);
         return delta * n.length / sum;
     }
 }
