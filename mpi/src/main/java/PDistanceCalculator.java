@@ -72,11 +72,17 @@ public class PDistanceCalculator {
                 PDistanceCalculator program = new PDistanceCalculator(_vectorFile, _distFile, mpi, distanceType, sharedInput, threads);
                 program.startThreads();
                 program.processFile(new File(singleFile));
+                program.stop();
+
             }
         } catch (MPIException | ParseException e) {
             e.printStackTrace();
             System.out.println(options.toString());
         }
+    }
+
+    private void stop() {
+        run = false;
     }
 
     private void startThreads() {
