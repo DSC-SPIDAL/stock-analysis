@@ -70,11 +70,20 @@ public class PDistanceCalculator {
                 }
             } else {
                 PDistanceCalculator program = new PDistanceCalculator(_vectorFile, _distFile, mpi, distanceType, sharedInput, threads);
+                program.startThreads();
                 program.processFile(new File(singleFile));
             }
         } catch (MPIException | ParseException e) {
             e.printStackTrace();
             System.out.println(options.toString());
+        }
+    }
+
+    private void startThreads() {
+        // start the threads
+        for (int i = 0; i < threads; i++) {
+            Thread t = new Thread(new PartitionWorker(distanceType));
+            t.start();
         }
     }
 
@@ -120,11 +129,7 @@ public class PDistanceCalculator {
                 files.addAll(list);
             }
 
-            // start the threads
-            for (int i = 0; i < threads; i++) {
-                Thread t = new Thread(new PartitionWorker(distanceType));
-                t.start();
-            }
+            startThreads();
 
             for (File file : files) {
                 processFile(file);
