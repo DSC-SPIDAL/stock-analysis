@@ -162,11 +162,12 @@ public class PDistanceCalculator {
 
         List<Double> localMaxValues = new ArrayList<>();
         CountDownLatch doneSignal = new CountDownLatch(threads);
+        long computeStart = System.currentTimeMillis();
         // assign values to the workers
         assignWorks(lineCount, localMaxValues, vectors, values, doneSignal, doneSignal);
         // barrier, wait until the workers finish
         doneSignal.await();
-
+        System.out.println("Compute time: " + (System.currentTimeMillis() - computeStart));
         double globalMax = Double.MIN_VALUE;
         for (Double localMaxValue : localMaxValues) {
             if (localMaxValue > globalMax) {
