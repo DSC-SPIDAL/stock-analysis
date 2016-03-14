@@ -243,7 +243,9 @@ public class PDistanceCalculator {
         }
 
         if (workerCount < threads) {
+            System.out.println("Worker count: " + workerCount);
             for (int i = workerCount; i < threads; i++) {
+                System.out.println("Count down...");
                 latch.countDown();
             }
         }
