@@ -68,6 +68,14 @@ public class DateUtils {
             // first lets get the date 1 year away
             Date oneYearAway = Utils.addYear(startDate);
             int firstIndex = 0;
+            for (int i = 0; i < availableDates.size(); i++) {
+                Date d = availableDates.get(i);
+                if (d.equals(startDate) || d.after(startDate)) {
+                    firstIndex = i;
+                    break;
+                }
+            }
+
             int lastIndex = 0;
             for (int i = 0; i < availableDates.size(); i++) {
                 Date d = availableDates.get(i);
