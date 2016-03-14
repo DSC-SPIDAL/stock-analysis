@@ -163,7 +163,7 @@ public class PDistanceCalculator {
         List<Double> localMaxValues = new ArrayList<>();
         CountDownLatch doneSignal = new CountDownLatch(threads);
         // assign values to the workers
-        assignWorks(lineCount, localMaxValues, vectors, values, doneSignal);
+        assignWorks(lineCount, localMaxValues, vectors, values, doneSignal, doneSignal);
         // barrier, wait until the workers finish
         doneSignal.await();
 
@@ -204,15 +204,17 @@ public class PDistanceCalculator {
     }
 
     private void assignWorks(int lineCount, List<Double> localMaxValues, List<VectorPoint> vectorPoints,
-                             double[][] values, CountDownLatch signal) throws InterruptedException {
+                             double[][] values, CountDownLatch signal, CountDownLatch latch) throws InterruptedException {
         // assign values to the workers
         int cellsPerWorker = (lineCount * lineCount / 2) / threads;
         int currentCellCount = 0;
         int currentStart = 0;
+        int workerCount = 0;
         for (int i = 0; i < lineCount; i++) {
             if (currentCellCount > cellsPerWorker) {
                 Work work = new Work(currentStart, i, localMaxValues, vectorPoints, values, signal);
                 workQueue.put(work);
+                workerCount++;
 
                 System.out.println(work + " cell count: " + currentCellCount);
                 currentCellCount = 0;
@@ -224,7 +226,14 @@ public class PDistanceCalculator {
         if (currentStart < lineCount) {
             Work work = new Work(currentStart, lineCount, localMaxValues, vectorPoints, values, signal);
             workQueue.put(work);
+            workerCount++;
             System.out.println(work + " cell count: " + currentCellCount);
+        }
+
+        if (workerCount < threads) {
+            for (int i = workerCount; i < threads; i++) {
+                latch.countDown();
+            }
         }
     }
 
