@@ -58,6 +58,8 @@ public class RemoveInvalidDays {
                         System.out.println("Only one day line: " + line);
                     }
                 } else {
+                    bufWriter.write(line);
+                    bufWriter.newLine();
                     System.out.println("Only one day line: " + line);
                 }
             }
