@@ -4,6 +4,7 @@ import mpi.MpiOps;
 import org.apache.commons.cli.*;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -161,7 +162,7 @@ public class PDistanceCalculator {
         String outFileName = distFolder + "/" + fileEntry.getName();
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
 
-        writer = new WriterWrapper(outFileName, false);
+        writer = new WriterWrapper(outFileName, false, true);
         List<VectorPoint> vectors = Utils.readVectors(fileEntry, 0, Integer.MAX_VALUE);
         int lineCount = vectors.size();
 
@@ -197,6 +198,7 @@ public class PDistanceCalculator {
 
         // now write the output
         // write the vectors to file
+        ByteBuffer byteBuffer = ByteBuffer.allocate(vectors.size() * 2);
         for (int i = 0; i < vectors.size(); i++) {
             for (int j = 0; j < values[i].length; j++) {
                 double doubleValue = values[i][j]/globalMax;
@@ -206,9 +208,13 @@ public class PDistanceCalculator {
                     throw new RuntimeException("Invalid distance");
                 }
                 short shortValue = (short) (doubleValue * Short.MAX_VALUE);
-                writer.writeShort(shortValue);
+                //writer.writeShort(shortValue);
+                byteBuffer.putShort(shortValue);
             }
-            writer.line();
+            byteBuffer.flip();
+            writer.write(byteBuffer);
+            byteBuffer.clear();
+            //writer.line();
         }
         writer.close();
         long end = System.currentTimeMillis();
