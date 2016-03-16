@@ -162,6 +162,7 @@ public class DistanceCalculator {
     }
 
     private void processFile(File fileEntry) {
+        long start = System.currentTimeMillis();
         WriterWrapper writer = null;
         if (fileEntry.isDirectory()) {
             return;
@@ -295,6 +296,8 @@ public class DistanceCalculator {
 //            smallWriter.close();
 //        }
         System.out.println(dmax);
+        long end = System.currentTimeMillis();
+        System.out.println("Time: " + (end - start));
     }
 
     private int countLines(File file) {

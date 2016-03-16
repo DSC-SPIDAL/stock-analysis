@@ -1,1 +1,8 @@
 sbatch internal_mds_weighted.sh /N/u/skamburu/data/OCT_12/preproc/yearly/distances/20041028_20051028.csv 6203 /N/u/skamburu/data/OCT_12/mds/weighted/yearly/20041028_20051028.txt /N/u/skamburu/data/OCT_12/preproc/yearly/weights/matrix/20041028_20051028.csv /N/u/skamburu/data/OCT_12/mds/weighted/yearly/summary/20041028_20051028
+
+20050423_20060421
+20060603_20070605.csv
+20060204_20070205
+
+20080823_20090821
+20080928_20090928
