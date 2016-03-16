@@ -28,7 +28,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import edu.indiana.soic.ts.streaming.storm.utils.HBaseStream;
 import edu.indiana.soic.ts.streaming.storm.utils.StreamData;
-import edu.indiana.soic.ts.streaming.utils.Constants;
+import edu.indiana.soic.ts.streaming.storm.utils.Constants;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.slf4j.Logger;

@@ -1,6 +1,10 @@
 package edu.indiana.soic.ts.utils;
 
-public class VectorPoint {
+import java.io.Serializable;
+
+public class VectorPoint implements Serializable{
+    private static final long serialVersionUID = 3915269597399355994L;
+
     int key;
     double []numbers;
     int elements;

@@ -21,7 +21,6 @@
 package edu.indiana.soic.ts.streaming.storm.utils;
 
 import com.google.protobuf.ServiceException;
-import edu.indiana.soic.ts.streaming.utils.Constants;
 import org.apache.crunch.*;
 import org.apache.crunch.impl.mr.MRPipeline;
 import org.apache.crunch.io.hbase.HBaseTarget;

@@ -19,7 +19,7 @@
  *
 */
 
-package edu.indiana.soic.ts.streaming.utils;
+package edu.indiana.soic.ts.streaming.storm.utils;
 
 public class Constants {
 

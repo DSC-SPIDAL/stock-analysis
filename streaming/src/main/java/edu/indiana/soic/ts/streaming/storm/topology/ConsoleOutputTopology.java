@@ -27,7 +27,7 @@ import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.utils.Utils;
 import edu.indiana.soic.ts.streaming.storm.bolt.ConsoleOutputBolt;
 import edu.indiana.soic.ts.streaming.storm.spout.HBaseSpout;
-import edu.indiana.soic.ts.streaming.utils.Constants;
+import edu.indiana.soic.ts.streaming.storm.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -11,6 +11,13 @@
 
     <artifactId>streaming</artifactId>
 
+    <repositories>
+        <repository>
+            <id>cloudera.repo</id>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -57,6 +64,16 @@
             <artifactId>storm-core</artifactId>
             <version>0.10.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.cloud.dataflow</groupId>
+            <artifactId>google-cloud-dataflow-java-sdk-all</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudera.dataflow.spark</groupId>
+            <artifactId>spark-dataflow</artifactId>
+            <version>0.4.2</version>
         </dependency>
     </dependencies>
     <build>
