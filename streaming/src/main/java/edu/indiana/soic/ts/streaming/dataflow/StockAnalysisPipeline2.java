@@ -50,8 +50,8 @@ import java.util.*;
 public class StockAnalysisPipeline2 {
     private final static Logger logger = LoggerFactory.getLogger(StockAnalysisPipeline2.class);
 
-    public static int WINDOW_LENGTH = 30;
-    public static int SLIDING_INTERVAL = 1;
+    public static int WINDOW_LENGTH = 360;
+    public static int SLIDING_INTERVAL = 360;
 
 
     public static interface StockAnalysisPipelineOptions extends PipelineOptions {
@@ -75,23 +75,27 @@ public class StockAnalysisPipeline2 {
         Pipeline pipeline = Pipeline.create(options);
 
         //Reading and time stamping the stock prices
-        PCollection<KV<Integer, StockPricePoint>> stockPrices = pipeline.apply(TextIO.Read.from(options.getInputFilePath()))
-                .apply(ParDo.of(new DoFn<String, KV<Integer, StockPricePoint>>() {
+        PCollection<KV<Integer, StockPricePoint>> stockPrices = pipeline.apply(TextIO.Read.named("Reading Input File").from(options.getInputFilePath()))
+                .apply(ParDo.named("Timestamping").of(new DoFn<String, KV<Integer, StockPricePoint>>() {
                     @Override
                     public void processElement(ProcessContext c) throws Exception {
-                        String[] fields = c.element().split(",");
-                        StockPricePoint stockPoint = new StockPricePoint();
-                        stockPoint.setId(fields[0]);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-                        stockPoint.setDate(sdf.parse(fields[1].trim()));
-                        stockPoint.setSymbol(fields[2]);
-                        stockPoint.setPrice(Double.parseDouble(fields[5].trim()));
-                        stockPoint.setCap(Double.parseDouble(fields[6].trim()));
-                        Instant instant = new Instant(stockPoint.getDate().getTime());
-                        int index = symbolEncoder.getSymbolIndex(stockPoint.getSymbol());
-                        //debugging - we cannot handle large amounts of data when using local runner
-                        if(index > 1000 && index < 1100) {
+                        try {
+                            String[] fields = c.element().split(",");
+                            StockPricePoint stockPoint = new StockPricePoint();
+                            stockPoint.setId(fields[0]);
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                            stockPoint.setDate(sdf.parse(fields[1].trim()));
+                            stockPoint.setSymbol(fields[2]);
+                            stockPoint.setPrice(Double.parseDouble(fields[5].trim()));
+                            stockPoint.setCap(Double.parseDouble(fields[6].trim()));
+                            Instant instant = new Instant(stockPoint.getDate().getTime());
+
+                            //debugging - we cannot handle large amounts of data when using local runner
+                            //int index = symbolEncoder.getSymbolIndex(stockPoint.getSymbol());
+                            //if(index > 1000 && index < 1100)
                             c.outputWithTimestamp(KV.of(symbolEncoder.getSymbolIndex(stockPoint.getSymbol()), stockPoint), instant);
+                        } catch (Exception ex) {
+                            //input format issue
                         }
                     }
                 }));
@@ -99,14 +103,14 @@ public class StockAnalysisPipeline2 {
 
         //creating the sliding windows
         PCollection<KV<Integer, StockPricePoint>> slidingWindowStockPrices = stockPrices.apply(
-                Window.<KV<Integer, StockPricePoint>>into(
+                Window.named("Windowing").<KV<Integer, StockPricePoint>>into(
                         SlidingWindows.of(Duration.standardDays(WINDOW_LENGTH)).every(Duration.standardDays(SLIDING_INTERVAL))
                 )
         );
 
         //stock prices of each company within a single window
         PCollection<KV<Integer, List<StockPricePoint>>> stockPricesOfCompany = slidingWindowStockPrices.apply(GroupByKey.create())
-                .apply(ParDo.of(new DoFn<KV<Integer, Iterable<StockPricePoint>>, KV<Integer, List<StockPricePoint>>>() {
+                .apply(ParDo.named("Combine By Company").of(new DoFn<KV<Integer, Iterable<StockPricePoint>>, KV<Integer, List<StockPricePoint>>>() {
                     @Override
                     public void processElement(ProcessContext processContext) throws Exception {
                         Integer key = processContext.element().getKey();
@@ -164,24 +168,24 @@ public class StockAnalysisPipeline2 {
                     public Map<Integer, List<StockPricePoint>> extractOutput(Map<Integer, List<StockPricePoint>> stockPricesMap) {
                         return stockPricesMap;
                     }
-                }).asSingletonView());
+                }).named("Combine By Window").asSingletonView());
 
 
         //calculating distance between companies within window
-        PCollection<KV<String,Double>> distances = stockPricesOfCompany.apply(ParDo.withSideInputs(stockPriceVectorView)
-                .of(new DoFn<KV<Integer, List<StockPricePoint>>, KV<String,Double>>() {
+        PCollection<KV<String,Double>> distances = stockPricesOfCompany.apply(ParDo.withSideInputs(stockPriceVectorView).named("Calculate Distances")
+                .of(new DoFn<KV<Integer, List<StockPricePoint>>, KV<String, Double>>() {
                     @Override
                     public void processElement(ProcessContext processContext) throws Exception {
-                        Map<Integer,List<StockPricePoint>> stockPricesVector = processContext.sideInput(stockPriceVectorView);
+                        Map<Integer, List<StockPricePoint>> stockPricesVector = processContext.sideInput(stockPriceVectorView);
                         Integer keyX = processContext.element().getKey();
                         List<StockPricePoint> stockPricesX = processContext.element().getValue();
-                        for(Map.Entry<Integer,List<StockPricePoint>> entry : stockPricesVector.entrySet()){
+                        for (Map.Entry<Integer, List<StockPricePoint>> entry : stockPricesVector.entrySet()) {
                             //calculate only the bottom triangle (matrix is symmetric)
                             Integer keyY = entry.getKey();
-                            if(keyY < keyX){
+                            if (keyY < keyX) {
                                 List<StockPricePoint> stockPricesY = entry.getValue();
                                 //TODO calculate distance
-                                processContext.output(KV.of(keyX+"_"+keyY, 0.0));
+                                processContext.output(KV.of(keyX + "_" + keyY, 0.0));
                             }
                         }
                     }
@@ -216,20 +220,20 @@ public class StockAnalysisPipeline2 {
             public DistanceMatrix extractOutput(DistanceMatrix distanceMatrix) {
                 return distanceMatrix;
             }
-        }).withoutDefaults());
+        }).named("Combine Distance Matrix").withoutDefaults());
 
         //write to file
-        distanceMatrix.apply(ParDo.of(new DoFn<DistanceMatrix, String>() {
+        distanceMatrix.apply(ParDo.named("Matrix to String").of(new DoFn<DistanceMatrix, String>() {
             @Override
             public void processElement(ProcessContext processContext) throws Exception {
-                String temp = processContext.timestamp() + "\n";
+                String temp = "<distance-matrix-entry>\n" + processContext.timestamp() + "\n";
                 temp += processContext.element().getDistanceValues().toString()+ "\n";
                 temp += processContext.element().getRow().toString() + "\n";
                 temp += processContext.element().getColumn().toString() + "\n";
-                temp += "-------------------------------------------------------------------------------------------";
+                temp += "</distance-matrix-entry>\n";
                 processContext.output(temp);
             }
-        })).apply(TextIO.Write.to(options.getOutputFilePath()));
+        })).apply(TextIO.Write.to(options.getOutputFilePath()).named("Writing Output File"));
 
 
         pipeline.run();
