@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -240,7 +241,7 @@ public class WeightCalculator {
 
         String outFileName = distFolder + "/" + fileEntry.getName();
         System.out.println("Calculator vector file: " + fileEntry.getAbsolutePath() + " Output: " + outFileName);
-        writer = new WriterWrapper(outFileName, false);
+        writer = new WriterWrapper(outFileName, false, true);
 
         int lineCount = countLines(fileEntry);
 
@@ -258,6 +259,7 @@ public class WeightCalculator {
         List<VectorPoint> vectors;
         double[] caps = new double[lineCount];
         double[] capMaxs = new double[lineCount];
+        ByteBuffer byteBuffer = ByteBuffer.allocate(lineCount * 2);
         do {
             startIndex = endIndex + 1;
             endIndex = startIndex + INC - 1;
@@ -353,14 +355,17 @@ public class WeightCalculator {
                 double[] row = values[i];
                 for (double value : row) {
                     short val = (short) ((normalize ? value / max : value) * Short.MAX_VALUE);
-                    writer.writeShort(val);
+                    // writer.writeShort(val);
+                    byteBuffer.putShort(val);
                 }
+                byteBuffer.flip();
+                writer.write(byteBuffer);
+                byteBuffer.clear();
                 //writer.line();
             }
         } while (true);
-        if (writer != null) {
-            writer.close();
-        }
+
+        writer.close();
     }
 
 //    private void processFile(File fileEntry) {
