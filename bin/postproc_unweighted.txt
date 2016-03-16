@@ -1,0 +1,1011 @@
+Starting Histogram calculator...
+Reading original stock file: /N/u/skamburu/data/2004_2014_AUG_28/input/2004_2014.csv
+No of stocks: 12164
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2004_1_2005_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2005_1_2006_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2006_1_2007_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2007_1_2008_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2008_1_2009_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2009_1_2010_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2010_1_2011_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2011_1_2012_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2012_1_2013_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2013_1_2014_1.csv
+Generating histogram for stocks file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2014_1_2015_1.csv
+Histogram calculator finished...
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2004_1_2005_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2004_1_2005_1.txt
+6435
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2004_1_2005_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:29:57 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-29-57 1x1x1 creation was successful at 2015-08-28 23-29-57
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2004_1_2005_1.csv
+ First Scale 3.1809E-01 Second Scale 3.2508E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean 4.8593E-03 8.9828E-04 -2.8348E-02 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas7428389456345944133libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2005_1_2006_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2005_1_2006_1.txt
+6404
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2005_1_2006_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:29:58 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-29-58 1x1x1 creation was successful at 2015-08-28 23-29-58
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2005_1_2006_1.csv
+ First Scale 3.1809E-01 Second Scale 3.5165E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean -2.3283E-03 9.7890E-04 2.0163E-02 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas4467965166480747883libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2006_1_2007_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2006_1_2007_1.txt
+6424
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2006_1_2007_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:29:59 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-29-59 1x1x1 creation was successful at 2015-08-28 23-29-59
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2006_1_2007_1.csv
+ First Scale 3.1809E-01 Second Scale 3.3445E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean 2.4730E-03 -1.3983E-02 2.4372E-02 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas4855233649735061121libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2007_1_2008_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2007_1_2008_1.txt
+6362
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2007_1_2008_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:30:00 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-30-00 1x1x1 creation was successful at 2015-08-28 23-30-00
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2007_1_2008_1.csv
+ First Scale 3.1809E-01 Second Scale 3.5800E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean 6.5855E-03 4.6998E-03 1.3792E-02 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas1402221379429517401libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2008_1_2009_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2008_1_2009_1.txt
+6551
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2008_1_2009_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:30:00 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-30-00 1x1x1 exists
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2008_1_2009_1.csv
+ First Scale 3.1809E-01 Second Scale 2.0698E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean -1.0559E-02 7.6489E-03 2.7579E-03 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas8223376488773444315libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2009_1_2010_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2009_1_2010_1.txt
+6347
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2009_1_2010_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:30:01 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-30-01 1x1x1 creation was successful at 2015-08-28 23-30-01
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2009_1_2010_1.csv
+ First Scale 3.1809E-01 Second Scale 2.3584E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean 1.2898E-02 4.0327E-03 9.7926E-03 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas5435147401201279242libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2010_1_2011_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2010_1_2011_1.txt
+6203
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2010_1_2011_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:30:02 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-30-02 1x1x1 creation was successful at 2015-08-28 23-30-02
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2010_1_2011_1.csv
+ First Scale 3.1809E-01 Second Scale 3.1398E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean 1.2790E-02 -5.2179E-03 -1.0487E-02 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas4021187039317313785libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2011_1_2012_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2011_1_2012_1.txt
+6264
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2011_1_2012_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:30:03 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-30-03 1x1x1 creation was successful at 2015-08-28 23-30-03
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2011_1_2012_1.csv
+ First Scale 3.1809E-01 Second Scale 3.1851E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean -9.8926E-04 7.4677E-03 1.8068E-02 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas9051063518297345409libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2012_1_2013_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2012_1_2013_1.txt
+6229
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2012_1_2013_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:30:04 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-30-04 1x1x1 creation was successful at 2015-08-28 23-30-04
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2012_1_2013_1.csv
+ First Scale 3.1809E-01 Second Scale 3.5136E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean -4.1408E-03 -8.6443E-03 -6.2577E-03 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas2998182843805946586libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2013_1_2014_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2013_1_2014_1.txt
+6302
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2013_1_2014_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:30:04 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-30-04 1x1x1 exists
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2013_1_2014_1.csv
+ First Scale 3.1809E-01 Second Scale 3.6353E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean -1.9495E-02 -4.2614E-03 -1.8652E-02 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas7008789997809535553libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+common file /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2014_1_2015_1.csv
+3260
+full file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2014_1_2015_1.txt
+6439
+/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/summary/2014_1_2015_1.csv.rotation.summary.txt
+ Distance Data Type: short
+Machine:cn01 1x1x1
+ ALL points varied and none fixed
+==== MDS Machine:cn01 1x1x1 ==== Option:200 PointCount_Global:3260 ==== Run  27 == File  == Fri Aug 28 23:30:05 EDT 2015 ==== 
+The directory /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/rotate_ops:MDSasChisq  2015-08-28 23-30-05 1x1x1 creation was successful at 2015-08-28 23-30-05
+ Reference Points Taken from Initialization File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/global_common_points/2004_2014.csv
+ Points to be rotated Taken from File /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/intermediate/common_points/2014_1_2015_1.csv
+ First Scale 3.1809E-01 Second Scale 3.6806E-01 First Mean 1.2178E-05 -3.4509E-05 7.8804E-05  Second Mean 1.8603E-02 1.6208E-02 2.7615E-02 
+-- org.jblas ERROR Couldn't load copied link file: java.lang.UnsatisfiedLinkError: /tmp/jblas3650455991424641490libjblas_arch_flavor.so: libgfortran.so.3: cannot open shared object file: No such file or directory.
+
+On Linux 64bit, you need additional support libraries.
+You need to install libgfortran3.
+
+For example for debian or Ubuntu, type "sudo apt-get install libgfortran3"
+
+For more information, see https://github.com/mikiobraun/jblas/wiki/Missing-Libraries
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.jblas.NativeBlas.dgeev(CCI[DII[DI[DI[DII[DII[DII)I
+	at org.jblas.NativeBlas.dgeev(Native Method)
+	at org.jblas.NativeBlas.dgeev(NativeBlas.java:298)
+	at org.jblas.SimpleBlas.geev(SimpleBlas.java:379)
+	at org.jblas.Eigen.eigenvalues(Eigen.java:83)
+	at salsa.mdsaschisq.GenericManxcat.FindQlimits(GenericManxcat.java:148)
+	at salsa.mdsaschisq.ManxcatCentral$$Lambda$6/1190035432.invoke(Unknown Source)
+	at salsa.mdsaschisq.ManxcatCentral.launchQlimits(ManxcatCentral.java:1557)
+	at salsa.mdsaschisq.ManxcatCentral.ManxcatControl(ManxcatCentral.java:368)
+	at salsa.mdsaschisq.ManxcatCentral.main(ManxcatCentral.java:221)
+APPLY HIST LABELS
+Reading original stock file: /N/u/skamburu/data/2004_2014_AUG_28/input/2004_2014.csv
+No of stocks: 12164
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2013_1_2014_1.csv
+No of symbols for point: 6302
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2013_1_2014_1.txt
+Read lines: 6302
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2006_1_2007_1.csv
+No of symbols for point: 6424
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2006_1_2007_1.txt
+Read lines: 6424
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2014_1_2015_1.csv
+No of symbols for point: 6439
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2014_1_2015_1.txt
+Read lines: 6439
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2011_1_2012_1.csv
+No of symbols for point: 6264
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2011_1_2012_1.txt
+Read lines: 6264
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2009_1_2010_1.csv
+No of symbols for point: 6347
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2009_1_2010_1.txt
+Read lines: 6347
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2004_1_2005_1.csv
+No of symbols for point: 6435
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2004_1_2005_1.txt
+Read lines: 6435
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2005_1_2006_1.csv
+No of symbols for point: 6404
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2005_1_2006_1.txt
+Read lines: 6404
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2012_1_2013_1.csv
+No of symbols for point: 6229
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2012_1_2013_1.txt
+Read lines: 6229
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2008_1_2009_1.csv
+No of symbols for point: 6551
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2008_1_2009_1.txt
+Read lines: 6551
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2010_1_2011_1.csv
+No of symbols for point: 6203
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2010_1_2011_1.txt
+Read lines: 6203
+0: 1
+1: 2
+2: 3
+3: 4
+4: 5
+5: 6
+6: 7
+7: 8
+8: 9
+9: 10
+0 : 1
+1 : 2
+2 : 3
+3 : 4
+4 : 5
+5 : 6
+6 : 7
+7 : 8
+8 : 9
+9 : 10
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2007_1_2008_1.csv
+No of symbols for point: 6362
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2007_1_2008_1.txt
+Read lines: 6362
+APPLY SECTOR LABELS
+Reading original stock file: /N/u/skamburu/data/2004_2014_AUG_28/input/2004_2014.csv
+No of stocks: 12164
+BA: 1
+Basic Industries: 2
+CVX: 3
+Capital Goods: 4
+Consumer Durables: 5
+Consumer Non-Durables: 6
+Consumer Services: 7
+Energy: 8
+Finance: 9
+GE: 10
+GOOG: 11
+GS: 12
+Health Care: 13
+IBM: 14
+INTC: 15
+MCD: 16
+MSFT: 17
+Miscellaneous: 18
+Public Utilities: 19
+Technology: 20
+Transportation: 21
+UNH: 22
+WMT: 23
+n/a: 24
+GOOG : 11
+n/a : 24
+Miscellaneous : 18
+CVX : 3
+Finance : 9
+Transportation : 21
+Consumer Services : 7
+Capital Goods : 4
+GS : 12
+Public Utilities : 19
+Basic Industries : 2
+UNH : 22
+MCD : 16
+MSFT : 17
+Health Care : 13
+Consumer Durables : 5
+Energy : 8
+IBM : 14
+Technology : 20
+INTC : 15
+Consumer Non-Durables : 6
+GE : 10
+BA : 1
+WMT : 23
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2013_1_2014_1.csv
+No of symbols for point: 6302
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2013_1_2014_1.txt
+Read lines: 6302
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2006_1_2007_1.csv
+No of symbols for point: 6424
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2006_1_2007_1.txt
+Read lines: 6424
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2014_1_2015_1.csv
+No of symbols for point: 6439
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2014_1_2015_1.txt
+Read lines: 6439
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2011_1_2012_1.csv
+No of symbols for point: 6264
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2011_1_2012_1.txt
+Read lines: 6264
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2009_1_2010_1.csv
+No of symbols for point: 6347
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2009_1_2010_1.txt
+Read lines: 6347
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2004_1_2005_1.csv
+No of symbols for point: 6435
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2004_1_2005_1.txt
+Read lines: 6435
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2005_1_2006_1.csv
+No of symbols for point: 6404
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2005_1_2006_1.txt
+Read lines: 6404
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2012_1_2013_1.csv
+No of symbols for point: 6229
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2012_1_2013_1.txt
+Read lines: 6229
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2008_1_2009_1.csv
+No of symbols for point: 6551
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2008_1_2009_1.txt
+Read lines: 6551
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2010_1_2011_1.csv
+No of symbols for point: 6203
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2010_1_2011_1.txt
+Read lines: 6203
+Loading symbols from vector file: /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/vectors/2007_1_2008_1.csv
+No of symbols for point: 6362
+Applying labels for points file: /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/rotate/points/2007_1_2008_1.txt
+Read lines: 6362
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2004_1_2005_1.txt
+6435
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2004_1_2005_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2004_1_2005_1.txt
+-Drows=6435 -Dcols=6435 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2004_1_2005_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2004_1_2005_1.csv -Dtitle=2004_1_2005_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2004_1_2005_1
+CellMean	16563.69
+CellMax	194054
+Power	0.2816614066836428
+Const	5.15320477805147E-6
+TotalPairs	41409225
+PairFraction	1.0
+0.0	0.0
+0.1	54.6462594816817
+0.2	640.2151475581991
+0.3	2700.9322350207044
+0.4	7500.521335780784
+0.5	16563.68999999999
+0.6	31643.112370172832
+0.7	54697.13036664817
+0.8	87873.3040339203
+0.9	133495.59525880002
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2005_1_2006_1.txt
+6404
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2005_1_2006_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2005_1_2006_1.txt
+-Drows=6404 -Dcols=6404 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2005_1_2006_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2005_1_2006_1.csv -Dtitle=2005_1_2006_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2005_1_2006_1
+CellMean	16404.4864
+CellMax	185094
+Power	0.28603335194880297
+Const	5.402660269916907E-6
+TotalPairs	41011216
+PairFraction	1.0
+0.0	0.0
+0.1	59.06042153256678
+0.2	666.3865845351254
+0.3	2750.161236304004
+0.4	7518.928387660129
+0.5	16404.486399999998
+0.6	31030.434690869282
+0.7	53191.2564918116
+0.8	84837.06816847152
+0.9	128061.84970248833
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2006_1_2007_1.txt
+6424
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2006_1_2007_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2006_1_2007_1.txt
+-Drows=6424 -Dcols=6424 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2006_1_2007_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2006_1_2007_1.csv -Dtitle=2006_1_2007_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2006_1_2007_1
+CellMean	16507.1104
+CellMax	188854
+Power	0.284405060344239
+Const	5.295095682378981E-6
+TotalPairs	41267776
+PairFraction	1.0
+0.0	0.0
+0.1	57.54589486075483
+0.2	658.3691612090383
+0.3	2739.214492073131
+0.4	7532.2480166469195
+0.5	16507.110399999998
+0.6	31338.714114735627
+0.7	53885.70537774364
+0.8	86174.69275154528
+0.9	130388.03292119049
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2007_1_2008_1.txt
+6362
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2007_1_2008_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2007_1_2008_1.txt
+-Drows=6362 -Dcols=6362 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2007_1_2008_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2007_1_2008_1.csv -Dtitle=2007_1_2008_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2007_1_2008_1
+CellMean	16190.0176
+CellMax	327696
+Power	0.2304582041784041
+Const	3.051608808163664E-6
+TotalPairs	40475044
+PairFraction	1.0
+0.0	0.0
+0.1	15.00684982368338
+0.2	303.74795020740135
+0.3	1764.4335524509343
+0.4	6148.04694784054
+0.5	16190.017599999992
+0.6	35713.22970050148
+0.7	69714.54625763644
+0.8	124440.28427860107
+0.9	207453.64933961173
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2008_1_2009_1.txt
+6551
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2008_1_2009_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2008_1_2009_1.txt
+-Drows=6551 -Dcols=6551 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2008_1_2009_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2008_1_2009_1.csv -Dtitle=2008_1_2009_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2008_1_2009_1
+CellMean	17166.2404
+CellMax	1539794
+Power	0.15415400089349363
+Const	6.494375221620554E-7
+TotalPairs	42915601
+PairFraction	1.0
+0.0	0.0
+0.1	0.501698943625235
+0.2	45.001876077680684
+0.3	624.5080480107387
+0.4	4036.621715559587
+0.5	17166.240399999988
+0.6	56017.725656378905
+0.7	152268.68523866995
+0.8	362080.7907297141
+0.9	777379.1573328845
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2009_1_2010_1.txt
+6347
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2009_1_2010_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2009_1_2010_1.txt
+-Drows=6347 -Dcols=6347 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2009_1_2010_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2009_1_2010_1.csv -Dtitle=2009_1_2010_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2009_1_2010_1
+CellMean	16113.7636
+CellMax	1239792
+Power	0.1596000857454077
+Const	8.065869113528721E-7
+TotalPairs	40284409
+PairFraction	1.0
+0.0	0.0
+0.1	0.6724934140282153
+0.2	51.74160273549435
+0.3	656.3990974876796
+0.4	3980.9957953363564
+0.5	16113.763599999995
+0.6	50503.3069910772
+0.7	132673.96001547365
+0.8	306297.57650730666
+0.9	640689.9550165163
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2010_1_2011_1.txt
+6203
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2010_1_2011_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2010_1_2011_1.txt
+-Drows=6203 -Dcols=6203 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2010_1_2011_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2010_1_2011_1.csv -Dtitle=2010_1_2011_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2010_1_2011_1
+CellMean	15390.8836
+CellMax	246110
+Power	0.25005280404086805
+Const	4.063223761732559E-6
+TotalPairs	38477209
+PairFraction	1.0
+0.0	0.0
+0.1	24.658914038944285
+0.2	394.3116907286974
+0.3	1995.5193702407068
+0.4	6305.294272074135
+0.5	15390.883599999996
+0.6	31909.6216288674
+0.7	59108.81652839935
+0.8	100825.65846318049
+0.9	161487.14216355464
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2011_1_2012_1.txt
+6264
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2011_1_2012_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2011_1_2012_1.txt
+-Drows=6264 -Dcols=6264 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2011_1_2012_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2011_1_2012_1.csv -Dtitle=2011_1_2012_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2011_1_2012_1
+CellMean	15695.0784
+CellMax	641750
+Power	0.1867892464798949
+Const	1.5582391897156214E-6
+TotalPairs	39237696
+PairFraction	1.0
+0.0	0.0
+0.1	2.84274973119596
+0.2	116.23609602326084
+0.3	1018.7508358168727
+0.4	4752.732845407617
+0.5	15695.078400000002
+0.6	41655.309532284846
+0.7	95077.66846955949
+0.8	194332.6580350397
+0.9	365087.80709336215
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2012_1_2013_1.txt
+6229
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2012_1_2013_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2012_1_2013_1.txt
+-Drows=6229 -Dcols=6229 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2012_1_2013_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2012_1_2013_1.csv -Dtitle=2012_1_2013_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2012_1_2013_1
+CellMean	15520.1764
+CellMax	187734
+Power	0.2780501822851009
+Const	5.326685629667508E-6
+TotalPairs	38800441
+PairFraction	1.0
+0.0	0.0
+0.1	47.541166909363255
+0.2	575.0639167066687
+0.3	2471.858428454036
+0.4	6956.0452508136295
+0.5	15520.176399999995
+0.6	29899.90952727768
+0.7	52052.57301258446
+0.8	84141.1956578178
+0.9	128521.96291201837
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2013_1_2014_1.txt
+6302
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2013_1_2014_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2013_1_2014_1.txt
+-Drows=6302 -Dcols=6302 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2013_1_2014_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2013_1_2014_1.csv -Dtitle=2013_1_2014_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2013_1_2014_1
+CellMean	15886.0816
+CellMax	426046
+Power	0.21074042886541203
+Const	2.347164390699596E-6
+TotalPairs	39715204
+PairFraction	1.0
+0.0	0.0
+0.1	7.660947925107055
+0.2	205.4576013068044
+0.3	1407.0381547681582
+0.4	5510.130906438175
+0.5	15886.081599999996
+0.6	37735.106288661824
+0.7	78418.7186903958
+0.8	147775.22181205207
+0.9	258421.85436154355
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2014_1_2015_1.txt
+6439
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2014_1_2015_1.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2014_1_2015_1.txt
+-Drows=6439 -Dcols=6439 -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/2014_1_2015_1.txt -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/2014_1_2015_1.csv -Dtitle=2014_1_2015_1.txt -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties
+***************************************************************
+DataSet	2014_1_2015_1
+CellMean	16584.2884
+CellMax	192952
+Power	0.28245771111429596
+Const	5.182636096023882E-6
+TotalPairs	41460721
+PairFraction	1.0
+0.0	0.0
+0.1	55.602753901648605
+0.2	646.9172696508886
+0.3	2718.1533778708713
+0.4	7526.640757988643
+0.5	16584.288399999998
+0.6	31624.699107797736
+0.7	54581.02264444963
+0.8	87569.65342784466
+0.9	132877.55132955324
+***************************************************************
+heatmap dir /N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap
+common file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/summary
+
+distance file /N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/summary.csv
+point file /N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/summary
+-Drows= -Dcols= -DAmat=/N/u/skamburu/data/2004_2014_AUG_28/mds/unweighted/yearly/summary -DBmat=/N/u/skamburu/data/2004_2014_AUG_28/preproc/yearly/distances/summary.csv -Dtitle=summary -Doutdir=/N/u/skamburu/data/2004_2014_AUG_28/postproc/unweighted/yearly/heatmap -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar SHeatMapGenerator -c heatmap.properties
+heatmap.properties

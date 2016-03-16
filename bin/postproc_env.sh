@@ -36,7 +36,7 @@ export YEARLY_MDS_DIR_NAME=$MDS_DIR_NAME/yearly
 # mds/global
 export GLOBAL_MDS_DIR_NAME=$MDS_DIR_NAME/global
 # name of the global stock file name
-export STOCK_FILE_NAME=2004_2014.csv
+export STOCK_FILE_NAME=2004_2015.csv
 # preproc/yearly/distances
 export YEARLY_DISTANCES_DIR_NAME=$YEARLY_PREPROC_DIR_NAME/distances
 # preproc/yearly/weights/simple

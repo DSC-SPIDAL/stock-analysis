@@ -1,9 +1,9 @@
 #!/bin/sh
 
 #SBATCH -A skamburu
-#SBATCH -N 2
+#SBATCH -N 28
 #SBATCH --tasks-per-node=1
-#SBATCH --time=04:00:00
+#SBATCH --time=24:00:00
 if [ $# -eq 0 ]
   then
     echo "Directory must be specified as argument"
@@ -16,7 +16,7 @@ JAR_FILE=$WD/../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar
 # distance 0 means correlation, distance 4 means correlation squared
 DISTANCE=0
 # stock file name
-STOCK_FILE_NAME=2004_2014.csv
+STOCK_FILE_NAME=2004_2015.csv
 # base directory
 BASE_DIR=$1
 PREPROC_DIR=$BASE_DIR/preproc
@@ -58,7 +58,7 @@ echo "breaking files"
 # generate vector files
 echo "generate vector files"
 #$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PVectorGenerator -i $BREAKS_DIR -o $VECTOR_DIR -d 300 -m | tee $PREPROC_DIR/yearly.vector.output.txt
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PSVectorGenerator -i $INPUT_DIR/$STOCK_FILE_NAME -o $VECTOR_DIR -d 3000 -m -s 20040101 -e 20150101 -md 5 | tee $PREPROC_DIR/yearly.vector.output.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PSVectorGenerator -i $INPUT_DIR/$STOCK_FILE_NAME -o $VECTOR_DIR -d 3000 -m -s 20140122 -e 20151231 -md 6 | tee $PREPROC_DIR/yearly.vector.output.txt
 
 # generate global vector file
 # we don't need globa file anymore
@@ -66,7 +66,8 @@ $BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PSVectorGe
 #java -cp $JAR_FILE PVectorGenerator -i $INPUT_DIR -o $GLOBAL_VEC_DIR -d 3000 | tee $GLOBAL_PREPROC_DIR/global.vector.output.txt
 
 echo "caclulate the distance matrix for normal data"
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $VECTOR_DIR -d $MATRIX_DIR -m -t 8 -s | tee $YEARLY_PREPROC_DIR/yearly.distances.output.txt
+#$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $VECTOR_DIR -d $MATRIX_DIR -m -t 5 -s | tee $YEARLY_PREPROC_DIR/yearly.distances.output.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PDistanceCalculator -v $VECTOR_DIR -d $MATRIX_DIR -m -t 5 -s -tn 24 | tee $YEARLY_PREPROC_DIR/yearly.distances.output.txt
 
 #echo "caclulate the distance matrix for global data set"
 #$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE DistanceCalculator -v $GLOBAL_VEC_DIR -d $GLOBAL_MATRIX_DIR -m -t 8 -s | tee $GLOBAL_PREPROC_DIR/global.distances.output.txt
@@ -75,7 +76,7 @@ echo "calculate the weigh matrix for yearly"
 $BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $WEIGHT_MATRIX_DIR -m -n -sh -wc 0.1 | tee $YEARLY_PREPROC_DIR/yearly.weights.output.txt
 
 echo "calculate the simple weigh file for yearly"
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $SIMPLE_WEIGHT_MATRIX_DIR -m -n -sh -s -wc 0.1 | tee $YEARLY_PREPROC_DIR/yearly.weights.simple.output.txt
+#$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $SIMPLE_WEIGHT_MATRIX_DIR -m -n -sh -s -wc 0.1 | tee $YEARLY_PREPROC_DIR/yearly.weights.simple.output.txt
 
 #echo "calculate the weight matrix for global"
 #$BUILD/bin/mpirun --report-bindings java -cp $JAR_FILE WeightCalculator -v $GLOBAL_VEC_DIR -d $GLOBAL_WEIGHT_MATRIX_DIR -m -n -sh -wc 0.1 | tee $GLOBAL_PREPROC_DIR/global.weights.output.txt

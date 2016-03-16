@@ -38,31 +38,14 @@ mkdir -p $GLOBAL_DAMDS_SUMMARY_DIR
 
 MATRIX_FILES=$MATRIX_DIR/*
 VECTOR_BASE=$VECTOR_DIR/
-for f in $MATRIX_FILES
-do
-  filename="${f##*/}"
-  filenameWithoutExtension="${filename%.*}"
-  echo $filename
-  vf=$VECTOR_BASE$filename
-  echo $vf
-  no_of_lines=`sed -n '$=' $vf`
-  echo $no_of_lines
-  sbatch --job-name $uuid --mail-user $email --account $account internal_mds.sh $f $no_of_lines $POINTS_DIR/$filenameWithoutExtension $DAMDS_SUMMARY_DIR/$filenameWithoutExtension
-done
 
-if [ "$noglobal" != true ]
-then
-MATRIX_FILES=$GLOBAL_MATRIX_DIR/*
-VECTOR_BASE=$GLOBAL_VECTORS_DIR/
-for f in $MATRIX_FILES
-do
-  filename="${f##*/}"
-  filenameWithoutExtension="${filename%.*}"
-  echo $filename
-  vf=$VECTOR_BASE$filename
-  echo $vf
-  no_of_lines=`sed -n '$=' $vf`
-  echo $no_of_lines
-  sbatch --job-name $uuid --mail-user $email --account $account internal_mds.sh $f $no_of_lines $GLOBAL_POINTS_DIR/$filenameWithoutExtension $GLOBAL_DAMDS_SUMMARY/$filenameWithoutExtension
-done
-fi
+f=$MATRIX_DIR/$2
+filename="${f##*/}"
+filenameWithoutExtension="${filename%.*}"
+echo $filename
+vf=$VECTOR_BASE$filename
+echo $vf
+no_of_lines=`sed -n '$=' $vf`
+echo $no_of_lines
+sbatch internal_mds.sh $f $no_of_lines $POINTS_DIR/$filenameWithoutExtension $DAMDS_SUMMARY_DIR/$filenameWithoutExtension
+

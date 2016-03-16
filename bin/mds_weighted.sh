@@ -40,11 +40,13 @@ for f in $MATRIX_FILES
 do
   filename="${f##*/}"
   filenameWithoutExtension="${filename%.*}"
+  echo "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
   echo $filename
   vf=$VECTOR_BASE$filename
   echo $vf
   no_of_lines=`sed -n '$=' $vf`
   echo $no_of_lines
+  echo "aaaaaaaaaaaaaaaaaaaaaaaaaa"
   sbatch internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$filenameWithoutExtension $WEIGHTS_DIR/$filename $DAMDS_SUMMARY_DIR/$filenameWithoutExtension
 done
 
