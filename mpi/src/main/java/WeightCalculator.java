@@ -201,17 +201,20 @@ public class WeightCalculator {
                 }
             }
 
-            int constIndex = -1;
+            List<Integer> constIndex = new ArrayList<>();
             double pMax = Double.MIN_VALUE;
             for (int i = 0; i < vectors.size(); i++) {
                 VectorPoint v = vectors.get(i);
                 if (v.isConstantVector()) {
                     capMaxs[i] = -1;
-                    constIndex = i;
+                    constIndex.add(i);
                 } else {
                     double pow = Math.pow(caps[i], 0.25);
                     double maxPow = Math.pow(dmax, 0.25);
                     capMaxs[i] = Math.max(maxPow * 0.05, pow);
+                    if (Double.isNaN(capMaxs[i])) {
+                        System.out.println("NAN: " + v.serialize());
+                    }
                     sum += capMaxs[i];
                     if (capMaxs[i] > pMax) {
                         pMax = capMaxs[i];
@@ -219,14 +222,14 @@ public class WeightCalculator {
                 }
             }
 
-            if (constIndex >= 0) {
-                capMaxs[constIndex] = pMax * Configuration.getInstance().weightAdjustForConstant;
+            for (int l : constIndex) {
+                capMaxs[l] = pMax * Configuration.getInstance().weightAdjustForConstant;
             }
 
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 double weight = capMaxs[i];
-                writer.write(weight / sum);
+                writer.write(weight / pMax);
                 writer.line();
             }
         } while (true);

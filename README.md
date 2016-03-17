@@ -418,3 +418,6 @@ Single distance
 
 java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar DistanceCalculator -v ~/data/MAR_09/preproc/yearly/vectors/ -d ~/data/test/ -n -t 5 -s -f /N/u/skamburu/data/MAR_09/preproc/yearly/vectors/20060603_20070605.csv
 
+Generate list
+
+java -cp mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVizFileListGenerator  -s 20040101 -e 20151231 -d 6 -o 2004_2016_total_pviz.index -ext txt -i ~/data/MAR_09/input/2004_2015.csv
