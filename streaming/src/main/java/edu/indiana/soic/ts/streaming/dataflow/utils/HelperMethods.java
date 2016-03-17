@@ -21,90 +21,60 @@
 package edu.indiana.soic.ts.streaming.dataflow.utils;
 
 import com.google.protobuf.ServiceException;
-import edu.indiana.soic.ts.streaming.storm.utils.Constants;
-import edu.indiana.soic.ts.streaming.storm.utils.HBaseStream;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class HelperMethods {
     private final static Logger logger = LoggerFactory.getLogger(HelperMethods.class);
 
     public static void main(String[] args) throws IOException, ServiceException {
-        HBaseStream hbaseStream = new HBaseStream(Constants.TIME_SORTED_STOCK_TABLE_NAME);
-        ResultScanner rs = hbaseStream.scanTable(Constants.TIME_SORTED_STOCK_TABLE_CF,"20040101", "20040401");
-        Result rr = new Result();
-        BufferedWriter writer = new BufferedWriter(new FileWriter("./inputFiles/2004.csv"));
-        if (rs != null) {
-            byte[] id, date, symbol, price, cap;
-            while (rr != null) {
-                try {
-                    rr = rs.next();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-                if (rr != null && !rr.isEmpty()) {
-                    id = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.ID_COLUMN_BYTES);
-                    date = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.DATE_COLUMN_BYTES);
-                    symbol = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.SYMBOL_COLUMN_BYTES);
-                    price = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.PRICE_COLUMN_BYTES);
-                    cap = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.CAP_COLUMN_BYTES);
-                    if(id != null && date != null && symbol != null && price != null && cap != null)
-                        writer.write(new String(id) + "," + new String(date) + "," + new String(symbol) + ",,,"
-                            + new String(price) + "," + new String(cap) + "\n");
+        generateInputFiles();
+    }
+
+    public static void generateInputFiles() throws IOException {
+
+        BufferedReader reader = new BufferedReader(new FileReader("./inputFiles/2004_2015.csv"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("./inputFiles/2004_2015_filtered.csv"));
+        HashMap<String,Integer> companies = new HashMap<>(15000);
+        String temp = reader.readLine();
+        int count = 0;
+        int wrongFormatCount = 0;
+        while(temp != null){
+            count++;
+            String temp2 = temp.replaceAll(",",", ");
+            String[] bits = temp2.split(",");
+            if(bits.length == 7 && !bits[2].trim().isEmpty()){
+                writer.write(temp + "\n");
+                String symbol = bits[2].trim();
+                if(companies.get(symbol) != null){
+                    companies.put(symbol, companies.get(symbol) + 1);
+                }else {
+                    companies.put(symbol, 1);
                 }
             }
+            else{
+                wrongFormatCount++;
+            }
+
+            temp = reader.readLine();
         }
-        rs.close();
         writer.close();
-
-//        HBaseStream hbaseStream = new HBaseStream(Constants.TIME_SORTED_STOCK_TABLE_NAME);
-//        ResultScanner rs = hbaseStream.scanTable(Constants.TIME_SORTED_STOCK_TABLE_CF,"20040101", "20170101");
-//        Result rr = new Result();
-//        HashSet<String> companies = new HashSet<>(10000);
-//        if (rs != null) {
-//            byte[] symbol;
-//            while (rr != null) {
-//                try {
-//                    rr = rs.next();
-//                } catch (IOException e) {
-//                    logger.error(e.getMessage(), e);
-//                }
-//                if (rr != null && !rr.isEmpty()) {
-//                    symbol = rr.getValue(Constants.TIME_SORTED_STOCK_TABLE_CF_BYTES, Constants.SYMBOL_COLUMN_BYTES);
-//                    if(symbol != null)
-//                        companies.add(new String(symbol).trim());
-//                }
-//            }
-//        }
-//        rs.close();
-//        System.out.println("unique companies : " + companies.size());
-//        BufferedWriter writer = new BufferedWriter(new FileWriter("streaming/src/main/resources/symbol_encoding.csv"));
-//        Iterator<String> iterator = companies.iterator();
-//        int i = 0;
-//        while(iterator.hasNext()){
-//            writer.write(iterator.next() + "," + i + "\n");
-//            i++;
-//        }
-//        writer.close();
-
-//        BufferedReader reader = new BufferedReader(new FileReader("./inputFiles/2004.csv"));
-//        String line = reader.readLine();
-//        int lineCount  = 0;
-//        HashSet<String> companies = new HashSet<>(1000);
-//        while(line != null){
-//            lineCount++;
-//            companies.add(line.split(",")[2].trim());
-//
-//            line =  reader.readLine();
-//        }
-//
-//        System.out.println("line count : " + lineCount);
-//        System.out.println("unique companies : " + companies.size());
+        System.out.println("total entries : " + count);
+        System.out.println("wrong format entries : " + wrongFormatCount);
+        System.out.println("unique companies : " + companies.size());
+        writer = new BufferedWriter(new FileWriter("streaming/src/main/resources/symbol_encoding.csv"));
+        Iterator<Map.Entry<String,Integer>> iterator = companies.entrySet().iterator();
+        int i = 0;
+        while(iterator.hasNext()){
+            Map.Entry<String,Integer> entry = iterator.next();
+            writer.write(entry.getKey() + "," + i + "," + entry.getValue() + "\n");
+            i++;
+        }
+        writer.close();
     }
 }
