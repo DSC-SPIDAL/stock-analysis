@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+mvn compile exec:java -Dexec.mainClass=edu.indiana.soic.ts.streaming.dataflow.StockAnalysisPipeline2 \
+  -Dexec.args="--jobName=stock-data-analysis --workerMachineType=n1-standard-1 --numWorkers=8 --runner=BlockingDataflowPipelineRunner --project=stock-data-analysis --stagingLocation=gs://stock-data-analysis/staging --inputFilePath=gs://stock-data-analysis/2004_2015_filtered.csv --outputFilePath=gs://stock-data-analysis/output.txt"

@@ -50,16 +50,19 @@ import java.util.*;
 public class StockAnalysisPipeline2 {
     private final static Logger logger = LoggerFactory.getLogger(StockAnalysisPipeline2.class);
 
+    public static int WINDOW_LENGTH = 360;
+    public static int SLIDING_INTERVAL = 360;
+
 
     public static interface StockAnalysisPipelineOptions extends PipelineOptions {
         @Description("Path to input file")
-        @Default.String("")
+        @Default.String("./inputFiles/jan_mar_2004.csv")
         String getInputFilePath();
 
         void setInputFilePath(String value);
 
         @Description("Output file path")
-        @Default.String("")
+        @Default.String("output.txt")
         String getOutputFilePath();
 
         void setOutputFilePath(String value);
@@ -72,23 +75,27 @@ public class StockAnalysisPipeline2 {
         Pipeline pipeline = Pipeline.create(options);
 
         //Reading and time stamping the stock prices
-        PCollection<KV<Integer, StockPricePoint>> stockPrices = pipeline.apply(TextIO.Read.from("./inputFiles/jan_mar_2004.csv"))
-                .apply(ParDo.of(new DoFn<String, KV<Integer, StockPricePoint>>() {
+        PCollection<KV<Integer, StockPricePoint>> stockPrices = pipeline.apply(TextIO.Read.named("Reading Input File").from(options.getInputFilePath()))
+                .apply(ParDo.named("Timestamping").of(new DoFn<String, KV<Integer, StockPricePoint>>() {
                     @Override
                     public void processElement(ProcessContext c) throws Exception {
-                        String[] fields = c.element().split(",");
-                        StockPricePoint stockPoint = new StockPricePoint();
-                        stockPoint.setId(fields[0]);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-                        stockPoint.setDate(sdf.parse(fields[1].trim()));
-                        stockPoint.setSymbol(fields[2]);
-                        stockPoint.setPrice(Double.parseDouble(fields[5].trim()));
-                        stockPoint.setCap(Double.parseDouble(fields[6].trim()));
-                        Instant instant = new Instant(stockPoint.getDate().getTime());
-                        int index = symbolEncoder.getSymbolIndex(stockPoint.getSymbol());
-                        //debugging - we cannot handle large amounts of data when using local runner
-                        if(index > 1000 && index < 1100) {
+                        try {
+                            String[] fields = c.element().split(",");
+                            StockPricePoint stockPoint = new StockPricePoint();
+                            stockPoint.setId(fields[0]);
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                            stockPoint.setDate(sdf.parse(fields[1].trim()));
+                            stockPoint.setSymbol(fields[2]);
+                            stockPoint.setPrice(Double.parseDouble(fields[5].trim()));
+                            stockPoint.setCap(Double.parseDouble(fields[6].trim()));
+                            Instant instant = new Instant(stockPoint.getDate().getTime());
+
+                            //debugging - we cannot handle large amounts of data when using local runner
+                            //int index = symbolEncoder.getSymbolIndex(stockPoint.getSymbol());
+                            //if(index > 1000 && index < 1100)
                             c.outputWithTimestamp(KV.of(symbolEncoder.getSymbolIndex(stockPoint.getSymbol()), stockPoint), instant);
+                        } catch (Exception ex) {
+                            //input format issue
                         }
                     }
                 }));
@@ -96,134 +103,138 @@ public class StockAnalysisPipeline2 {
 
         //creating the sliding windows
         PCollection<KV<Integer, StockPricePoint>> slidingWindowStockPrices = stockPrices.apply(
-                Window.<KV<Integer, StockPricePoint>>into(
-                        SlidingWindows.of(Duration.standardDays(20)).every(Duration.standardDays(20))
+                Window.named("Windowing").<KV<Integer, StockPricePoint>>into(
+                        SlidingWindows.of(Duration.standardDays(WINDOW_LENGTH)).every(Duration.standardDays(SLIDING_INTERVAL))
                 )
         );
 
-        //accumulating stock prices per company per window
-        PCollection<KV<Integer,List<StockPricePoint>>> stockPricesPerCompanyPerWindow = slidingWindowStockPrices
-                .apply(GroupByKey.create()).apply(ParDo.of(new DoFn<KV<Integer,Iterable<StockPricePoint>>,
-                        KV<Integer,List<StockPricePoint>>>() {
-            @Override
-            public void processElement(ProcessContext c) throws Exception {
-                Integer key = c.element().getKey();
-                Iterator<StockPricePoint> iterator = c.element().getValue().iterator();
-                List<StockPricePoint> stockPricePoints = new ArrayList<>();
-                while(iterator.hasNext()){
-                    stockPricePoints.add(iterator.next());
-                }
-                c.output(KV.of(key, stockPricePoints));
-            }
-        }));
-
-        //accumulating companies per window
-        PCollectionView<Set<Integer>> companiesPerWindow = slidingWindowStockPrices.apply(Combine.globally(
-                new Combine.CombineFn<KV<Integer, StockPricePoint>, Set<Integer>, Set<Integer>>() {
-            @Override
-            public Set<Integer> createAccumulator() {
-                return new HashSet<>();
-            }
-            @Override
-            public Set<Integer> addInput(Set<Integer> indices, KV<Integer, StockPricePoint> integerStockPricePointKV) {
-                indices.add(integerStockPricePointKV.getKey());
-                return indices;
-            }
-            @Override
-            public Set<Integer> mergeAccumulators(Iterable<Set<Integer>> iterable) {
-                HashSet<Integer> indices = new HashSet<>();
-                Iterator<Set<Integer>> iterator = iterable.iterator();
-                while (iterator.hasNext()) {
-                    indices.addAll(iterator.next());
-                }
-                return indices;
-            }
-            @Override
-            public Set<Integer> extractOutput(Set<Integer> indices) {
-                return indices;
-            }
-        }).asSingletonView());
-
-        //explode the company entries in each window to create distance matrix entries
-        PCollection<KV<String,List<StockPricePoint>>> explodedEntries = stockPricesPerCompanyPerWindow.apply(
-                ParDo.withSideInputs(companiesPerWindow).of(new DoFn<KV<Integer, List<StockPricePoint>>,
-                        KV<String, List<StockPricePoint>>>() {
+        //stock prices of each company within a single window
+        PCollection<KV<Integer, List<StockPricePoint>>> stockPricesOfCompany = slidingWindowStockPrices.apply(GroupByKey.create())
+                .apply(ParDo.named("Combine By Company").of(new DoFn<KV<Integer, Iterable<StockPricePoint>>, KV<Integer, List<StockPricePoint>>>() {
                     @Override
-                    public void processElement(ProcessContext c) throws Exception {
-                        Set<Integer> indices = c.sideInput (companiesPerWindow);
-                        Integer key = c.element().getKey();
-                        List<StockPricePoint> stockPricePoints = c.element().getValue();
-                        Iterator<Integer> iterator = indices.iterator();
-                        while(iterator.hasNext()){
-                            Integer temp = iterator.next();
-                            // we generate only the lower half. The distance matrix is symmetric
-                            if(key > temp) {
-                                c.output(KV.of(key + "_" + temp, stockPricePoints));
-                            }else if (temp > key){
-                                c.output(KV.of(temp + "_" + key, stockPricePoints));
+                    public void processElement(ProcessContext processContext) throws Exception {
+                        Integer key = processContext.element().getKey();
+                        Iterator<StockPricePoint> iterator = processContext.element().getValue().iterator();
+                        ArrayList<StockPricePoint> stockPricePoints = new ArrayList<>(250);
+                        while (iterator.hasNext()) {
+                            stockPricePoints.add(iterator.next());
+                        }
+                        processContext.output(KV.of(key, stockPricePoints));
+                    }
+                }));
+
+        //complete stock prices vector as a view
+        PCollectionView<Map<Integer, List<StockPricePoint>>> stockPriceVectorView = stockPricesOfCompany.apply(
+                Combine.globally(new Combine.CombineFn<KV<Integer
+                        , List<StockPricePoint>>, Map<Integer, List<StockPricePoint>>, Map<Integer, List<StockPricePoint>>>() {
+                    @Override
+                    public Map<Integer, List<StockPricePoint>> createAccumulator() {
+                        return new HashMap<>();
+                    }
+
+                    @Override
+                    public Map<Integer, List<StockPricePoint>> addInput(Map<Integer, List<StockPricePoint>> stockPricesMap,
+                                                                        KV<Integer, List<StockPricePoint>> stockPricePointKV) {
+                        if (stockPricesMap.get(stockPricePointKV.getKey()) != null) {
+                            stockPricesMap.get(stockPricePointKV.getKey()).addAll(stockPricePointKV.getValue());
+                        } else {
+                            ArrayList<StockPricePoint> stockPricePoints = new ArrayList<>();
+                            stockPricePoints.addAll(stockPricePointKV.getValue());
+                            stockPricesMap.put(stockPricePointKV.getKey(), stockPricePoints);
+                        }
+                        return stockPricesMap;
+                    }
+
+                    @Override
+                    public Map<Integer, List<StockPricePoint>> mergeAccumulators(Iterable<Map<Integer,
+                            List<StockPricePoint>>> iterable) {
+                        Map<Integer, List<StockPricePoint>> stockPricesMap = new HashMap<>();
+                        Iterator<Map<Integer, List<StockPricePoint>>> iterator = iterable.iterator();
+                        while (iterator.hasNext()) {
+                            for (Map.Entry<Integer, List<StockPricePoint>> entry : iterator.next().entrySet()) {
+                                if (stockPricesMap.get(entry.getKey()) != null) {
+                                    stockPricesMap.get(entry.getKey()).addAll(entry.getValue());
+                                } else {
+                                    ArrayList<StockPricePoint> stockPricePoints = new ArrayList<>();
+                                    stockPricePoints.addAll(entry.getValue());
+                                    stockPricesMap.put(entry.getKey(), stockPricePoints);
+                                }
+                            }
+                        }
+                        return stockPricesMap;
+                    }
+
+                    @Override
+                    public Map<Integer, List<StockPricePoint>> extractOutput(Map<Integer, List<StockPricePoint>> stockPricesMap) {
+                        return stockPricesMap;
+                    }
+                }).named("Combine By Window").asSingletonView());
+
+
+        //calculating distance between companies within window
+        PCollection<KV<String,Double>> distances = stockPricesOfCompany.apply(ParDo.withSideInputs(stockPriceVectorView).named("Calculate Distances")
+                .of(new DoFn<KV<Integer, List<StockPricePoint>>, KV<String, Double>>() {
+                    @Override
+                    public void processElement(ProcessContext processContext) throws Exception {
+                        Map<Integer, List<StockPricePoint>> stockPricesVector = processContext.sideInput(stockPriceVectorView);
+                        Integer keyX = processContext.element().getKey();
+                        List<StockPricePoint> stockPricesX = processContext.element().getValue();
+                        for (Map.Entry<Integer, List<StockPricePoint>> entry : stockPricesVector.entrySet()) {
+                            //calculate only the bottom triangle (matrix is symmetric)
+                            Integer keyY = entry.getKey();
+                            if (keyY < keyX) {
+                                List<StockPricePoint> stockPricesY = entry.getValue();
+                                //TODO calculate distance
+                                processContext.output(KV.of(keyX + "_" + keyY, 0.0));
                             }
                         }
                     }
                 }));
 
-        //grouping two entries to create a distance entry in the matrix and calculating the distance
-        PCollection<KV<String,Double>> distances = explodedEntries.apply(GroupByKey.create()).apply(
-                ParDo.of(new DoFn<KV<String,Iterable<List<StockPricePoint>>>, KV<String,Double>>() {
-            @Override
-            public void processElement(ProcessContext processContext) throws Exception {
-                Integer keyX = Integer.parseInt(processContext.element().getKey().split("_")[0]);
-                Integer keyY = Integer.parseInt(processContext.element().getKey().split("_")[1]);
-                Iterator<List<StockPricePoint>> iterator = processContext.element().getValue().iterator();
-                List<StockPricePoint> stockPricesX = iterator.next();
-                List<StockPricePoint> stockPricesY = iterator.next();
-                //TODO calculate distance
-                processContext.output(KV.of(keyX+"_"+keyY, 0.0));
-            }
-        }));
-
         //formulate the distance matrix
         PCollection<DistanceMatrix> distanceMatrix = distances.apply(Combine.globally(
                 new Combine.CombineFn<KV<String,Double>, DistanceMatrix, DistanceMatrix>() {
-                    @Override
-                    public DistanceMatrix createAccumulator() {
-                        return new DistanceMatrix();
-                    }
+            @Override
+            public DistanceMatrix createAccumulator() {
+                return new DistanceMatrix();
+            }
 
-                    @Override
-                    public DistanceMatrix addInput(DistanceMatrix distanceMatrix, KV<String, Double> stringDoubleKV) {
-                        distanceMatrix.addPoint(Integer.parseInt(stringDoubleKV.getKey().split("_")[0]),
-                                Integer.parseInt(stringDoubleKV.getKey().split("_")[1]),stringDoubleKV.getValue());
-                        return distanceMatrix;
-                    }
+            @Override
+            public DistanceMatrix addInput(DistanceMatrix distanceMatrix, KV<String, Double> stringDoubleKV) {
+                distanceMatrix.addPoint(Integer.parseInt(stringDoubleKV.getKey().split("_")[0]),
+                        Integer.parseInt(stringDoubleKV.getKey().split("_")[1]),stringDoubleKV.getValue());
+                return distanceMatrix;
+            }
 
-                    @Override
-                    public DistanceMatrix mergeAccumulators(Iterable<DistanceMatrix> iterable) {
-                        DistanceMatrix distanceMatrix = new DistanceMatrix();
-                        Iterator<DistanceMatrix> iterator = iterable.iterator();
-                        while(iterator.hasNext()){
-                            distanceMatrix.merge(iterator.next());
-                        }
-                        return distanceMatrix;
-                    }
+            @Override
+            public DistanceMatrix mergeAccumulators(Iterable<DistanceMatrix> iterable) {
+                DistanceMatrix distanceMatrix = new DistanceMatrix();
+                Iterator<DistanceMatrix> iterator = iterable.iterator();
+                while(iterator.hasNext()){
+                    distanceMatrix.merge(iterator.next());
+                }
+                return distanceMatrix;
+            }
 
-                    @Override
-                    public DistanceMatrix extractOutput(DistanceMatrix distanceMatrix) {
-                        return distanceMatrix;
-                    }
-                }).withoutDefaults());
+            @Override
+            public DistanceMatrix extractOutput(DistanceMatrix distanceMatrix) {
+                return distanceMatrix;
+            }
+        }).named("Combine Distance Matrix").withoutDefaults());
 
         //write to file
-        distanceMatrix.apply(ParDo.of(new DoFn<DistanceMatrix, String>() {
+        distanceMatrix.apply(ParDo.named("Matrix to String").of(new DoFn<DistanceMatrix, String>() {
             @Override
             public void processElement(ProcessContext processContext) throws Exception {
-                String temp = processContext.timestamp() + "\n";
+                String temp = "<distance-matrix-entry>\n" + processContext.timestamp() + "\n";
                 temp += processContext.element().getDistanceValues().toString()+ "\n";
                 temp += processContext.element().getRow().toString() + "\n";
                 temp += processContext.element().getColumn().toString() + "\n";
-                temp += "-------------------------------------------------------------------------------------------";
+                temp += "</distance-matrix-entry>\n";
                 processContext.output(temp);
             }
-        })).apply(TextIO.Write.to("output.txt"));
+        })).apply(TextIO.Write.to(options.getOutputFilePath()).named("Writing Output File"));
+
 
         pipeline.run();
         System.exit(0);
