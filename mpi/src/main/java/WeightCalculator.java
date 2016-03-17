@@ -333,6 +333,9 @@ public class WeightCalculator {
                     double pow = Math.pow(caps[i], 0.25);
                     double maxPow = Math.pow(dmax, 0.25);
                     capMaxs[i] = Math.max(maxPow * 0.05, pow);
+                    if (Double.isNaN(capMaxs[i])) {
+                        System.out.println("NAN: " + v.serialize());
+                    }
                     sum += capMaxs[i];
                     if (capMaxs[i] > pMax) {
                         pMax = capMaxs[i];
@@ -353,11 +356,16 @@ public class WeightCalculator {
                     }
                 }
             }
+            int count0 = 0;
             // write the vectors to file
             for (int i = 0; i < vectors.size(); i++) {
                 double[] row = values[i];
                 for (double value : row) {
                     short val = (short) ((normalize ? value / max : value) * Short.MAX_VALUE);
+                    if (val == 0) {
+                        // System.out.println(val);
+                        count0++;
+                    }
                     // writer.writeShort(val);
                     byteBuffer.putShort(val);
                 }
@@ -366,6 +374,7 @@ public class WeightCalculator {
                 byteBuffer.clear();
                 //writer.line();
             }
+            System.out.println("0 WEights" + count0);
         } while (true);
 
         writer.close();
