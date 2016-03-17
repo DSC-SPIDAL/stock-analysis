@@ -200,11 +200,15 @@ public class PSVectorGenerator {
 
                 // figure out the index
                 int index = datesList.get(record.getDate());
-                if (!point.add(record.getPrice(), record.getFactorToAdjPrice(), record.getFactorToAdjVolume(), metric, index)) {
+                double price = record.getPrice();
+                if (!point.add(price, record.getFactorToAdjPrice(), record.getFactorToAdjVolume(), metric, index)) {
                     metric.dupRecords++;
                     System.out.println("dup: " + record.serialize());
                 }
-                point.addCap(record.getVolume() * record.getPrice());
+                if (price < 0) {
+                    price = -1 * price;
+                }
+                point.addCap(record.getVolume() * price);
 
                 if (point.noOfElements() == size) {
                     fullCount++;
