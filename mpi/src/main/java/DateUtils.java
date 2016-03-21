@@ -105,6 +105,13 @@ public class DateUtils {
                 lastDate = Utils.addDays(lastDate, 7);
                 dates.put(start + "_" + end, list);
             } while (lastDate.before(endDate));
+        } else if (mode == 8) {
+            String start = Utils.getDateString(startDate);
+            String end = Utils.getDateString(endDate);
+            List<Date> list = new ArrayList<Date>();
+            list.add(startDate);
+            list.add(endDate);
+            dates.put(start + "_" + end, list);
         }
         return dates;
     }
@@ -217,6 +224,11 @@ public class DateUtils {
                 dates.put(key, list);
                 dateList.add(key);
             } while (lastDate.before(endDate));
+        } else if (mode == 8) {
+            String start = Utils.getDateString(startDate);
+            String end = Utils.getDateString(endDate);
+            String key = start + "_" + end;
+            dateList.add(key);
         }
         return dateList;
     }
