@@ -12,7 +12,7 @@ public class Histogram {
     private String vectorFolder;
     private String distFolder;
     private String stockFile;
-    private static int INC = 3000;
+    private static int INC = 7000;
     private int bins = 10;
     private boolean global = false;
     // we will use this many files to generate the global bins

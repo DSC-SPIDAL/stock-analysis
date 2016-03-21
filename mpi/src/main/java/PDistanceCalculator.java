@@ -21,6 +21,7 @@ public class PDistanceCalculator {
     private int threads;
     private BlockingQueue<Work> workQueue = new ArrayBlockingQueue<Work>(64);
     private boolean run = true;
+    private int bins = 100;
 
     public PDistanceCalculator(String vectorFolder, String distFolder, boolean mpi, int distanceType, boolean sharedInput, int threads) {
         this.vectorFolder = vectorFolder;
@@ -173,6 +174,7 @@ public class PDistanceCalculator {
         }
 
         List<Double> localMaxValues = new ArrayList<>();
+        int []histogram = new int[bins];
         CountDownLatch doneSignal = new CountDownLatch(threads);
         long computeStart = System.currentTimeMillis();
         // assign values to the workers
@@ -196,6 +198,7 @@ public class PDistanceCalculator {
             }
         }
 
+        int binRange = Short.MAX_VALUE / bins;
         // now write the output
         // write the vectors to file
         ByteBuffer byteBuffer = ByteBuffer.allocate(vectors.size() * 2);
@@ -208,8 +211,12 @@ public class PDistanceCalculator {
                     throw new RuntimeException("Invalid distance");
                 }
                 short shortValue = (short) (doubleValue * Short.MAX_VALUE);
+                int index = shortValue / binRange;
+                if (index == bins) index--;
+                histogram[index] = histogram[index] + 1;
                 //writer.writeShort(shortValue);
                 byteBuffer.putShort(shortValue);
+
             }
             byteBuffer.flip();
             writer.write(byteBuffer);
@@ -219,6 +226,10 @@ public class PDistanceCalculator {
         writer.close();
         long end = System.currentTimeMillis();
         System.out.println("Time: " + (end - start) / 1000);
+
+        for (int i = 0; i < histogram.length; i++) {
+            System.out.print(histogram[i] + ", ");
+        }
     }
 
     private void assignWorks(int lineCount, List<Double> localMaxValues, List<VectorPoint> vectorPoints,
