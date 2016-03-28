@@ -87,7 +87,7 @@ public class CCommonGenerator {
             processPair(firstFile, secondFile);
         } else {
             List<Date> dates;
-            if (mode == 6) {
+            if (mode == 6 || mode == 9) {
                 Set<Date> dateSet = DateUtils.retrieveDates(inputFile);
                 dates = DateUtils.sortDates(dateSet);
             } else {
