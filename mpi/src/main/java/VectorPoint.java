@@ -218,7 +218,7 @@ public class VectorPoint {
             for (int i = 0; i < vp.elements; i++) {
                 regression.addData(i, vp.numbers[i]);
             }
-            return regression.getSlope();
+            return 10 * Math.abs(Math.log(Math.abs(regression.getSlope())));
         }
         return 0;
     }

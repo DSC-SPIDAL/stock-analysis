@@ -112,6 +112,35 @@ public class DateUtils {
             list.add(startDate);
             list.add(endDate);
             dates.put(start + "_" + end, list);
+        } else if (mode == 9) {
+            // first lets get the date 1 year away
+            Date oneYearAway = Utils.addYear(startDate);
+            int firstIndex = 0;
+            for (int i = 0; i < availableDates.size(); i++) {
+                Date d = availableDates.get(i);
+                if (d.equals(startDate) || d.after(startDate)) {
+                    firstIndex = i;
+                    break;
+                }
+            }
+
+            int lastIndex = 0;
+            for (int i = 0; i < availableDates.size(); i++) {
+                Date d = availableDates.get(i);
+                if (d.equals(oneYearAway) || d.after(oneYearAway)) {
+                    lastIndex = i;
+                    break;
+                }
+            }
+            if (lastIndex != 0) {
+                for (; lastIndex < availableDates.size(); lastIndex++) {
+                    Date lastDate = availableDates.get(lastIndex);
+                    addTwoDates(availableDates.get(firstIndex), lastDate, dates);
+                    if (lastDate.after(endDate) || lastDate.equals(endDate)) {
+                        break;
+                    }
+                }
+            }
         }
         return dates;
     }
@@ -229,6 +258,35 @@ public class DateUtils {
             String end = Utils.getDateString(endDate);
             String key = start + "_" + end;
             dateList.add(key);
+        }  else if (mode == 9) {
+            // first lets get the date 1 year away
+            Date oneYearAway = Utils.addYear(startDate);
+            int firstIndex = 0;
+            for (int i = 0; i < availableDates.size(); i++) {
+                Date d = availableDates.get(i);
+                if (d.equals(startDate) || d.after(startDate)) {
+                    firstIndex = i;
+                    break;
+                }
+            }
+
+            int lastIndex = 0;
+            for (int i = 0; i < availableDates.size(); i++) {
+                Date d = availableDates.get(i);
+                if (d.equals(oneYearAway) || d.after(oneYearAway)) {
+                    lastIndex = i;
+                    break;
+                }
+            }
+            if (lastIndex != 0) {
+                for (; lastIndex < availableDates.size(); lastIndex++) {
+                    Date lastDate = availableDates.get(lastIndex);
+                    addTwoDatesKey(availableDates.get(firstIndex), lastDate, dateList);
+                    if (lastDate.after(endDate) || lastDate.equals(endDate)) {
+                        break;
+                    }
+                }
+            }
         }
         return dateList;
     }

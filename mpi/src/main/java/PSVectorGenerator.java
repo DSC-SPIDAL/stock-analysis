@@ -33,7 +33,7 @@ public class PSVectorGenerator {
     public void process() throws FileNotFoundException {
         System.out.println("starting vector generator...");
         List<Date> dates;
-        if (mode == 6) {
+        if (mode == 6 || mode == 9) {
             Set<Date> dateSet = DateUtils.retrieveDates(this.inFolder);
             dates = DateUtils.sortDates(dateSet);
         } else {
