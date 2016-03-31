@@ -30,7 +30,7 @@ public class PVizFileListGenerator {
 
             int mode = Integer.parseInt(days);
             List<Date> dates;
-            if (mode == 6 || mode == 9) {
+            if (mode == 6 || mode == 9 || mode == 10) {
                 Set<Date> dateSet = DateUtils.retrieveDates(inputFile);
                 dates = DateUtils.sortDates(dateSet);
             } else {
