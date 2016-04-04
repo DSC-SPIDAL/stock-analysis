@@ -1,21 +1,27 @@
+import edu.indiana.soic.spidal.common.BinaryReader2D;
+import edu.indiana.soic.spidal.common.Range;
 import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.ByteOrder;
 import java.util.*;
 
 public class ConsecutiveDistancePrint {
     private String vectorFolder;
     private int distanceType;
+    private String distanceFolder;
 
-    public ConsecutiveDistancePrint(String vectorFolder, int distanceType) {
+    public ConsecutiveDistancePrint(String vectorFolder, int distanceType, String distanceFolder) {
         this.vectorFolder = vectorFolder;
         this.distanceType = distanceType;
+        this.distanceFolder = distanceFolder;
     }
 
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("v", true, "Input Vector folder");
+        options.addOption(Utils.createOption("d", true, "distance folder", false));
         options.addOption("sd", true, "Start date");
         options.addOption("ed", true, "End date");
         options.addOption("dm", true, "Date mode");
@@ -33,6 +39,7 @@ public class ConsecutiveDistancePrint {
             String sd = cmd.getOptionValue("sd");
             String ed = cmd.getOptionValue("ed");
             String symbol = cmd.getOptionValue("sy");
+            String distanceFolder = cmd.getOptionValue("d");
 
             Date startDate = Utils.parseDateString(sd);
             Date endDate = Utils.parseDateString(ed);
@@ -51,7 +58,7 @@ public class ConsecutiveDistancePrint {
 
             int permNo = intervtedMappings.get(symbol);
 
-            ConsecutiveDistancePrint consecutiveDistancePrint = new ConsecutiveDistancePrint(vectorFolder, distanceType);
+            ConsecutiveDistancePrint consecutiveDistancePrint = new ConsecutiveDistancePrint(vectorFolder, distanceType, distanceFolder);
             consecutiveDistancePrint.process(dateString, permNo, distanceType);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -74,27 +81,42 @@ public class ConsecutiveDistancePrint {
             StringBuilder sb = new StringBuilder();
             String name = dateString.get(i);
             String fileName = vectorFolder + "/" + name + ".csv";
+
             File file = new File(fileName);
 
             List<VectorPoint> vectorPoints = Utils.readVectors(file, 0, 7000);
             // get the vector point
-            VectorPoint vc1 = getVectorPoint(permNo, vectorPoints);
-            VectorPoint vc2 = getVectorPoint(1, vectorPoints);
+            int vc1Index = getVectorPoint(permNo, vectorPoints);
+            int vc2Index = getVectorPoint(1, vectorPoints);
+
+            VectorPoint vc1 = vectorPoints.get(vc1Index);
+            VectorPoint vc2 = vectorPoints.get(vc2Index);
 
             double cor = vc1.correlation(vc2, dist);
 
-            sb.append(name).append(": ").append(cor).append(", ");
+            sb.append(name).append(": ").append(cor);
+            if (distanceFolder != null) {
+                String distanceFileName = distanceFolder + "/" + name + ".csv";
+                short d = getDistance(vc1Index, vc2Index, distanceFileName, vectorPoints.size());
+                sb.append(": ").append(d);
+            }
             System.out.println(sb.toString());
         }
     }
 
-    public VectorPoint getVectorPoint(int permNo, List<VectorPoint> vectorPoints) {
-        for (VectorPoint vectorPoint : vectorPoints) {
+    public short getDistance(int i, int j, String file, int size) {
+        short [][]a = BinaryReader2D.readRowRange(file, new Range(i, i), size, ByteOrder.BIG_ENDIAN, true, null);
+        return a[0][j];
+    }
+
+    public int getVectorPoint(int permNo, List<VectorPoint> vectorPoints) {
+        for (int i = 0; i < vectorPoints.size(); i++) {
+            VectorPoint vectorPoint = vectorPoints.get(i);
             if (vectorPoint.getKey() == permNo) {
-                return vectorPoint;
+                return i;
             }
         }
-        return null;
+        return -1;
     }
 
 
