@@ -1,4 +1,3 @@
-import mpi.MpiOps;
 import org.apache.commons.cli.*;
 
 import java.io.File;
@@ -71,8 +70,8 @@ public class ConsecutiveDistancePrint {
     }
 
     public void process(List<String> dateString, int permNo, int dist) {
-        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < dateString.size(); i++) {
+            StringBuilder sb = new StringBuilder();
             String name = dateString.get(i);
             String fileName = vectorFolder + "/" + name + ".csv";
             File file = new File(fileName);
@@ -85,8 +84,8 @@ public class ConsecutiveDistancePrint {
             double cor = vc1.correlation(vc2, dist);
 
             sb.append(name).append(": ").append(cor).append(", ");
+            System.out.println(sb.toString());
         }
-        System.out.println(sb.toString());
     }
 
     public VectorPoint getVectorPoint(int permNo, List<VectorPoint> vectorPoints) {
