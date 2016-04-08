@@ -345,6 +345,20 @@ public class DateUtils {
                     }
                 }
             }
+        } else if (mode == 11) {
+            Date lastDate = Utils.parseDateString("20091219");;
+            do {
+                String start = Utils.getDateString(currentDate);
+                String end = Utils.getDateString(lastDate);
+                List<Date> list = new ArrayList<Date>();
+                list.add(currentDate);
+                list.add(lastDate);
+
+                lastDate = Utils.addDays(lastDate, 7);
+                String key = start + "_" + end;
+                dates.put(key, list);
+                dateList.add(key);
+            } while (lastDate.before(endDate));
         }
         return dateList;
     }
