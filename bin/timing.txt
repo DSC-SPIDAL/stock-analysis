@@ -1,7 +1,7 @@
-0              0.0            1       1           1       6684        6684                        27                                   Tue Mar 15 08:52:04 EDT 2016tempest.dsc.soic.indiana.edu
-18             Infinity
-175            Infinity
-4682           Infinity
+0              0.0            1       1           1       4334        4334                        27                                   Sat Apr 09 23:39:06 EDT 2016tempest.dsc.soic.indiana.edu
+11             Infinity
+154            Infinity
+1693           Infinity
 0              NaN     
 0              NaN     
 0              NaN     

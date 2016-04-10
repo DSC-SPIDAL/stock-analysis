@@ -22,7 +22,7 @@ mkdir -p $CONT_COMMON_POINTS
 mkdir -p $FINAL_ROTATE
 
 echo "Generating point list"
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar CCommonGenerator -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS -r $FINAL_ROTATE -sd 20040101 -ed 20151231 -l -md 6 -i $ORIGINAL_STOCK_FILE | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.list.out.txt
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar CCommonGenerator -v $CONT_VECS -p $CONT_POINTS -d $CONT_COMMON_POINTS -r $FINAL_ROTATE -sd 20040101 -ed 20100221 -l -md 11 -i $ORIGINAL_STOCK_FILE | tee $BASE_DIR/$POSTPROC_INTERMEDIATE_DIR_NAME/common.points.list.out.txt
 
 FILE_LIST=$CONT_COMMON_POINTS/list.txt
 echo "Copying the first point file to rotate folder"
@@ -62,7 +62,7 @@ first_common_file=$first_file_name
       -DInitializationFileName=$first_file -DReducedVectorOutputFileName=$ROTATE_OUT/$filename$ext \
       -DRotationLabelsFileName=$second_file \
       -DfinalRotationFileName=$full_file \
-      -DWeightingOption=1 -DWeightingFileName=$weight_file -DfinalRotationPointCount=$no_of_full_lines \
+      -DWeightingOption=0 -DWeightingFileName=$weight_file -DfinalRotationPointCount=$no_of_full_lines \
       -DDataPoints=$no_of_lines \
       -cp $MANXCAT_JAR salsa.mdsaschisq.ManxcatCentral -c mconfig.properties -n 1 -t 1 2>&1 | tee $FINAL_ROTATE_SUMMARY/$filename.rotation.summary.txt
 

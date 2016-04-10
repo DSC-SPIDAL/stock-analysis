@@ -57,8 +57,8 @@ echo "breaking files"
 
 # generate vector files
 echo "generate vector files"
-#$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PVectorGenerator -i $BREAKS_DIR -o $VECTOR_DIR -d 300 -m | tee $PREPROC_DIR/yearly.vector.output.txt
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PSVectorGenerator -i $INPUT_DIR/$STOCK_FILE_NAME -o $VECTOR_DIR -d 3000 -m -s 20140122 -e 20151231 -md 6 | tee $PREPROC_DIR/yearly.vector.output.txt
+#$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PVectorGenerator -i $BREAKS_DIR -o $VECTOR_DIR -d 3000 -m | tee $PREPROC_DIR/yearly.vector.output.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE PSVectorGenerator -i $INPUT_DIR/$STOCK_FILE_NAME -o $VECTOR_DIR -d 3000 -m -s 20040101 -e 20151231 -md 10 | tee $PREPROC_DIR/yearly.vector.output.txt
 
 # generate global vector file
 # we don't need globa file anymore
@@ -76,7 +76,7 @@ echo "calculate the weigh matrix for yearly"
 $BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $WEIGHT_MATRIX_DIR -m -n -sh -wc 0.1 | tee $YEARLY_PREPROC_DIR/yearly.weights.output.txt
 
 echo "calculate the simple weigh file for yearly"
-#$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $SIMPLE_WEIGHT_MATRIX_DIR -m -n -sh -s -wc 0.1 | tee $YEARLY_PREPROC_DIR/yearly.weights.simple.output.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java -cp $JAR_FILE WeightCalculator -v $VECTOR_DIR -d $SIMPLE_WEIGHT_MATRIX_DIR -m -n -sh -s -wc 0.1 | tee $YEARLY_PREPROC_DIR/yearly.weights.simple.output.txt
 
 #echo "calculate the weight matrix for global"
 #$BUILD/bin/mpirun --report-bindings java -cp $JAR_FILE WeightCalculator -v $GLOBAL_VEC_DIR -d $GLOBAL_WEIGHT_MATRIX_DIR -m -n -sh -wc 0.1 | tee $GLOBAL_PREPROC_DIR/global.weights.output.txt
