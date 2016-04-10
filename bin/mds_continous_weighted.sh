@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+#SBATCH -A skamburu
+#SBATCH -N 4
+#SBATCH --tasks-per-node=24
+#SBATCH --time=12:00:00
+
 if [ $# -eq 0 ]
   then
     echo "Directory must be specified as argument"
@@ -44,8 +49,8 @@ VECTOR_BASE=$VECTOR_DIR/
 echo "Generating list"
 basefile=
 #java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar CCommonGenerator -v $VECTOR_DIR -p $INTER_POINT_DIR -d $INTER_MDS_DIR -r $YEARLY_MDS_DIR -sd 20040101 -ed 20150101 -l -md 5 | tee $BASE_DIR/$INTER_MDS_DIR/mds.list.out.txt
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVizFileListGenerator -s 20040101 -e 20151231 -d 9 -o $INTER_MDS_DIR/list.txt -ext txt -i $ORIGINAL_STOCK_FILE | tee $BASE_DIR/$INTER_MDS_DIR/mds.list.out.txt
-TXT_EXT='.txt'
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVizFileListGenerator -s 20040101 -e 20100221 -d 11 -o $INTER_MDS_DIR/list.txt -ext txt -i $ORIGINAL_STOCK_FILE | tee $BASE_DIR/$INTER_MDS_DIR/mds.list.out.txt
+CSV_EXT='.csv'
 FILE_LIST=$INTER_MDS_DIR/list.txt
 {
   read;
@@ -53,17 +58,19 @@ FILE_LIST=$INTER_MDS_DIR/list.txt
       filename=$line
       fwext="${filename%.*}"
       echo $filename
-      vf=$VECTOR_BASE$filename
+      vf=$VECTOR_BASE$fwext$CSV_EXT
+      f=$MATRIX_DIR/$fwext$CSV_EXT
       echo $vf
       no_of_lines=`sed -n '$=' $vf`
       echo $no_of_lines
-      java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar MDSPointGenerator -v $VECTOR_DIR -p $INTER_POINT_DIR -r $YEARLY_MDS_DIR -ff $fwext | tee $BASE_DIR/$INTER_MDS_DIR/mds.list.out.txt
       # first one
+      echo $WEIGHTS_DIR/$fwext$CSV_EXT
       if [ -z "$basefile" ]; then
-        sbatch internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$filename $DAMDS_SUMMARY_DIR/$fwext
+        sh internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$fwext$CSV_EXT $DAMDS_SUMMARY_DIR/$fwext
       else
-        sbatch internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$filename $DAMDS_SUMMARY_DIR/$fwext $INTER_POINT_DIR/$filename
+        java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar MDSPointGenerator -v $VECTOR_DIR -p $INTER_POINT_DIR -r $YEARLY_MDS_DIR -sf $basefile -ff $fwext | tee $BASE_DIR/$INTER_MDS_DIR/mds.list.out.txt
+        sh internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$fwext$CSV_EXT $DAMDS_SUMMARY_DIR/$fwext $INTER_POINT_DIR/$filename
       fi
-      basefile=$line
+      basefile=$fwext
   done
 } < ${FILE_LIST}
