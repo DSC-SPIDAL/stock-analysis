@@ -50,6 +50,12 @@ public class Point {
         return sb.toString();
     }
 
+    public String serializeXYZ() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(four.format(x)).append("\t").append(four.format(y)).append("\t").append(four.format(z)).append("\t");
+        return sb.toString();
+    }
+
     public void setClazz(int clazz) {
         this.clazz = clazz;
     }
