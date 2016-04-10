@@ -165,3 +165,4 @@ $RECYCLE.BIN/
 .DS_Store
 bin/nohup.out_back
 bin/nohup.out.back
+bin/nohup.out.bak
