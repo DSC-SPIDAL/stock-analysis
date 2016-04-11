@@ -8,7 +8,7 @@ sh postproc/c_rotations.sh
 #sh postproc/cont_rotate.sh
 #sh postproc/common_points.sh
 ### generate histograms
-sh postproc/histogram.sh
+#sh postproc/histogram.sh
 ## rotations
 #sh postproc/rotate.sh
 ## apply labels

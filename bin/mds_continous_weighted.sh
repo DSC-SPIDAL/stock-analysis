@@ -48,13 +48,18 @@ VECTOR_BASE=$VECTOR_DIR/
 
 echo "Generating list"
 basefile=
-#java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar CCommonGenerator -v $VECTOR_DIR -p $INTER_POINT_DIR -d $INTER_MDS_DIR -r $YEARLY_MDS_DIR -sd 20040101 -ed 20150101 -l -md 5 | tee $BASE_DIR/$INTER_MDS_DIR/mds.list.out.txt
-java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVizFileListGenerator -s 20040101 -e 20100221 -d 11 -o $INTER_MDS_DIR/list.txt -ext txt -i $ORIGINAL_STOCK_FILE | tee $BASE_DIR/$INTER_MDS_DIR/mds.list.out.txt
+#java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVizFileListGenerator -s 20040101 -e 20151231 -d 7 -o $INTER_MDS_DIR/list.txt -ext txt -i $ORIGINAL_STOCK_FILE > $INTER_MDS_DIR/mds.list.out.txt 2>&1
 CSV_EXT='.csv'
+TXT_EXT='.txt'
 FILE_LIST=$INTER_MDS_DIR/list.txt
-{
-  read;
-  while read line; do
+basefile=20040101_20050101
+#basefile=20040101_20100320
+#{
+  #read;
+  #while read line; do
+  #while IFS='' read -r line || [[ -n "$line" ]]; do
+  for line in $(cat $FILE_LIST)
+  do
       filename=$line
       fwext="${filename%.*}"
       echo $filename
@@ -66,11 +71,18 @@ FILE_LIST=$INTER_MDS_DIR/list.txt
       # first one
       echo $WEIGHTS_DIR/$fwext$CSV_EXT
       if [ -z "$basefile" ]; then
-        sh internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$fwext$CSV_EXT $DAMDS_SUMMARY_DIR/$fwext
+        ./internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$fwext$CSV_EXT $DAMDS_SUMMARY_DIR/$fwext "" .95 2>&1
+        echo "First finished"
       else
-        java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar MDSPointGenerator -v $VECTOR_DIR -p $INTER_POINT_DIR -r $YEARLY_MDS_DIR -sf $basefile -ff $fwext | tee $BASE_DIR/$INTER_MDS_DIR/mds.list.out.txt
-        sh internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$fwext$CSV_EXT $DAMDS_SUMMARY_DIR/$fwext $INTER_POINT_DIR/$filename
+        java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar MDSPointGenerator -v $VECTOR_DIR -p $INTER_POINT_DIR -r $YEARLY_MDS_DIR -ff $basefile -sf $fwext 2>&1 | tee $INTER_MDS_DIR/$line
+        while [ ! -f $POINTS_DIR/$fwext$TXT_EXT ]; do 
+            ./internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$fwext$CSV_EXT $DAMDS_SUMMARY_DIR/$fwext $INTER_POINT_DIR/$fwext$TXT_EXT .95 
+        done
+        echo "Second finished" 
       fi
+      echo "333"
       basefile=$fwext
-  done
-} < ${FILE_LIST}
+  done 
+#} < ${FILE_LIST}
+
+echo "Finished..........."

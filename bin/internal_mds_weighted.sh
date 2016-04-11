@@ -18,7 +18,7 @@ mkdir -p $HOME/mmaps/$SLURM_JOB_ID
 wd=`pwd`
 
 echo "running job"
-$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java $opts -cp $cp -DInitialPointsFile=$6 -DNumberDataPoints=$2 -DDistanceMatrixFile=$1 -DPointsFile=$3.txt -DTimingFile=$5timing.txt -DSummaryFile=$5.summary.txt -DWeightMatrixFile=$4 -DTransformationFunction=trfm.DistanceTransformer edu.indiana.soic.spidal.damds.Program  -c config.properties -n $SLURM_JOB_NUM_NODES -t $tpn -mmaps 1 -mmapdir /tmp/$USER 2>&1 | tee $5.summary.txt
+$BUILD/bin/mpirun --report-bindings --mca btl ^tcp java $opts -cp $cp -DInitialPointsFile=$6 -DAlpha=$7 -DNumberDataPoints=$2 -DDistanceMatrixFile=$1 -DPointsFile=$3.txt -DTimingFile=$5timing.txt -DSummaryFile=$5.summary.txt -DWeightMatrixFile=$4 -DTransformationFunction=trfm.DistanceTransformer edu.indiana.soic.spidal.damds.Program  -c config.properties -n $SLURM_JOB_NUM_NODES -t $tpn -mmaps 1 -mmapdir /tmp/$USER 2>&1 | tee $5.summary.txt
 echo "Finished $0 on `date`" 
 
 
