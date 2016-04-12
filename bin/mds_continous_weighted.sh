@@ -48,12 +48,13 @@ VECTOR_BASE=$VECTOR_DIR/
 
 echo "Generating list"
 basefile=
-#java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVizFileListGenerator -s 20040101 -e 20151231 -d 7 -o $INTER_MDS_DIR/list.txt -ext txt -i $ORIGINAL_STOCK_FILE > $INTER_MDS_DIR/mds.list.out.txt 2>&1
+java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar PVizFileListGenerator -s 20040101 -e 20151231 -d 7 -o $INTER_MDS_DIR/list.txt -ext txt -i $ORIGINAL_STOCK_FILE > $INTER_MDS_DIR/mds.list.out.txt 2>&1
 CSV_EXT='.csv'
 TXT_EXT='.txt'
 FILE_LIST=$INTER_MDS_DIR/list.txt
-basefile=20040101_20050101
-#basefile=20040101_20100320
+#basefile=20040101_20050101
+basefile=
+count=0
 #{
   #read;
   #while read line; do
@@ -75,12 +76,19 @@ basefile=20040101_20050101
         echo "First finished"
       else
         java -cp ../mpi/target/stocks-1.0-ompi1.8.1-jar-with-dependencies.jar MDSPointGenerator -v $VECTOR_DIR -p $INTER_POINT_DIR -r $YEARLY_MDS_DIR -ff $basefile -sf $fwext 2>&1 | tee $INTER_MDS_DIR/$line
+        alpha=.5
+        if [ $(( $count % 10 )) -eq 0 ] ;
+        then
+             alpha=.95
+        fi     
+        echo "Alpha="$alpha
         while [ ! -f $POINTS_DIR/$fwext$TXT_EXT ]; do 
-            ./internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$fwext$CSV_EXT $DAMDS_SUMMARY_DIR/$fwext $INTER_POINT_DIR/$fwext$TXT_EXT .95 
+            ./internal_mds_weighted.sh $f $no_of_lines $POINTS_DIR/$fwext $WEIGHTS_DIR/$fwext$CSV_EXT $DAMDS_SUMMARY_DIR/$fwext $INTER_POINT_DIR/$fwext$TXT_EXT $alpha 
         done
         echo "Second finished" 
       fi
-      echo "333"
+      echo $count
+      count=$((count+1))
       basefile=$fwext
   done 
 #} < ${FILE_LIST}
