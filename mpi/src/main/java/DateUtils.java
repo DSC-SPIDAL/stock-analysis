@@ -318,7 +318,7 @@ public class DateUtils {
             }
         }  else if (mode == 10) {
             // first lets get the date 1 year away
-            Date oneYearAway = Utils.parseDateString("20091219");
+            Date oneYearAway = Utils.parseDateString("20080102");
             int firstIndex = 0;
             for (int i = 0; i < availableDates.size(); i++) {
                 Date d = availableDates.get(i);
